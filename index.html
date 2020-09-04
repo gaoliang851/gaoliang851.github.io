@@ -364,6 +364,160 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/" class="post-title-link" itemprop="url">Swift5.1学习笔记之继承</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-03 15:27:29" itemprop="dateCreated datePublished" datetime="2020-09-03T15:27:29+08:00">2020-09-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>值类型(枚举、结构体)不支持继承，只有类支持继承</li>
+<li>没有父类的类，称为：基类<ul>
+<li><code>Swift</code>并没有像<code>OC</code>，<code>Java</code>那样的规定：任何类最终都要继承自某个基类</li>
+</ul>
+</li>
+<li>子类可以重写父类的<strong>下标</strong>、<strong>方法</strong>、<strong>属性</strong>，重写必须加上<code>override</code>关键字</li>
+</ul>
+<h2 id="内存结构"><a href="#内存结构" class="headerlink" title="内存结构"></a>内存结构</h2><p><code>Swift</code>中，实例的内存布局：前八个字节存储<code>class</code>的<strong>类型信息</strong>，第二个八个字节存放着该实例的<strong>引用计数信息</strong>。后面的内存存放着实例的属性数据。在<code>Swift</code>中，为实例分配的字节数必须是<strong>16</strong>的倍数。</p>
+<p>例如：在如下场景中，有基类<code>Animal</code>,<code>Dog</code>继承自<code>Animal</code>，<code>ErHa</code>继承自<code>Dog</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> : <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> weight = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ErHa</span> : <span class="title">Dog</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> iq = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Animal</code>的实例在内存中，前16个字节，分别存放着类型信息和引用计数信息，第三个八个字节存放着属性<code>age</code>的数据，攻击占24个字节。因为内存分配必须是16的倍数，所以<code>Animal</code>的一个实例会占有32个字节。</p>
+<p><code>Dog</code>继承自<code>Animal</code>,前16个字节，依旧分别存放着类型信息和引用计数信息。第三个八个字节存放着从父类继承来的属性<code>age</code>的属性，第四个八个字节存放着自身<code>weight</code>属性的数据。<strong>一般来说，在内存中，从父类继承来的属性会排列在自身属性前边。</strong></p>
+<p><code>ErHa</code>继承自<code>Dog</code>,前16个字节，依旧分别存放着类型信息和引用计数信息，第三个和第四个八个字节分别存放着属性<code>age</code>和<code>weight</code>的属性，第五个八个字节存放着<code>iq</code>的数据，一个实例占用40个字节，因为内存分配必须是16的倍数，所以<code>ErHa</code>的一个实例会占有48个字节。</p>
+<h2 id="重写实例方法、下标"><a href="#重写实例方法、下标" class="headerlink" title="重写实例方法、下标"></a>重写实例方法、下标</h2><p>实例代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Aniaml speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> anim : <span class="type">Animal</span></span><br><span class="line">anim = <span class="type">Animal</span>()</span><br><span class="line">anim.speak()</span><br><span class="line"><span class="built_in">print</span>(anim[<span class="number">6</span>])<span class="comment">//6</span></span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cat</span> : <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="keyword">super</span>.speak()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Cat speak&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">     <span class="keyword">override</span> <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>[index] + <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">anim = <span class="type">Cat</span>()</span><br><span class="line">anim.speak()</span><br><span class="line"><span class="built_in">print</span>(anim[<span class="number">6</span>])<span class="comment">//7</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="重写类型方法、下标"><a href="#重写类型方法、下标" class="headerlink" title="重写类型方法、下标"></a>重写类型方法、下标</h2><ul>
+<li>被<code>class</code>修饰的类型方法、下标<strong>允许</strong>被子类重写，重写后可以被<code>static</code>修饰</li>
+<li>被<code>static</code>修饰的类型方法，下标<strong>不允许</strong>被子类重写</li>
+</ul>
+<p>示例代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">speak</span>() </span>&#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Animal speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cat</span> : <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="keyword">super</span>.speak()</span><br><span class="line">       <span class="built_in">print</span>(<span class="string">&quot;Cat speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="重写属性"><a href="#重写属性" class="headerlink" title="重写属性"></a>重写属性</h2><ul>
+<li>子类<strong>可以</strong>将父类的属性(存储、计算)重写为<strong>计算属性</strong></li>
+<li>子类<strong>不可以</strong>将父类属性重写为<strong>存储属性</strong></li>
+<li>只能重写**<code>var</code><strong>属性，不能重写</strong><code>let</code>**属性</li>
+<li>重写时，属性名、类型要一致</li>
+<li>子类重写后属性权限<strong>不能小于</strong>父类属性的权限<ul>
+<li>如果父类属性是只读的，那么子类重写后属性可以是只读的，也可以是可读写的。</li>
+<li>如果父类属性是可读写的，那么子类重写后的属性也是必须可读写的。</li>
+</ul>
+</li>
+</ul>
+<h3 id="实例属性"><a href="#实例属性" class="headerlink" title="实例属性"></a>实例属性</h3><ul>
+<li>子类将父类的<strong>存储属性</strong>重写为<strong>计算属性</strong>时，储存属性的内存依旧会分配，如果想要访问这段存储要使用<code>super</code>。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="keyword">var</span> diameter : <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle setDiameter&quot;</span>)</span><br><span class="line">      radius = newValue / <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle getDiameter&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span> radius * <span class="number">2</span></span><br><span class="line">     &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span>: <span class="title">Circle</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;SubCircle setRadius&quot;</span>)</span><br><span class="line">        <span class="keyword">super</span>.radius = newValue &gt; <span class="number">0</span> ? newValue : <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">get</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;SubCircle getRadius&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.radius</span><br><span class="line">      &#125;</span><br><span class="line">     &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">var</span> diameter: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle setDiameter&quot;</span>)</span><br><span class="line">         <span class="keyword">super</span>.diameter = newValue &gt; <span class="number">0</span> ? newValue : <span class="number">0</span></span><br><span class="line">       &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle getDiameter&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.diameter</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//SubCircle setRadius</span></span><br><span class="line">circle.radius = <span class="number">6</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//SubCircle getDiameter</span></span><br><span class="line"><span class="comment">//Circle getDiameter</span></span><br><span class="line"><span class="comment">//SubCircle getRadius</span></span><br><span class="line"><span class="built_in">print</span>(circle.diameter)</span><br><span class="line">    </span><br><span class="line"><span class="comment">//SubCircle setDiameter</span></span><br><span class="line"><span class="comment">//Circle setDiameter</span></span><br><span class="line"><span class="comment">//SubCircle setRadius</span></span><br><span class="line">circle.diameter = <span class="number">20</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//SubCircle getRadius</span></span><br><span class="line"><span class="comment">//10</span></span><br><span class="line"><span class="built_in">print</span>(circle.radius)</span><br></pre></td></tr></table></figure>
+
+<p>对于上述实例代码中，<code>print(circle.diameter)</code>这一句</p>
+<ol>
+<li>会先访问<code>SubCircle.diameter.get </code>方法(输出：<code>SubCircle getDiamater</code>)</li>
+<li><code>SubCircle.diameter.get</code>中调用<code>super.diameter</code>,由此又会调用<code>Circle.diamater.get</code>,输出：<code>Circle getDiameter</code></li>
+<li><code>Circle.diamater.get</code>中又返回了<code>radius * 2</code>,由此调用了<code>SubCircle.radius.get</code>，输出：<code>SubCircle getRadius</code></li>
+</ol>
+<h3 id="类型属性"><a href="#类型属性" class="headerlink" title="类型属性"></a>类型属性</h3><ul>
+<li>被<code>class</code>修饰的<strong>计算类型属性</strong>，<strong>可以</strong>被子类重写。(存储属性不能用<code>class</code>修饰)</li>
+<li>被<code>static</code>修饰的<strong>类型属性（存储、计算）</strong>，<strong>不可以</strong>被子类重写。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">var</span> <span class="title">diameter</span>: <span class="title">Int</span> </span>&#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle setDiameter&quot;</span>)</span><br><span class="line">        radius = newValue / <span class="number">2</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">get</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle getDiameter&quot;</span>)</span><br><span class="line">           <span class="keyword">return</span> radius * <span class="number">2</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span> : <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">static</span> <span class="keyword">var</span> diameter: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle setDiameter&quot;</span>)</span><br><span class="line">      radius = newValue &gt; <span class="number">0</span> ? newValue : <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle getDiameter&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.diameter</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性观察器"><a href="#属性观察器" class="headerlink" title="属性观察器"></a>属性观察器</h2><p>可以在子类中为父类属性(除了只读计算属性、<code>let</code>属性)增加属性观察器</p>
+<h3 id="子类中为存储属性增加属性观察器"><a href="#子类中为存储属性增加属性观察器" class="headerlink" title="子类中为存储属性增加属性观察器"></a>子类中为存储属性增加属性观察器</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span>: <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle willSetRadius&quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;SubCircle didSetRadius&quot;</span>,oldValue)</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//SubCircle willSetRadius 10</span></span><br><span class="line"><span class="comment">//SubCircle didSetRadius 0</span></span><br><span class="line">circle.radius = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="子类重写父类属性观察器"><a href="#子类重写父类属性观察器" class="headerlink" title="子类重写父类属性观察器"></a>子类重写父类属性观察器</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">1</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle willSetRadius &quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle didSetRadius &quot;</span>,oldValue)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span>: <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle willSetRadius &quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle didSetRadius &quot;</span>,oldValue)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//SubCircle willSetRadius  10</span></span><br><span class="line"><span class="comment">//Circle willSetRadius  10</span></span><br><span class="line"><span class="comment">//Circle didSetRadius  1</span></span><br><span class="line"><span class="comment">//SubCircle didSetRadius  1</span></span><br><span class="line">circle.radius = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>当给<code>cirle.radius</code>赋值时，首先先触发<code>SubCircle.radius.willSet</code>方法</li>
+<li>其次会触发<code>Circle.radius.willSet</code></li>
+<li>当修改完成时，会触发<code>Circle.radius.didSet</code></li>
+<li>最后触发<code>SubCirlce.radius.didSet</code></li>
+</ol>
+<h3 id="子类为父类计算属性添加属性观察器"><a href="#子类为父类计算属性添加属性观察器" class="headerlink" title="子类为父类计算属性添加属性观察器"></a>子类为父类计算属性添加属性观察器</h3><p>在同一个类中，计算属性是无法添加属性观察器的，但是如果使用继承可以实现。(类计算属性同理)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle set Radius&quot;</span>,newValue)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">get</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle getRadius&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">20</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span> : <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">           <span class="built_in">print</span>(<span class="string">&quot;SubCircle willSetRadius &quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle didSetRadius&quot;</span>,oldValue,radius)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//Circle getRadius</span></span><br><span class="line"><span class="comment">//SubCircle willSetRadius  10</span></span><br><span class="line"><span class="comment">//Circle set Radius 10</span></span><br><span class="line"><span class="comment">//Circle getRadius</span></span><br><span class="line"><span class="comment">//SubCircle didSetRadius 20 20</span></span><br><span class="line">circle.radius = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>当<code>circle.radius</code>赋值时，会先触发<code>SubCircle.radius.willSet</code>方法，但是并不是首先输出`</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Circle &#123;</span><br><span class="line">  var radius: Int &#123;</span><br><span class="line">    set &#123;</span><br><span class="line">      print(&quot;Circle set Radius&quot;,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    get &#123;</span><br><span class="line">      print(&quot;Circle getRadius&quot;)</span><br><span class="line">      return 20</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">class SubCircle : Circle &#123;</span><br><span class="line">  override var radius: Int &#123;</span><br><span class="line">    willSet &#123;</span><br><span class="line">      print(&quot;SubCircle willSetRadius &quot;,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    didSet &#123;</span><br><span class="line">      print(&quot;SubCircle didSetRadius&quot;,oldValue,radius)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">let circle &#x3D; SubCircle()</span><br><span class="line">&#x2F;&#x2F;Circle getRadius</span><br><span class="line">&#x2F;&#x2F;SubCircle willSetRadius  10</span><br><span class="line">&#x2F;&#x2F;Circle set Radius 10</span><br><span class="line">&#x2F;&#x2F;Circle getRadius</span><br><span class="line">&#x2F;&#x2F;SubCircle didSetRadius 20 20</span><br><span class="line">circle.radius &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>当<code>circle.radius</code>赋值时，会先触发<code>SubCircle.radius.willSet</code>方法，但是并不是首先输出<code>SubCircle willSetRadius</code>，而是先输出了<code>Circle getRadius</code>。造成这样的原因是，**在执行属性观察器<code>set</code>之前会先执行计算属性的<code>get</code>方法并将之赋值给<code>oldValue</code>**。</li>
+<li>赋值给<code>oldValue</code>后，随后触发子类中<code>willSet</code>方法输出<code>SubCircle willSetRadius  10</code></li>
+<li><code>willSet</code>之后随即触发父类<code>set</code>方法，输出<code>Circle set Radius 10</code></li>
+<li><code>set</code>方法执行后再次执行子类中<code>didSet</code>方法，但因为<code>didSet</code>中访问了<code>radius</code>属性，所以先执行父类中<code>get</code>方法。</li>
+<li>最后执行了子类中<code>didSet</code>方法</li>
+</ol>
+</li>
+</ol>
+<h2 id="final关键字"><a href="#final关键字" class="headerlink" title="final关键字"></a><code>final</code>关键字</h2><ul>
+<li>被<code>final</code>修饰的方法、下标、属性，禁止被重写</li>
+<li>被<code>final</code>修饰的类，禁止被继承</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/03/Realm%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -981,7 +1135,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
