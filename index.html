@@ -574,6 +574,139 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/" class="post-title-link" itemprop="url">Swift5.1学习笔记之可选链</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-06 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-06T11:15:53+08:00">2019-09-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对于可选项的方法调用，参考如下代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123; <span class="keyword">var</span> price = <span class="number">0</span> &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> </span>&#123; <span class="keyword">var</span> weight = <span class="number">0</span> &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name: <span class="type">String</span> = <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="keyword">var</span> dog: <span class="type">Dog</span> = <span class="type">Dog</span>()</span><br><span class="line">  <span class="keyword">var</span> car: <span class="type">Car?</span> = <span class="type">Car</span>()</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">age</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; <span class="number">18</span> &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span>  &#123; <span class="built_in">print</span>(<span class="string">&quot;Person eat&quot;</span>) &#125;</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123; index &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>如果可选项为<code>nil</code>，调用方法、下标、属性失败，结果为<code>nil</code></p>
+<ul>
+<li>可选项为<code>nil</code>的情况下，调用方法，获取属性，使用下标<strong>不会造成崩溃异常</strong>，只是结果为<code>nil</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> person: <span class="type">Person?</span> = <span class="literal">nil</span></span><br><span class="line"><span class="keyword">var</span> age1 = person?.age() <span class="comment">//age1的类型是Int?,如果person是nil,age1是nil</span></span><br><span class="line"><span class="keyword">var</span> age2 = person!.age() <span class="comment">//age2的类型是Int,如果person是nil,使用&quot;!&quot;强制解包会崩溃</span></span><br><span class="line"><span class="keyword">var</span> name = person?.name <span class="comment">//name的类型是 String?</span></span><br><span class="line"><span class="keyword">var</span> index = person?[<span class="number">6</span>] <span class="comment">//index的类型是 Int？</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<ul>
+<li><p>如果可选项不为<code>nil</code>，调用方法、下标、属性成功，结果会被包装成可选项<code>Type？</code></p>
+<ul>
+<li>如果结果本来就是可选项，不会进行再次包装</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> person: <span class="type">Person?</span> = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">var</span> age1 = person?.age() <span class="comment">//age1的类型是Int?,如果person是nil,age1是nil</span></span><br><span class="line"><span class="keyword">var</span> age2 = person!.age() <span class="comment">//age2的类型是Int,如果person是nil,使用&quot;!&quot;强制解包会崩溃</span></span><br><span class="line"><span class="keyword">var</span> name = person?.name <span class="comment">//name的类型是 String?</span></span><br><span class="line"><span class="keyword">var</span> index = person?[<span class="number">6</span>] <span class="comment">//index的类型是 Int？</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> dog = person?.dog <span class="comment">//dog类型是Dog?</span></span><br><span class="line"><span class="keyword">var</span> weight = person?.dog.weight <span class="comment">//weight的类型Int?</span></span><br><span class="line"><span class="keyword">var</span> price = person?.car?.price <span class="comment">//price的类型是Int?</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>判断一个可选项调用方法是否成功有两种方式</p>
+<ol>
+<li><p>通过可选项绑定判断可选项是否为空</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> person: <span class="type">Person?</span> = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> person_temp = person &#123; <span class="comment">//此时person 是 Person？类型，person_temp 是 Person类型</span></span><br><span class="line">    person_temp.eat() </span><br><span class="line">&#125; <span class="keyword">else</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;person:nil&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>也可以通过函数返回值来判断，对于没有返回值的方法，即返回了<code>Void</code>类型的返回值。在<code>Swift</code>中，<code>Void</code>类型就是空元组<code>()</code>。所以对于没有返回值的方法，其实是返回了一个空元组。可选项为<code>nil</code>时，调用的方法返回的是<code>nil</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = person?.eat() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;eat 调用成功&quot;</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     <span class="built_in">print</span>(<span class="string">&quot;eat 调用失败&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>多个<code>?</code>可以链接在一起，如果链中任何一个节点是<code>nil</code>,那么整个链就会调用失败</p>
+<ul>
+<li>经过可选链调用获得的返回值肯定是可选项，因为有可能存在<code>nil</code>的情景。</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见的场景"><a href="#常见的场景" class="headerlink" title="常见的场景"></a>常见的场景</h2><ul>
+<li><p>使用字典取值时，取出来的值都是可选类型，当可选项不为<code>nil</code>时，调用或赋值才会生效。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//scores的类型是 [String,[Int]]</span></span><br><span class="line"><span class="keyword">var</span> scores = [</span><br><span class="line">    <span class="string">&quot;Jack&quot;</span>:[<span class="number">86</span>,<span class="number">82</span>,<span class="number">64</span>],</span><br><span class="line">  <span class="string">&quot;Rose&quot;</span>:[<span class="number">79</span>,<span class="number">94</span>,<span class="number">81</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">scores[<span class="string">&quot;Jack&quot;</span>]?[<span class="number">0</span>] = <span class="number">11</span></span><br><span class="line">scores[<span class="string">&quot;Rose&quot;</span>]?[<span class="number">2</span>] += <span class="number">10</span></span><br><span class="line">scores[<span class="string">&quot;Kate&quot;</span>]?[<span class="number">0</span>] = <span class="number">88</span></span><br><span class="line"><span class="built_in">print</span>(scores)     <span class="comment">//[&quot;Jack&quot;: [11, 82, 64], &quot;Rose&quot;: [79, 94, 91]]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于定义变量时，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num1: <span class="type">Int?</span> = <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>当使用<code>num1?</code>时，当<code>num1</code>不为<code>nil</code>时赋值才会成功；为<code>nil</code>时，不生效。</p>
+</li>
+<li><p>当使用<code>num1!</code>时，当<code>num1</code>为<code>nil</code>时，会直接崩溃，不为<code>nil</code>时，赋值生效。</p>
+</li>
+<li><p>当直接使用<code>num</code>时，不管<code>num</code>是否为<code>nil</code>,都会是新值（可选类型）。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">num1? = <span class="number">10</span> <span class="comment">//Optional(10),num1为nil时，赋值后，num1还是nil</span></span><br><span class="line">num1! = <span class="number">10</span> <span class="comment">//Optional(10),num1为nil时，直接崩溃</span></span><br><span class="line">num1 = <span class="number">10</span> <span class="comment">//Optional(10)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>对于字典中存放函数的，获取的函数也是可选类型(可为<code>nil</code>)，函数运行返回值也是<strong>可选类型</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> dict: [<span class="type">String</span> : (<span class="type">Int</span>,<span class="type">Int</span>) -&gt; <span class="type">Int</span>] = [</span><br><span class="line">    <span class="string">&quot;sum&quot;</span>: (+),</span><br><span class="line">  <span class="string">&quot;difference&quot;</span> : (-)</span><br><span class="line">]</span><br><span class="line"><span class="keyword">var</span> result = dict[<span class="string">&quot;sum&quot;</span>]?(<span class="number">10</span>,<span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(result)<span class="comment">//Optional(30)</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1332,7 +1465,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
