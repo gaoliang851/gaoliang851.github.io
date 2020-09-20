@@ -20,19 +20,19 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="人类的本能是胆怯，但人类的本质是不甘心">
-<meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://yoursite.com/tags/index.html">
+  <meta name="description" content="字符串对于使用字面量定义字符串的方式：  如果字符串长度 &lt;&#x3D; 0xF，字符串内容直接存放在字符串变量的内存中（以ASCII码的形式）。(类似于OC的Tagged Pointer)。对于后续对字符串进行拼接操作， 如果拼接后，字符串长度依旧 &lt;&#x3D; 0xF,字符串的地址不会变化 如果长度 &gt; 0xF,则可会开辟堆空间存储。   如果字符串长度 &gt; 0xF,字符串内容存放在__">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之String、Array的底层分析">
+<meta property="og:url" content="http://yoursite.com/2019/09/20/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BString%E3%80%81Array%E7%9A%84%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/index.html">
 <meta property="og:site_name" content="Dev.Gao的学习笔记">
-<meta property="og:description" content="人类的本能是胆怯，但人类的本质是不甘心">
+<meta property="og:description" content="字符串对于使用字面量定义字符串的方式：  如果字符串长度 &lt;&#x3D; 0xF，字符串内容直接存放在字符串变量的内存中（以ASCII码的形式）。(类似于OC的Tagged Pointer)。对于后续对字符串进行拼接操作， 如果拼接后，字符串长度依旧 &lt;&#x3D; 0xF,字符串的地址不会变化 如果长度 &gt; 0xF,则可会开辟堆空间存储。   如果字符串长度 &gt; 0xF,字符串内容存放在__">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-04T02:03:35.000Z">
+<meta property="article:published_time" content="2019-09-20T05:22:32.000Z">
 <meta property="article:author" content="Dev.Gao">
-<meta property="article:tag" content="iOS,Android,Java">
+<meta property="article:tag" content="Swift">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/tags/">
+<link rel="canonical" href="http://yoursite.com/2019/09/20/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BString%E3%80%81Array%E7%9A%84%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/">
 
 
 <script id="page-configurations">
@@ -40,13 +40,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>tags | Dev.Gao的学习笔记
-</title>
+  <title>Swift5学习笔记之String、Array的底层分析 | Dev.Gao的学习笔记</title>
   
 
 
@@ -154,51 +153,111 @@
       <div class="main-inner">
         <div class="content-wrap">
           
-  
-  
 
-          <div class="content page posts-expand">
+          <div class="content post posts-expand">
             
 
     
-    
-    
-    <div class="post-block" lang="zh-CN">
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/20/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BString%E3%80%81Array%E7%9A%84%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之String、Array的底层分析
+        </h1>
 
-<h1 class="post-title" itemprop="name headline">tags
-</h1>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
 
-<div class="post-meta">
+              <time title="创建时间：2019-09-20 13:22:32" itemprop="dateCreated datePublished" datetime="2019-09-20T13:22:32+08:00">2019-09-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>对于使用字面量定义字符串的方式：</p>
+<ul>
+<li>如果字符串长度 &lt;= <code>0xF</code>，字符串内容直接存放在字符串变量的内存中（以<code>ASCII</code>码的形式）。(类似于OC的<code>Tagged Pointer</code>)。对于后续对字符串进行拼接操作，<ul>
+<li>如果拼接后，字符串长度依旧 &lt;= <code>0xF</code>,字符串的地址不会变化</li>
+<li>如果长度 &gt; <code>0xF</code>,则可会开辟堆空间存储。</li>
+</ul>
+</li>
+<li>如果字符串长度 &gt; <code>0xF</code>,字符串内容存放在<code>__TEXT.cstring</code>中(常量区)。字符串的地址信息存放在变量的后8个字节。<ul>
+<li>因为常量区的内容是不可更改的，后续对字符串操作会开辟堆空间存储。</li>
+</ul>
+</li>
+</ul>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p><code>Swfit</code>中，数组是用结构体实现的。从结构体来讲，每个数据都存储在结构体内。但是<code>Array</code>只占8个字节。</p>
+<p><code>Array</code>在底层也是用一个可变数组实现的，存储的8个字节指向了堆空间存储空间。内部也存储了关于数组的长度，容量，引用计数以及每个数组的元素。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%B3%9B%E5%9E%8B/" rel="prev" title="Swift5学习笔记之泛型">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之泛型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/03/Realm%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Realm学习笔记">
+      Realm学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
-          <div class="tag-cloud">
-            <div class="tag-cloud-title">
-              目前共计 5 个标签
-            </div>
-            <div class="tag-cloud-tags">
-              <a href="/tags/Hexo/" style="font-size: 12px; color: #ccc">Hexo</a> <a href="/tags/Realm/" style="font-size: 12px; color: #ccc">Realm</a> <a href="/tags/Swift/" style="font-size: 30px; color: #111">Swift</a> <a href="/tags/iOS/" style="font-size: 12px; color: #ccc">iOS</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/" style="font-size: 12px; color: #ccc">数据持久化</a>
-            </div>
-          </div>
-        
-      </div>
-      
-      
-      
-    </div>
-    
-
-    
-    
-    
 
 
           </div>
@@ -249,6 +308,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">2.</span> <span class="nav-text">数组</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
