@@ -574,6 +574,260 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%B3%9B%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%B3%9B%E5%9E%8B/" class="post-title-link" itemprop="url">Swift5学习笔记之泛型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-09 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-09T11:15:53+08:00">2019-09-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="在函数中使用泛型"><a href="#在函数中使用泛型" class="headerlink" title="在函数中使用泛型"></a>在函数中使用泛型</h2><ul>
+<li><p>泛型可以将类型参数化，提高代码复用率，减少代码量。在函数中使用泛型，可以在函数名上加上<code>&lt;T,...&gt;</code>。当然这里的<code>T</code>可以自定义。参数的类型使用<code>T</code>代替。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapValues</span>&lt;T&gt;<span class="params">(<span class="number">_</span> a: <span class="keyword">inout</span> T,<span class="number">_</span> b: <span class="keyword">inout</span> T)</span></span> &#123;</span><br><span class="line">    (a,b) = (b,a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> n1 = <span class="number">5</span></span><br><span class="line"><span class="keyword">var</span> n2 = <span class="number">6</span></span><br><span class="line">swapValues(&amp;n1, &amp;n2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;n1:\(n1),n2:\(n2)&quot;</span>) <span class="comment">//n1:6,n2:5</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> s1 = <span class="string">&quot;abc&quot;</span></span><br><span class="line"><span class="keyword">var</span> s2 = <span class="string">&quot;test&quot;</span></span><br><span class="line">swapValues(&amp;s1, &amp;s2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;s1:\(s1),s2:\(s2)&quot;</span>) <span class="comment">//s1:test,s2:abc</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数使用泛型时，也可以指定多种类型，例如：<code>test&lt;T1,T2&gt;</code>。并且将函数赋值给另外一个参数时，需要指定类型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mutilType</span>&lt;T1,T2&gt;<span class="params">(<span class="number">_</span> t1: T1, <span class="number">_</span> t2: T2)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> fn: (<span class="type">Int</span>, <span class="type">Double</span>) -&gt; <span class="type">Int</span> = mutilType</span><br><span class="line">fn(<span class="number">10</span>,<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="在类、结构体或枚举中使用泛型"><a href="#在类、结构体或枚举中使用泛型" class="headerlink" title="在类、结构体或枚举中使用泛型"></a>在类、结构体或枚举中使用泛型</h2><ul>
+<li><p>在类、结构体或枚举中使用泛型，需要在类名，结构体或枚举名后加泛型例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化时需要指定类型</span></span><br><span class="line"><span class="keyword">var</span> intStack = <span class="type">Stack</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line"><span class="keyword">var</span> anyStack = <span class="type">Stack</span>&lt;<span class="type">Any</span>&gt;()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Score</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> point(<span class="type">T</span>)</span><br><span class="line">    <span class="keyword">case</span> grade(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在继承时，也要使用泛型：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubStack</span>&lt;<span class="title">E</span>&gt;: <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于要不要指定泛型的类型，一个基本原则就是<strong>如果编译器推断出泛型的类型就不用显式的写出，否则就要指定。</strong></p>
+<p>譬如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对于如下代码，初始化时编译器无法推断出T的类型，就需要显式指明 </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> stack = <span class="type">Stack</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line"><span class="keyword">var</span> anyStack = <span class="type">Stack</span>&lt;<span class="type">Any</span>&gt;()</span><br><span class="line"></span><br><span class="line"><span class="comment">//如果在某些方法中可以使编译器推断出类型,比如有构造器中使用T，编译器就可以匹配出T的具体类型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">      <span class="keyword">init</span>(firstElement: <span class="type">E</span>) &#123;</span><br><span class="line">            elements.append(firstElement)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> stack = <span class="type">Stack</span>(firstElements: <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Score</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> point(<span class="type">T</span>)</span><br><span class="line">    <span class="keyword">case</span> grade(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//对于枚举来说，也是同样的原则</span></span><br><span class="line"><span class="keyword">let</span> score0 = <span class="type">Score</span>&lt;<span class="type">Int</span>&gt;.point(<span class="number">100</span>)</span><br><span class="line"><span class="keyword">let</span> score1 = <span class="type">Score</span>.point(<span class="number">100</span>)</span><br><span class="line"><span class="keyword">let</span> score2 = <span class="type">Score</span>.point(<span class="number">99.5</span>)</span><br><span class="line"><span class="comment">//报错无法匹配出泛型的类型，应该使用 Score&lt;Int&gt;.grade(&quot;11&quot;)</span></span><br><span class="line"><span class="keyword">let</span> score3 = <span class="type">Score</span>.grade(<span class="string">&quot;11&quot;</span>)</span><br><span class="line"><span class="keyword">let</span> score4 = <span class="type">Score</span>&lt;<span class="type">Int</span>&gt;.grade(<span class="string">&quot;abc&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="协议中使用泛型"><a href="#协议中使用泛型" class="headerlink" title="协议中使用泛型"></a>协议中使用泛型</h2><p>在协议中使用泛型可以使用关联类型( Associated Type )</p>
+<p>关联类型的作用：给协议中用的类型定义一个占位符。协议中可以拥有多个关联类型。在遵循此协议的类型中使用<code>typealias</code>指定类型。<strong>如果编译器通过类型内的方法中推断出泛型的类型，<code>typealias</code>可以省略。</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Stackable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Element</span> <span class="comment">// 关联类型</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: Element)</span></span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">Element</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">Element</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StringStack</span>: <span class="title">Stackable</span> </span>&#123;</span><br><span class="line">        <span class="comment">//编译器可以通过其他方法中推断出Element的类型，typealias可以省略</span></span><br><span class="line">      <span class="comment">//typealias Element = String</span></span><br><span class="line">      <span class="keyword">var</span> elements = [<span class="type">String</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: String)</span></span> &#123; elements.append(element) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123; elements.removeLast() &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//遵循协议的类型中也可以继续使用泛型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt;: <span class="title">Stackable</span> </span>&#123;</span><br><span class="line">     <span class="comment">//可以省略</span></span><br><span class="line">        <span class="comment">//typealias Element = E</span></span><br><span class="line">        <span class="keyword">var</span> elementes = [<span class="type">E</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span> &#123; elementes.append(element) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elementes.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elementes.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elementes.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="类型约束"><a href="#类型约束" class="headerlink" title="类型约束"></a>类型约束</h2><ul>
+<li><p>可以对泛型的类型进行约束，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runnable</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"><span class="comment">//T的类型必须是 遵循Runable协议，Person类型或Person子类的类型</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapValues</span>&lt;T: Person &amp; Runnable&gt;<span class="params">(<span class="number">_</span> a: <span class="keyword">inout</span> T,<span class="number">_</span> b: <span class="keyword">inout</span> T)</span></span> &#123;</span><br><span class="line">        (a,b) = (b,a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在协议中使用泛型的场景中，使用类型约束</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Arrayable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Element</span>: <span class="type">Equatable</span> <span class="comment">//关联类型Element遵守Equatable协议</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Array</span>&lt;<span class="title">E</span>: <span class="title">Equatable</span>&gt; : <span class="title">Arrayable</span> </span>&#123;</span><br><span class="line">      <span class="comment">//遵循Arrayable协议，并指定泛型E为关联类型。</span></span><br><span class="line">      <span class="comment">//为了避免出错泛型E也要和关联类型有相同的类型约束 ( &lt;E: Equatable&gt;)</span></span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Element</span> = <span class="type">E</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>where</code>增加类型约束。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//指定了两个泛型，S1(遵循协议Arrayable)、S2(遵循协议Arrayable),</span></span><br><span class="line"><span class="comment">// where指定了类型约束的条件</span></span><br><span class="line"><span class="comment">// S1的关联类型 等于 S2的关联类型，并且 S1的关联类型遵循协议Hashable</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">equal</span>&lt;S1: Arrayable,S2: Arrayable&gt;<span class="params">(<span class="number">_</span> s1: S1, <span class="number">_</span> s2:S2)</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line">        <span class="keyword">where</span> <span class="type">S1</span>.<span class="type">Element</span> == <span class="type">S2</span>.<span class="type">Element</span>, <span class="type">S1</span>.<span class="type">Element</span>: <span class="type">Hashable</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> stack1 = <span class="type">Array</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line"><span class="keyword">var</span> stack2 = <span class="type">Array</span>&lt;<span class="type">String</span>&gt;()</span><br><span class="line"><span class="built_in">equal</span>(stack1,stack2) <span class="comment">//报错，function &#x27;equal&#x27; requires the types &#x27;Array&lt;Int&gt;.Element&#x27; (aka &#x27;Int&#x27;) and &#x27;Array&lt;String&gt;.Element&#x27; (aka &#x27;String&#x27;) be equivalent</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="不透明类型"><a href="#不透明类型" class="headerlink" title="不透明类型"></a>不透明类型</h2><p>对于某个函数要求返回遵守某个协议的类型，如果协议中不含有泛型或<code>Self</code>，函数是可以返回不同类类型的值。例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runable</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">Runnable</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">Runnable</span> </span>&#123; &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span><span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; <span class="type">Runnable</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> type == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Person</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Car</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是如果协议中使用泛型或<code>Self</code>，这是编译不通过的。因为在实现该协议的类型中，最终确定的泛型的类型可能是不一样的，所以就因此造成崩溃。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Speed</span></span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Speed</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">      <span class="keyword">var</span> speed: <span class="type">Double</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span><span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; <span class="type">Runable</span> &#123; <span class="comment">//Protocol &#x27;Runable&#x27; can only be used as a generic constraint because it has Self or associated type requirements</span></span><br><span class="line">        <span class="keyword">if</span> type == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Person</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Car</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解决方案有两个：方案1：使用泛型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span>&lt;T: Runable&gt;<span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; <span class="type">T</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> type == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Person</span>() <span class="keyword">as</span>! <span class="type">T</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Car</span>() <span class="keyword">as</span>! <span class="type">T</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> r1: <span class="type">Person</span> = <span class="keyword">get</span>(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">var</span> r2: <span class="type">Car</span> = <span class="keyword">get</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>方案2：使用<code>some</code>关键字来声明一个不透明类型。<code>some</code>关键字限制了只能返回一个参数类型。<code>some</code>关键字的一个作用就是隐藏返回值的真实类型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Speed</span></span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Speed</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Double</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> speed: <span class="type">Int</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span><span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; some <span class="type">Runable</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Car</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>some</code>除了用在返回值类型上，一般还可以用在属性类型上</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">RunProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Speed</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> :<span class="title">RunProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Speed</span> = <span class="type">Double</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonSignle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> pet: some <span class="type">RunProtocol</span> &#123;</span><br><span class="line">        <span class="type">Dog</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/08/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/08/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">Swift5学习笔记之错误处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-08 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-08T11:15:53+08:00">2019-09-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="自定义错误"><a href="#自定义错误" class="headerlink" title="自定义错误"></a>自定义错误</h2><ul>
+<li><p><code>Swift</code>中可以通过**<code>Error</code>协议**自定义运行时的错误信息</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">SomeError</span> : <span class="title">Error</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> illegalArg(<span class="type">String</span>)</span><br><span class="line">    <span class="keyword">case</span> outOfBounds(<span class="type">Int</span>,<span class="type">Int</span>)</span><br><span class="line">    <span class="keyword">case</span> outOfMemory</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyError</span>: <span class="title">Error</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> msg : <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DIYError</span>: <span class="title">Error</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> msg: <span class="type">String</span></span><br><span class="line">    <span class="keyword">init</span>(msg: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.msg = msg</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数内部通过<code>throw</code>抛出自定义<code>Error</code>，可能会抛出<code>Error</code>的函数必须加上<code>throws</code>声明</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">divide</span><span class="params">(<span class="number">_</span> num1: Int, <span class="number">_</span> num2: Int)</span></span> <span class="keyword">throws</span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> num2 == <span class="number">0</span> &#123;</span><br><span class="line"><span class="comment">//      throw SomeError.illegalArg(&quot;0不能作为除数&quot;)</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="type">DIYError</span>(msg: <span class="string">&quot;0不能作为除数&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> num1 / num2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>需要使用<code>try</code>调用可能会抛出<code>Error</code>的函数。这里的<code>try</code>仅仅是尝试调用该函数，并没有处理可能抛出的错误。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="keyword">try</span> divide(<span class="number">2</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="do-catch捕捉Error"><a href="#do-catch捕捉Error" class="headerlink" title="do-catch捕捉Error"></a><code>do-catch</code>捕捉Error</h2><p>可以使用**<code>do-catch</code>**捕捉<code>Error</code>。抛出<code>Error</code>后，<code>try</code>下一句直到作用域结束的代码都将停止运行</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;1&quot;</span>)</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;2&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;3&quot;</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="keyword">let</span> <span class="type">SomeError</span>.illegalArg(msg) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;参数异常：&quot;</span>,msg)</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="keyword">let</span> <span class="type">SomeError</span>.outOfBounds(size, index) &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;下标越界：&quot;</span>,<span class="string">&quot;size=\(size),index=\(index)&quot;</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="type">SomeError</span>.outOfMemory &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;内存溢出&quot;</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;其他错误&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;4&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test()</span><br><span class="line"><span class="comment">//1</span></span><br><span class="line"><span class="comment">//2</span></span><br><span class="line"><span class="comment">//参数异常： 0不能作为除数</span></span><br><span class="line"><span class="comment">//4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//另外一种写法</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> result = <span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>)</span><br><span class="line">  <span class="built_in">print</span>(result)</span><br><span class="line">&#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</span><br><span class="line">  <span class="keyword">switch</span> error &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> <span class="type">SomeError</span>.illegalArg(msg):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;参数错误：&quot;</span>,msg)</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;其他错误&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="处理Error"><a href="#处理Error" class="headerlink" title="处理Error"></a>处理Error</h2><p>处理<code>Error</code>的2种方式</p>
+<ol>
+<li>通过<code>do-catch</code>捕捉<code>Error</code></li>
+<li>不捕捉<code>Error</code>，在当前函数增加<code>throws</code>声明，<code>Error</code>将自动抛给上层函数。如果最顶层函数(<code>main</code>函数)依旧没有捕捉<code>Error</code>，那么程序将终止。</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testHandleError</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="keyword">try</span> divide(<span class="number">10</span>,<span class="number">0</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> testHandleError()</span><br><span class="line"><span class="comment">//1</span></span><br><span class="line"><span class="comment">//Fatal error: Error raised at top level:</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>do-catch</code>使用<code>is</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testHandleErroris</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>))</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="keyword">is</span> <span class="type">SomeError</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SomeError&quot;</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;other Error&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//对于如果 do-catch 对于Error没有处理完全，编译是会报错的，函数依旧要加上 throws</span></span><br><span class="line"><span class="comment">//如：下述代码只捕捉了 SomeError类型的 Error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testHandleErroris</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>))</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="keyword">is</span> <span class="type">SomeError</span> &#123;<span class="comment">////如果抛出其他类型的错误，并不会捕捉，还是会直接向上抛</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SomeError&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>do-catch</code>使用<code>as</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testHandleErrorAs</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123; <span class="comment">//只捕捉了SomeError类型的错误，所以还要使用 throws</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="number">2</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>))</span><br><span class="line">        <span class="built_in">print</span>(<span class="number">3</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> <span class="keyword">let</span> error <span class="keyword">as</span> <span class="type">SomeError</span> &#123; <span class="comment">//如果抛出其他类型的错误，并不会捕捉，还是会直接向上抛</span></span><br><span class="line">        <span class="built_in">print</span>(error)</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">      <span class="comment">//如果要对抛出的Error全部处理，参考上面代码</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="number">4</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> testHandleErrorAs()</span><br><span class="line"><span class="comment">//1</span></span><br><span class="line"><span class="comment">//2</span></span><br><span class="line"><span class="comment">//illegalArg(&quot;0不能作为除数&quot;)</span></span><br><span class="line"><span class="comment">//4</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="不处理Error"><a href="#不处理Error" class="headerlink" title="不处理Error"></a>不处理<code>Error</code></h2><p>可以使用<code>try?</code>和<code>try!</code>调用可能会抛出的<code>Error</code>的函数，这样就不用处理<code>Error</code></p>
+<ul>
+<li><p><code>try?</code>会获得原函数结果的可选项包装类型，当然如果遇到错误抛出，结果是<code>nil</code>,但是程序并不会崩溃</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> result1 = <span class="keyword">try</span>? divide(<span class="number">20</span>, <span class="number">10</span>) <span class="comment">//Optional(2), Int?</span></span><br><span class="line"><span class="keyword">var</span> result2 = <span class="keyword">try</span>? divide(<span class="number">20</span>, <span class="number">0</span>) <span class="comment">// nil，并不会崩溃</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>try!</code>是对<code>try?</code>的强制解包。但对于异常抛出的情况程序还是会崩溃。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> result3 = <span class="keyword">try</span>! divide(<span class="number">20</span>, <span class="number">10</span>) <span class="comment">//2, Int</span></span><br><span class="line"><span class="keyword">var</span> result4 = <span class="keyword">try</span>! divide(<span class="number">20</span>, <span class="number">0</span>) <span class="comment">// 崩溃，Error抛出,Fatal error: &#x27;try!&#x27; expression unexpectedly raised an error</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>对于<code>try?</code>和<code>try!</code>，下述代码中<code>a</code>和<code>b</code>是等价的。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="keyword">try</span>? divide(<span class="number">20</span>, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">var</span> b : <span class="type">Int?</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">        b = <span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>)</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">       b = <span class="literal">nil</span></span><br><span class="line">       <span class="built_in">print</span>(error) <span class="comment">//illegalArg(&quot;0不能作为除数&quot;)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="rethrows"><a href="#rethrows" class="headerlink" title="rethrows"></a><code>rethrows</code></h2><p><code>rethrows</code>表明：函数本身不会抛出错误，但调用闭包参数抛出错误，那么它会将错误向上抛。否则就要处理<code>Error</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">exec</span><span class="params">(<span class="number">_</span> fn: <span class="params">(Int,Int)</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Int</span>,<span class="number">_</span> num1: <span class="type">Int</span> ,<span class="number">_</span> num2: <span class="type">Int</span>) <span class="keyword">rethrows</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="keyword">try</span> fn(num1,num2))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> exec(divide(<span class="number">_</span>:<span class="number">_</span>:), <span class="number">10</span>, <span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="defer"><a href="#defer" class="headerlink" title="defer"></a><code>defer</code></h2><ul>
+<li><p><code>defer</code>语句用来定义任何方式(抛错误，<code>return</code>等)离开代码块前必须执行的代码。<code>defer</code>语句将延迟至当前作用域结束之前执行。类似于<code>java</code>中的<code>finally</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟打开文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">open</span><span class="params">(<span class="number">_</span> fileName: String)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;open&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//模拟关闭文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">close</span><span class="params">(<span class="number">_</span> file: Int)</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;close&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">processFile</span><span class="params">(<span class="number">_</span> fileName: String)</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> file = <span class="keyword">open</span>(fileName)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//定义延迟执行的代码</span></span><br><span class="line">    <span class="keyword">defer</span> &#123;</span><br><span class="line">        close(file)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> result = <span class="keyword">try</span> divide(<span class="number">20</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> processFile(<span class="string">&quot;test.txt&quot;</span>)</span><br><span class="line"><span class="comment">//open</span></span><br><span class="line"><span class="comment">//close</span></span><br><span class="line"><span class="comment">//Fatal error: Error raised at top level</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>defer</code>语句的执行顺序与定义顺序相反</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testDefer</span><span class="params">()</span></span> <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;first&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;second&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;abc&quot;</span>)</span><br><span class="line">    <span class="keyword">throw</span> <span class="type">SomeError</span>.illegalArg(<span class="string">&quot;abc&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> testDefer()</span><br><span class="line"><span class="comment">//abc</span></span><br><span class="line"><span class="comment">//second</span></span><br><span class="line"><span class="comment">//first</span></span><br><span class="line"><span class="comment">//Fatal error: Error raised at top level</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -588,7 +842,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/" class="post-title-link" itemprop="url">Swift5.1学习笔记之协议</a>
+            <a href="/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/" class="post-title-link" itemprop="url">Swift5学习笔记之协议</a>
         </h2>
 
         <div class="post-meta">
@@ -738,6 +992,9 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
 <p><strong>注意：如果使用<code>X.Type</code>调用初始化器，必须是<code>required</code>的，因为<code>X.Type</code>也可能是子类的，只有<code>required</code>能保证子类中也有该初始化器</strong></p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>() &#123; &#125;</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">speak</span>() </span>&#123; <span class="built_in">print</span>(<span class="string">&quot;Animal speak&quot;</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cat</span>: <span class="title">Animal</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pig</span>: <span class="title">Animal</span> </span>&#123; &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">create</span><span class="params">(<span class="number">_</span> clses: [Animal.<span class="keyword">Type</span>])</span></span> -&gt; [<span class="type">Animal</span>] &#123;</span><br><span class="line">    <span class="keyword">var</span> arr = [<span class="type">Animal</span>]()</span><br><span class="line">  <span class="keyword">for</span> cls <span class="keyword">in</span> clses &#123;</span><br><span class="line">      cls.speak()</span><br><span class="line">    arr.append(cls.<span class="keyword">init</span>())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(create([<span class="type">Cat</span>.<span class="keyword">self</span>,<span class="type">Dog</span>.<span class="keyword">self</span>,<span class="type">Pig</span>.<span class="keyword">self</span>]))</span><br></pre></td></tr></table></figure>
 
+<p>所以<strong>对于类属性以及类方法也可使用元类型进行调用</strong>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Person</span>.age = <span class="number">10</span></span><br><span class="line"><span class="type">Person</span>.<span class="keyword">self</span>.age = <span class="number">10</span></span><br><span class="line"><span class="type">Person</span>.run()</span><br><span class="line"><span class="type">Person</span>.<span class="keyword">self</span>.run()</span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> p0 = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">var</span> p1 = <span class="type">Person</span>.<span class="keyword">self</span>()</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="type">Person</span>.<span class="keyword">init</span>()</span><br><span class="line"><span class="keyword">var</span> p3 = <span class="type">Person</span>.<span class="keyword">self</span>.<span class="keyword">init</span>()</span><br></pre></td></tr></table></figure>
+
 <p>在纯<code>Swift</code>中，也实现了某些<code>OC</code>中<code>Runtime</code>方法中：</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> : <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> no: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(class_getInstanceSize(<span class="type">Student</span>.<span class="keyword">self</span>)) <span class="comment">//32</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//class_getSuperclass() 返回的是可选类型，需要强制解包</span></span><br><span class="line"><span class="built_in">print</span>(class_getSuperclass(<span class="type">Student</span>.<span class="keyword">self</span>)!) <span class="comment">//Person</span></span><br><span class="line"><span class="built_in">print</span>(class_getSuperclass(<span class="type">Person</span>.<span class="keyword">self</span>)!) <span class="comment">//_TtCs12_SwiftObject</span></span><br></pre></td></tr></table></figure>
 
@@ -786,7 +1043,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/" class="post-title-link" itemprop="url">Swift5.1学习笔记之可选链</a>
+            <a href="/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/" class="post-title-link" itemprop="url">Swift5学习笔记之可选链</a>
         </h2>
 
         <div class="post-meta">
@@ -919,7 +1176,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/" class="post-title-link" itemprop="url">Swift5.1学习笔记之初始化</a>
+            <a href="/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/" class="post-title-link" itemprop="url">Swift5学习笔记之初始化</a>
         </h2>
 
         <div class="post-meta">
@@ -1111,7 +1368,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/09/04/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/" class="post-title-link" itemprop="url">Swift5.1学习笔记之继承</a>
+            <a href="/2019/09/04/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/" class="post-title-link" itemprop="url">Swift5学习笔记之继承</a>
         </h2>
 
         <div class="post-meta">
@@ -1270,7 +1527,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/" class="post-title-link" itemprop="url">Swift5.1学习笔记之下标</a>
+            <a href="/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/" class="post-title-link" itemprop="url">Swift5学习笔记之下标</a>
         </h2>
 
         <div class="post-meta">
@@ -1389,7 +1646,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/09/02/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">Swift5.1学习笔记之方法</a>
+            <a href="/2019/09/02/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">Swift5学习笔记之方法</a>
         </h2>
 
         <div class="post-meta">
@@ -1663,7 +1920,7 @@ config.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaV
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
