@@ -159,6 +159,211 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/" class="post-title-link" itemprop="url">Swift5学习笔记之下标</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-03 16:33:59" itemprop="dateCreated datePublished" datetime="2019-09-03T16:33:59+08:00">2019-09-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="定义和使用"><a href="#定义和使用" class="headerlink" title="定义和使用"></a>定义和使用</h2><p><strong>下标</strong>(<code>subscript</code>)可以给任意类型(枚举，结构体，类)增加下标功能，也叫做**<em>下标脚本**</em></p>
+<ul>
+<li><p><code>subscript</code>的语法类似于实例方法、计算属性，本质上就是方法(函数)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>, y = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">          x = newValue</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">        y = newValue</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> x</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line">p[<span class="number">0</span>] = <span class="number">11.1</span> <span class="comment">//调用 subscript set方法</span></span><br><span class="line">p[<span class="number">1</span>] = <span class="number">22.2</span>    <span class="comment">//调用 subscript set方法</span></span><br><span class="line"><span class="built_in">print</span>(p.x)    </span><br><span class="line"><span class="built_in">print</span>(p.y)</span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">0</span>])    <span class="comment">//调用 subscript get方法</span></span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">1</span>])    <span class="comment">//调用 subscript get方法</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>subscript</code>中可以定义<code>set</code>方法和<code>get</code>方法，接受的参数即为下标传入的值，<code>set</code>方法中使用<code>newValue</code>来接受设置的值</p>
+</li>
+<li><p><code>subscript</code>中定义的返回值类型决定了：</p>
+<ul>
+<li><code>get</code>方法的返回值类型</li>
+<li><code>set</code>方法中<code>newValue</code>的类型</li>
+</ul>
+</li>
+<li><p><code>subscript</code>可以接受多个参数，并且类型任意(eg:<code>String</code>)</p>
+</li>
+</ul>
+<h2 id="下标的使用细节"><a href="#下标的使用细节" class="headerlink" title="下标的使用细节"></a>下标的使用细节</h2><ul>
+<li><p><code>subscript</code>可以没有<code>set</code>方法，但必须要有<code>get</code>方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">10.0</span>, y = <span class="number">11.0</span></span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">1</span>]) <span class="comment">//11.0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果只有<code>get</code>方法，可以省略<code>get</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">10.0</span>, y = <span class="number">11.0</span></span><br><span class="line">    <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> x</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> y</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">1</span>]) <span class="comment">//11.0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以设置参数标签，外部调用使用参数标签，内部使用形参</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>,y = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">subscript</span>(index i: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> i == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> i == <span class="number">1</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> y</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line">p.y = <span class="number">22.2</span></span><br><span class="line"><span class="built_in">print</span>(p[index: <span class="number">1</span>])<span class="comment">//22.2</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下标可以是类型方法，并且要使用<code>static</code>修饰</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sum</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">subscript</span>(v1: <span class="type">Int</span>, v2: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        v1 + v2</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="type">Sum</span>[<span class="number">20</span>,<span class="number">11</span>])<span class="comment">//31</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="返回值为结构体、类"><a href="#返回值为结构体、类" class="headerlink" title="返回值为结构体、类"></a>返回值为结构体、类</h2><p>当下标的返回值的类型为结构体或者类时，两者有些细微的差别。譬如如下场景中：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PointManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> point = <span class="type">Point</span>()</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Point</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123; point &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>Point</code>是不同的<code>class</code>或者<code>struct</code>类型</p>
+<ul>
+<li><p><code>struct</code>类型</p>
+<p>此时没有<code>subscript</code>没有<code>set</code>方法，如果修改通过下标获取的<code>point</code>，此时会报错：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">0</span> ,y = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PointManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> point = <span class="type">Point</span>()</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Point</span> &#123;</span><br><span class="line">      <span class="keyword">get</span> &#123; point &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> pm = <span class="type">PointManager</span>()</span><br><span class="line">pm[<span class="number">0</span>].x = <span class="number">11</span> <span class="comment">//Cannot assign to property: subscript is get-only</span></span><br></pre></td></tr></table></figure>
+
+<p>因为<code>struct</code>是值类型，修改其属性值<code>pm[0].x = 11</code>相当于<code>pm[0] = Point(x: 11, y: pm[0].y)</code>,所以要消除这个报错要添加<code>subscript</code>的<code>set</code>方法。</p>
+</li>
+<li><p><code>class</code>类型</p>
+<p>对于<code>class</code>类型就没有这个问题了，因为保存在<code>PointManager</code>内的是<code>point</code>的引用，修改<code>point</code>的值并不会修改这个引用的值，无需实现<code>set</code>方法。</p>
+</li>
+</ul>
+<h2 id="接受多个参数的下标"><a href="#接受多个参数的下标" class="headerlink" title="接受多个参数的下标"></a>接受多个参数的下标</h2><p>多个参数本身也是一种语法糖</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Gird</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> data = [</span><br><span class="line">        [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],</span><br><span class="line">        [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>],</span><br><span class="line">        [<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">subscript</span>(row: <span class="type">Int</span>,column: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            <span class="keyword">guard</span> row &gt;= <span class="number">0</span> &amp;&amp; row &lt; <span class="number">3</span> &amp;&amp; column &gt;= <span class="number">0</span> &amp;&amp; column &lt; <span class="number">3</span> <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">            data[row][column] = newValue</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">guard</span> row &gt;= <span class="number">0</span> &amp;&amp; row &lt; <span class="number">3</span> &amp;&amp; column &gt;= <span class="number">0</span> &amp;&amp; column &lt; <span class="number">3</span> <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> data[row][column]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> gird = <span class="type">Gird</span>()</span><br><span class="line">gird[<span class="number">0</span>,<span class="number">1</span>] = <span class="number">77</span></span><br><span class="line">gird[<span class="number">2</span>,<span class="number">1</span>] = <span class="number">99</span></span><br><span class="line"><span class="built_in">print</span>(gird.data)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/02/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/02/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">Swift5学习笔记之方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-02 15:27:29" itemprop="dateCreated datePublished" datetime="2019-09-02T15:27:29+08:00">2019-09-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>枚举、结构体、类都可以定义<strong>实例方法</strong>和<strong>类型方法</strong></p>
+<ul>
+<li>实例方法：通过实例调用，方法中的<code>self</code>代表调用的实例</li>
+<li>类型方法：通过类型调用，用<code>static</code>或者<code>class</code>关键字来定义，方法中的<code>self</code>代表类型。</li>
+</ul>
+<p>示例代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> <span class="built_in">count</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="type">Car</span>.<span class="built_in">count</span> += <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">getCount</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="built_in">count</span> <span class="comment">//等价于 self.count、Car.count或者Car.self.count</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> c0 = <span class="type">Car</span>()</span><br><span class="line"><span class="keyword">let</span> c1 = <span class="type">Car</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="type">Car</span>.getCount())<span class="comment">//2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="mutating关键字"><a href="#mutating关键字" class="headerlink" title="mutating关键字"></a>mutating关键字</h2><p>结构体和枚举是<strong>值类型</strong>，默认情况下，值类型的属性不能被自身实例方法修改。修改时编译器会报错:</p>
+<p><code>&#39;self&#39; is immutable</code>   {immutable:不可改变的,mutate:使改变}</p>
+<p>在<code>func</code>关键字前加<code>mutating</code>可以允许这种修改行为:</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>,y = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">moveBy</span><span class="params">(deltaX: Double,deltaY: Double)</span></span> &#123;</span><br><span class="line">      x += deltaX</span><br><span class="line">    y += deltaY</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="discardableResult"><a href="#discardableResult" class="headerlink" title="@discardableResult"></a>@discardableResult</h2><p>在<code>func</code>前面加关键字<code>@discardableResult</code>，可以消除函数调用后返回值未被使用的警告</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>,y = <span class="number">0.0</span></span><br><span class="line">    <span class="meta">@discardableResult</span> <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">moveBy</span><span class="params">(deltaX: Double)</span></span> -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      x += deltaX</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Point</span>()</span><br><span class="line">p.moveBy(deltaX: <span class="number">9</span>)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/04/Hexo%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -364,7 +569,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
