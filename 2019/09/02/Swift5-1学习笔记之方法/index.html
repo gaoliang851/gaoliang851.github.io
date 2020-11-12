@@ -227,6 +227,21 @@
 <h2 id="discardableResult"><a href="#discardableResult" class="headerlink" title="@discardableResult"></a>@discardableResult</h2><p>在<code>func</code>前面加关键字<code>@discardableResult</code>，可以消除函数调用后返回值未被使用的警告</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>,y = <span class="number">0.0</span></span><br><span class="line">    <span class="meta">@discardableResult</span> <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">moveBy</span><span class="params">(deltaX: Double)</span></span> -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      x += deltaX</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Point</span>()</span><br><span class="line">p.moveBy(deltaX: <span class="number">9</span>)</span><br></pre></td></tr></table></figure>
 
+<h2 id="将方法赋值给var-let"><a href="#将方法赋值给var-let" class="headerlink" title="将方法赋值给var/let"></a>将方法赋值给var/let</h2><p>方法可以像函数那样赋值给一个<code>let</code>或者<code>var</code></p>
+<ul>
+<li><p>获取实例方法(2种)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;func run &quot;</span>,age,v)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//第一种，通过实例获取方法</span></span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>(age: <span class="number">10</span>)</span><br><span class="line"><span class="keyword">let</span> fun1 = p.run</span><br><span class="line">fun1(<span class="number">10</span>)<span class="comment">//func run  10 10</span></span><br><span class="line"><span class="comment">//第二种通过类型获取方法，绑定实例</span></span><br><span class="line"><span class="keyword">let</span> fun2 = <span class="type">Person</span>.run <span class="comment">//fun2的类型： (Person) -&gt; ((Int) -&gt; ())</span></span><br><span class="line"><span class="keyword">let</span> fun3 = fun2(p) <span class="comment">//绑定实例，获取实例方法</span></span><br><span class="line">fun3(<span class="number">15</span>) <span class="comment">//func run  10 15</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取类型方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;static func run &quot;</span>,v)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> fun = <span class="type">Person</span>.run</span><br><span class="line">fun(<span class="number">20</span>)<span class="comment">//static func run  20</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>假如存在同名的实例方法和类型方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span></span><br><span class="line">      <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;func run &quot;</span>,age,v)&#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;static func run &quot;</span>,v)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> fun = <span class="type">Person</span>.run <span class="comment">//默认会获取类型方法</span></span><br><span class="line"><span class="comment">//如果想通过Person.run获取实例方法，则需要指定变量的类型</span></span><br><span class="line"><span class="keyword">let</span> fun1 : (<span class="type">Person</span>) -&gt; ((<span class="type">Int</span>) -&gt; ()) = <span class="type">Person</span>.run</span><br><span class="line"><span class="keyword">let</span> fun2 = fun1(<span class="type">Person</span>(age: <span class="number">10</span>)) <span class="comment">//绑定实例，获取实例方法</span></span><br><span class="line">fun2(<span class="number">10</span>) <span class="comment">//func run  10 10</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
 
     </div>
 
@@ -310,7 +325,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mutating%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.</span> <span class="nav-text">mutating关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discardableResult"><span class="nav-number">2.</span> <span class="nav-text">@discardableResult</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mutating%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.</span> <span class="nav-text">mutating关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#discardableResult"><span class="nav-number">2.</span> <span class="nav-text">@discardableResult</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E6%96%B9%E6%B3%95%E8%B5%8B%E5%80%BC%E7%BB%99var-let"><span class="nav-number">3.</span> <span class="nav-text">将方法赋值给var&#x2F;let</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -324,7 +339,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

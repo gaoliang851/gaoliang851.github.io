@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概述 跟OC一样，Swfit也是采取基于引用计数的ARC内存管理方案(针对堆空间) Swfit的ARC中有3种引用 强引用(strong reference): 默认情况下，引用都是强引用 弱引用(weak refierence): 通过weak定义弱引用 弱引用必须是可选类型的var，因为实例销毁后，ARC会自动将弱引用设置为nil ARC自动给弱引用设置nil时，不会触发属性观察器   无主引">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之内存管理">
+<meta property="og:url" content="http://yoursite.com/2019/10/22/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="概述 跟OC一样，Swfit也是采取基于引用计数的ARC内存管理方案(针对堆空间) Swfit的ARC中有3种引用 强引用(strong reference): 默认情况下，引用都是强引用 弱引用(weak refierence): 通过weak定义弱引用 弱引用必须是可选类型的var，因为实例销毁后，ARC会自动将弱引用设置为nil ARC自动给弱引用设置nil时，不会触发属性观察器   无主引">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-22T03:04:06.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/10/22/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之内存管理 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/22/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之内存管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-22 11:04:06" itemprop="dateCreated datePublished" datetime="2019-10-22T11:04:06+08:00">2019-10-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li>跟<code>OC</code>一样，<code>Swfit</code>也是采取基于引用计数的ARC内存管理方案(针对堆空间)</li>
+<li><code>Swfit</code>的ARC中有3种引用<ul>
+<li>强引用(strong reference): 默认情况下，引用都是强引用</li>
+<li>弱引用(weak refierence): 通过<code>weak</code>定义弱引用<ul>
+<li>弱引用必须是可选类型的<code>var</code>，因为实例销毁后，ARC会自动将弱引用设置为<code>nil</code></li>
+<li>ARC自动给弱引用设置<code>nil</code>时，不会触发属性观察器</li>
+</ul>
+</li>
+<li>无主引用(unowend reference)：通过<code>unowned</code>定义无主引用<ul>
+<li>不会产生强引用，实例销毁后仍然存储着实例的内存地址(类似于OC中的<code>unsafe_unretained</code>)</li>
+<li>试图在实例销毁后访问无主引用，会产生运行时错误(野指针)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="weak、unowned的使用限制"><a href="#weak、unowned的使用限制" class="headerlink" title="weak、unowned的使用限制"></a>weak、unowned的使用限制</h2><ul>
+<li><p><code>weak</code>，<code>unowned</code>只能用在类实例上面</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AnyObject代表只能用类实现该实例</span></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Liveable</span>: <span class="title">AnyObject</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">weak</span> <span class="keyword">var</span> p0: <span class="type">Person?</span></span><br><span class="line"><span class="keyword">weak</span> <span class="keyword">var</span> p1: <span class="type">AnyObject?</span></span><br><span class="line"><span class="keyword">weak</span> <span class="keyword">var</span> p2: <span class="type">Liveable?</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">unowned</span> <span class="keyword">var</span> p10: <span class="type">Person?</span></span><br><span class="line"><span class="keyword">unowned</span> <span class="keyword">let</span> p11: <span class="type">Person</span></span><br><span class="line"><span class="keyword">unowned</span> <span class="keyword">var</span> p12: <span class="type">AnyObject</span></span><br><span class="line"><span class="keyword">unowned</span> <span class="keyword">var</span> p13: <span class="type">Liveable</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Autoreleasepool"><a href="#Autoreleasepool" class="headerlink" title="Autoreleasepool"></a>Autoreleasepool</h2><p><code>Swift</code>中也保留了<code>Autoreleasepool</code>。<code>Autoreleasepool</code>是一个全局函数，</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// autoreleasepool的定义</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">autoreleasepool</span>&lt;Result&gt;<span class="params">(invoking body: <span class="params">()</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Result</span>) <span class="keyword">rethrows</span> -&gt; <span class="type">Result</span></span><br></pre></td></tr></table></figure>
+
+<p>在使用上，调用<code>autoreleasepool</code>函数，传入一个尾随闭包即可。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">autoreleasepool &#123;</span><br><span class="line">    <span class="keyword">let</span> p = <span class="type">Person</span>()</span><br><span class="line">    p.run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="循环引用-Reference-Cycle"><a href="#循环引用-Reference-Cycle" class="headerlink" title="循环引用(Reference Cycle)"></a>循环引用(Reference Cycle)</h2><p><code>weak</code>、<code>unowned</code>都能解决循环引用的问题，<code>unowned</code>要比<code>weak</code>少一些性能消耗(因为<code>unowned</code>不需要置为<code>nil</code>)</p>
+<ul>
+<li>在生命周期中可能会变为<code>nil</code>的使用<code>weak</code></li>
+<li>初始化赋值后再也不会变为<code>nil</code>的使用<code>unowned</code></li>
+</ul>
+<h2 id="闭包的循环引用"><a href="#闭包的循环引用" class="headerlink" title="闭包的循环引用"></a>闭包的循环引用</h2><p>闭包表达式默认会对用到的外层对象产生额外的强引用(对外层对象进行<code>retain</code>操作)</p>
+<p><em>下面代码会产生循环引用，导致<code>Person</code>对象无法释放</em></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> fn: (() -&gt; ())?</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;run&quot;</span>) &#125;</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">print</span>(<span class="string">&quot;deinit&quot;</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> p = <span class="type">Person</span>()</span><br><span class="line">    p.fn = &#123; p.run() &#125;</span><br><span class="line">    <span class="comment">//p.fn?()</span></span><br><span class="line">&#125;</span><br><span class="line">test()</span><br></pre></td></tr></table></figure>
+
+<p>在闭包表达式的<strong>捕获列表</strong>声明<code>weak</code>或<code>unowened</code>引用，解决循环引用问题。使用<code>weak</code>要使用可选项，<code>unowened</code>不用</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> fn: (() -&gt; ())?</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;run&quot;</span>) &#125;</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">print</span>(<span class="string">&quot;deinit&quot;</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> p = <span class="type">Person</span>()</span><br><span class="line">    p.fn = &#123;</span><br><span class="line">      [<span class="keyword">weak</span> p] <span class="keyword">in</span> </span><br><span class="line">      p?.run()</span><br><span class="line">    &#125;</span><br><span class="line">  p.fn = &#123;</span><br><span class="line">    [<span class="keyword">weak</span> weakP = p] <span class="keyword">in</span></span><br><span class="line">    weakP?.run()</span><br><span class="line">  &#125;</span><br><span class="line">  p.fn = &#123;</span><br><span class="line">    [<span class="keyword">unowned</span> p] <span class="keyword">in</span></span><br><span class="line">      p.run()</span><br><span class="line">  &#125;</span><br><span class="line">  p.fn = &#123;</span><br><span class="line">    [<span class="keyword">weak</span> wp = p, <span class="keyword">unowned</span> up = p, a = <span class="number">10</span> + <span class="number">20</span>] <span class="keyword">in</span></span><br><span class="line">    wp?.run()</span><br><span class="line">    up.run()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">test()</span><br></pre></td></tr></table></figure>
+
+<p>如果想在定义闭包属性的同时引用<code>self</code>，这个闭包必须是<code>lazy</code>的(因为在实例初始化完毕之后才能引用<code>self</code>)。闭包函数内如果用的实例成员(属性、方法)，编译器会强制要求明确写出<code>self</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> fn: (() -&gt; ()) = &#123;</span><br><span class="line">        [<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">self</span>?.run()  <span class="comment">//编译器要求强制写明self</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;run&quot;</span>) &#125;</span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">print</span>(<span class="string">&quot;Student run&quot;</span>) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>lazy</code>属性是闭包调用的结果，那么不用考虑循环引用的问题(因为闭包调用后，闭包的生命周期就结束了)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wirtor</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">    <span class="built_in">lazy</span> <span class="keyword">var</span> getAge: <span class="type">Int</span> = &#123;</span><br><span class="line">        <span class="keyword">self</span>.age </span><br><span class="line">    &#125;()  <span class="comment">//这个加了 (),代表这个闭包表达式运行返回结果。</span></span><br><span class="line">    <span class="keyword">deinit</span> &#123; <span class="built_in">print</span>(<span class="string">&quot;wirtor deinit&quot;</span>) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="逃逸闭包与非逃逸闭包"><a href="#逃逸闭包与非逃逸闭包" class="headerlink" title="逃逸闭包与非逃逸闭包"></a>逃逸闭包与非逃逸闭包</h2><p>逃逸闭包、非逃逸闭包，一般都是当做参数传递给函数</p>
+<p><strong>非逃逸闭包</strong>：闭包调用发生在函数结束前，闭包调用在函数作用域内</p>
+<p><strong>逃逸闭包</strong>：闭包有可能在函数结束后调用，闭包调用逃离了函数的作用域，需要通过<code>@eacaping</code>声明</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//fn是非逃逸闭包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">(<span class="number">_</span> fn: Fn)</span></span> &#123; fn() &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//fn是逃逸闭包</span></span><br><span class="line"><span class="keyword">var</span> gFn: <span class="type">Fn?</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">(<span class="number">_</span> fn: @escaping Fn)</span></span> &#123;</span><br><span class="line">    gFn = fn</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//fn是逃逸闭包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test3</span><span class="params">(<span class="number">_</span> fn: @escaping Fn)</span></span> &#123;</span><br><span class="line">    <span class="type">DispatchQueue</span>.global().async &#123;</span><br><span class="line">        fn()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逃逸闭包内如果访问实例的成员（属性、方法），编译器会强制要求写明<code>self</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> fn: <span class="type">Fn</span></span><br><span class="line">    <span class="comment">//fn是一个逃逸闭包</span></span><br><span class="line">    <span class="keyword">init</span>(fn: @escaping <span class="type">Fn</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.fn = fn;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">//DispatchQueue.global().async 也是一个逃逸闭包</span></span><br><span class="line">        <span class="comment">//它用到了实例成员(属性，方法)，编译器会要强制写明self</span></span><br><span class="line">        <span class="comment">//写明self的作用</span></span><br><span class="line">        <span class="comment">//1：逃逸闭包会对实例产生强引用，不至于等到逃逸闭包执行时，实例被销毁了</span></span><br><span class="line">        <span class="comment">//2：提醒开发者在逃逸闭包访问实例时，是不是要使用weak</span></span><br><span class="line">        <span class="type">DispatchQueue</span>.global().async &#123;</span><br><span class="line">            <span class="keyword">self</span>.fn()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另外，<strong>逃逸闭包不能捕获<code>inout</code>参数</strong>，因为逃逸闭包执行时机不确定，而通过<code>inout</code>传入的内存地址存在，无法保证在逃逸闭包执行时还是有效的。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typealias</span> <span class="type">Fn</span> = () -&gt; ()</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">other1</span><span class="params">(<span class="number">_</span> fn: Fn)</span></span> &#123;</span><br><span class="line">    fn()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">other2</span><span class="params">(<span class="number">_</span> fn: @escaping Fn)</span></span> &#123;</span><br><span class="line">    fn()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testInout</span><span class="params">(value: <span class="keyword">inout</span> Int)</span></span> -&gt; <span class="type">Fn</span> &#123;</span><br><span class="line">    other1 &#123;</span><br><span class="line">        value += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    other2 &#123; <span class="comment">//Error: Escaping closure captures &#x27;inout&#x27; parameter &#x27;value&#x27;</span></span><br><span class="line">        value += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">plus</span><span class="params">()</span></span> &#123;</span><br><span class="line">        value += <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> plus <span class="comment">//Error: Escaping closure captures &#x27;inout&#x27; parameter &#x27;value&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内存访问冲突"><a href="#内存访问冲突" class="headerlink" title="内存访问冲突"></a>内存访问冲突</h2><p>这里说的内存访问冲突，并非是在多线程的的情况，当两个访问满足下列条件时就会发生：</p>
+<ol>
+<li>至少是一个写入操作</li>
+<li>他们访问的是同一块内存</li>
+<li>他们的访问时间重叠(比如在同一个函数内)</li>
+</ol>
+<p>这种操作在其他语言也许是可以的，但<code>swift</code>中，编译器检测出这种操作就会报错，即便没有检测出也会在运行时报错。举几个🌰来说明：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> step = <span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">increment</span><span class="params">(<span class="number">_</span> num: <span class="keyword">inout</span> Int)</span></span> &#123;</span><br><span class="line">    <span class="comment">//如果传入的参数就是step,</span></span><br><span class="line">    <span class="comment">//那么这里对step即进行了读取，也进行了写入的操作</span></span><br><span class="line">    num = num + step</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//存在访问冲突</span></span><br><span class="line"><span class="comment">//Simultaneous accesses to 0x10000c8c8,but modification requires exclusive access</span></span><br><span class="line">increment(&amp;step)</span><br></pre></td></tr></table></figure>
+
+<p>再例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">balance</span><span class="params">(<span class="number">_</span> x: <span class="keyword">inout</span> Int, <span class="number">_</span> y: <span class="keyword">inout</span> Int)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> sum = x + y</span><br><span class="line">    x =  sum / <span class="number">2</span></span><br><span class="line">    y = sum - x</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> num1 = <span class="number">42</span></span><br><span class="line"><span class="keyword">var</span> num2 = <span class="number">30</span></span><br><span class="line">balance(&amp;num1, &amp;num2) <span class="comment">//OK</span></span><br><span class="line"><span class="comment">//balance(&amp;num1, &amp;num1) //Error</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Player</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> health: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">var</span> energy: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">shareHealth</span><span class="params">(with teammate: <span class="keyword">inout</span> Player)</span></span> &#123;</span><br><span class="line">        balance(&amp;teammate.health, &amp;health)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> oscar = <span class="type">Player</span>(name: <span class="string">&quot;Oscar&quot;</span>, health: <span class="number">10</span>, energy: <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> maris = <span class="type">Player</span>(name: <span class="string">&quot;Maria&quot;</span>, health: <span class="number">5</span>, energy: <span class="number">10</span>)</span><br><span class="line">oscar.shareHealth(with: &amp;maris) <span class="comment">//ok</span></span><br><span class="line"><span class="comment">//oscar.shareHealth(with: &amp;oscar) //Error</span></span><br><span class="line"><span class="keyword">var</span> tulpe = (health: <span class="number">10</span>,energy: <span class="number">20</span>)</span><br><span class="line"><span class="comment">//Error:Thread 1: Simultaneous accesses to 0x10000c928, but modification requires exclusive access</span></span><br><span class="line">balance(&amp;tulpe.health, &amp;tulpe.energy) </span><br></pre></td></tr></table></figure>
+
+<p>如果下面的条件可以满足，就说明重叠访问结构体的属性是安全的</p>
+<ul>
+<li>只访问实例存储属性，不是计算属性或者类属性</li>
+<li>结构体是局部变量而非全局变量</li>
+<li>结构体要么没有被闭包捕获要么只被非逃逸闭包捕获</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">balance</span><span class="params">(<span class="number">_</span> x: <span class="keyword">inout</span> Int, <span class="number">_</span> y: <span class="keyword">inout</span> Int)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> sum = x + y</span><br><span class="line">    x =  sum / <span class="number">2</span></span><br><span class="line">    y = sum - x</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// ok</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">accessCoTest</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> tulpe = (health: <span class="number">10</span>,energy: <span class="number">20</span>)</span><br><span class="line">    balance(&amp;tulpe.health, &amp;tulpe.energy)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> holly = (name: <span class="string">&quot;Hello&quot;</span>,health: <span class="number">10</span>, energy: <span class="number">20</span>)</span><br><span class="line">    balance(&amp;holly.health, &amp;holly.energy)</span><br><span class="line">&#125;</span><br><span class="line">accessCoTest()</span><br></pre></td></tr></table></figure>
+
+<h2 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h2><h3 id="常见的四种指针类型"><a href="#常见的四种指针类型" class="headerlink" title="常见的四种指针类型"></a>常见的四种指针类型</h3><p><code>Swfit</code>中也有专门的指针类型，这些都被定义为”Unsafe”(不安全的),常见的有以下四种类型</p>
+<ul>
+<li><code>UnsafePointer&lt;Pointee&gt;</code> 类似于 <code>const Pointee *</code>。只读，类型确定，不能更改内存数据</li>
+<li><code>UnsafeMutablePointer&lt;Pointee&gt;</code>类似于<code>Pointee *</code>。类型确定，内存数据可读可写。</li>
+<li><code>UnsafeRowPointer</code> 类似于 <code>const void *</code>。只读，类型不确定，不能更改内存数据。</li>
+<li><code>UnsafeMutableRowPointer</code> 类似于 <code>void *</code>。类型不确定，内存数据可读可写。</li>
+</ul>
+<p><strong>对于<code>UnsafePointer</code></strong></p>
+<p><code>UnsafePointer</code>在使用时，必须指定泛型类型，否则会编译报错。通过<code>UnsafePointer.pointee</code>也可以读取到内存中存储的数据。当函数中参数是<code>UnsafePointer</code>时，传参时需要使用<code>&amp;</code>,例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merroyTest1</span><span class="params">(<span class="number">_</span> ptr: UnsafePointer&lt;Int&gt;)</span></span> &#123;</span><br><span class="line">    <span class="comment">//通过pointee属性获取该内存的值</span></span><br><span class="line">    <span class="built_in">print</span>(ptr.pointee) <span class="comment">//10</span></span><br><span class="line">&#125;</span><br><span class="line">merroyTest1(&amp;age) </span><br></pre></td></tr></table></figure>
+
+<p><strong>对于<code>UnsafeMutablePointer</code></strong></p>
+<p><code>UnsafeMutablePointer</code>与<code>UnsafePointer</code>在使用时大体相同，不过<code>UnsafeMutablePointer</code>是可读写的，允许对内存中的数据进行读写,例如</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merroyTest2</span><span class="params">(<span class="number">_</span> ptr: UnsafeMutablePointer&lt;Int&gt;)</span></span> &#123;</span><br><span class="line">    ptr.pointee += <span class="number">10</span> <span class="comment">//UnsafeMutablePointer.pointee,可读写</span></span><br><span class="line">    <span class="built_in">print</span>(ptr.pointee) <span class="comment">//20</span></span><br><span class="line">&#125;</span><br><span class="line">merroyTest2(&amp;age)</span><br><span class="line"><span class="built_in">print</span>(age) <span class="comment">//20</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>对于<code>UnsafeRawPointer</code></strong></p>
+<p><code>UnsafeRawPointer</code>类型是不确定内存中数据类型的，但可以使用<code>load</code>方法进行类型转换，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merroyTest3</span><span class="params">(<span class="number">_</span> ptr: UnsafeRawPointer)</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(ptr.load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>))</span><br><span class="line">&#125;</span><br><span class="line">merroyTest3(&amp;age)<span class="comment">//10</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>对于<code>UnsafeMutableRawPointer</code></strong></p>
+<p>相比于<code>UnsafeRawPointer</code>，<code>UnsafeMutableRawPointer</code>可以使用<code>storeBytes</code>方法以指定的类型向内存中写入数据，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merroyTest4</span><span class="params">(<span class="number">_</span> ptr: UnsafeMutableRawPointer)</span></span> &#123;</span><br><span class="line">    ptr.storeBytes(of: <span class="number">20</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line">&#125;</span><br><span class="line">merroyTest4(&amp;age)</span><br><span class="line"><span class="built_in">print</span>(age) <span class="comment">//20</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="获得指向某个变量的指针"><a href="#获得指向某个变量的指针" class="headerlink" title="获得指向某个变量的指针"></a>获得指向某个变量的指针</h3><p><code>Swift</code>中提供了两个函数来获取变量的指针,下面是这两个函数的原型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">@inlinable <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">withUnsafeMutablePointer</span>&lt;T, Result&gt;<span class="params">(to value: <span class="keyword">inout</span> T, <span class="number">_</span> body: <span class="params">(UnsafeMutablePointer&lt;T&gt;)</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Result</span>) <span class="keyword">rethrows</span> -&gt; <span class="type">Result</span></span><br><span class="line"></span><br><span class="line">@inlinable <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">withUnsafePointer</span>&lt;T, Result&gt;<span class="params">(to value: <span class="keyword">inout</span> T, <span class="number">_</span> body: <span class="params">(UnsafePointer&lt;T&gt;)</span></span></span> <span class="keyword">throws</span> -&gt; <span class="type">Result</span>) <span class="keyword">rethrows</span> -&gt; <span class="type">Result</span></span><br></pre></td></tr></table></figure>
+
+<p>这个两个函数从名字可以看出，一个是返回不可变指针的，一个是返回可变指针的。调用这两个函数第一个参数传入要获取指针的变量，第二个参数传入一个闭包表达式，这个闭包表达式，接受的参数就是第一个参数的地址值，并且这个闭包的返回值类型就是函数的返回值类型。函数的使用如下：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> ptr = <span class="built_in">withUnsafePointer</span>(to: &amp;age) &#123; (agePtr) -&gt; <span class="type">UnsafePointer</span>&lt;<span class="type">Int</span>&gt; <span class="keyword">in</span></span><br><span class="line">    <span class="comment">//使用形参agePtr来接收age的指针，并返回。</span></span><br><span class="line">       <span class="keyword">return</span> agePtr</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//ptr的类型就是UnsafePointer&lt;Int&gt;</span></span><br><span class="line"><span class="built_in">print</span>(ptr) <span class="comment">//0x000000010000c9b0</span></span><br><span class="line"><span class="built_in">print</span>(ptr.pointee) <span class="comment">//10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//也可以直接简写为一个尾随闭包</span></span><br><span class="line"><span class="keyword">var</span> agePtr = <span class="built_in">withUnsafePointer</span>(to: &amp;age) &#123; $<span class="number">0</span> &#125; <span class="comment">//$0代表第一个参数，直接返回</span></span><br><span class="line"><span class="built_in">print</span>(agePtr) <span class="comment">//0x000000010000c9b0</span></span><br><span class="line"><span class="built_in">print</span>(agePtr.pointee) <span class="comment">//10</span></span><br></pre></td></tr></table></figure>
+
+<p>还可以将变量的指针包装成<code>UnsafeMuatableRawPointer</code>和<code>UnsafeRawPointer</code>类型，来隐藏类型</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> aNumber = <span class="number">20</span></span><br><span class="line"><span class="keyword">var</span> ptr4 = <span class="built_in">withUnsafeMutablePointer</span>(to: &amp;aNumber) &#123;</span><br><span class="line">    <span class="comment">//UnsafeMutableRawPointer的构造函数</span></span><br><span class="line">    <span class="type">UnsafeMutableRawPointer</span>($<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;ptr4:&quot;</span>,ptr4.load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)) <span class="comment">//ptr4: 20</span></span><br><span class="line">ptr4.storeBytes(of: <span class="number">2</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ptr3 = <span class="built_in">withUnsafePointer</span>(to: &amp;aNumber) &#123;</span><br><span class="line">    <span class="comment">//UnsafeRawPointer的构造函数</span></span><br><span class="line">    <span class="type">UnsafeRawPointer</span>($<span class="number">0</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;ptr3:&quot;</span>,ptr3.load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>))<span class="comment">//ptr3: 2</span></span><br></pre></td></tr></table></figure>
+
+<p>我们也可以使用<strong>这个函数获取引用类型的地址值，但获取的并不是该引用类型在堆空间的地址值，而是获取引用类型变量的地址值</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person4</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person4</span>()</span><br><span class="line"><span class="keyword">var</span> pptr = <span class="built_in">withUnsafePointer</span>(to: &amp;p) &#123; $<span class="number">0</span> &#125;</span><br><span class="line"><span class="comment">//pptr 是 变量p的地址值</span></span><br><span class="line"><span class="built_in">print</span>(pptr) <span class="comment">//0x000000010000cb40</span></span><br><span class="line"><span class="built_in">print</span>(pptr.pointee.age) <span class="comment">//10</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="获取指向堆空间实例的指针"><a href="#获取指向堆空间实例的指针" class="headerlink" title="获取指向堆空间实例的指针"></a>获取指向堆空间实例的指针</h3><p>在上一节中，使用<code>withUnsafePointer</code>函数**获取了引用类型变量本身的指针，并不是引用类型在堆空间的地址值。若要获取引用类型变型中保存的指向堆空间的地址值则需要通过<code>UnsafeRawPointer(bitPattern: )</code>**。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person4</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person4</span>()</span><br><span class="line"><span class="keyword">var</span> pptr = <span class="built_in">withUnsafePointer</span>(to: &amp;p) &#123; <span class="type">UnsafeRawPointer</span>($<span class="number">0</span>) &#125;</span><br><span class="line"><span class="comment">//pptr 是 变量p的地址值</span></span><br><span class="line"><span class="built_in">print</span>(pptr) <span class="comment">//0x0000000100010b60</span></span><br><span class="line"><span class="built_in">print</span>(pptr.load(<span class="keyword">as</span>: <span class="type">Person4</span>.<span class="keyword">self</span>)) <span class="comment">//Person4</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> heapPtr = <span class="type">UnsafeRawPointer</span>(bitPattern: pptr.load(<span class="keyword">as</span>: <span class="type">UInt</span>.<span class="keyword">self</span>))</span><br><span class="line"><span class="built_in">print</span>(heapPtr!) <span class="comment">//0x0000000102155a80 堆空间地址值</span></span><br><span class="line"><span class="built_in">print</span>(heapPtr?.load(<span class="keyword">as</span>: <span class="type">Person4</span>.<span class="keyword">self</span>) <span class="keyword">as</span> <span class="type">Any</span>) <span class="comment">//Optional(Person4)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="创建指针"><a href="#创建指针" class="headerlink" title="创建指针"></a>创建指针</h3><p>上面讲的是已有一个在堆空间的变量，获取指向这个变量的指针。那么是否能直接向堆空间申请一段内存呢。答案是肯定的，<code>Swfit</code>同样也支持这样的操作，并且在<code>HandyJson</code>这个库中大量的使用了指针的代码。</p>
+<h4 id="第一种方式"><a href="#第一种方式" class="headerlink" title="第一种方式"></a>第一种方式</h4><p>引入<code>Foundtion</code>框架，使用<code>malloc</code>函数。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建，</span></span><br><span class="line"><span class="comment">//向堆空间申请16个字节的内存，</span></span><br><span class="line"><span class="comment">//返回 UnsafeMutableRawPointer? 类型的变量（可读写）</span></span><br><span class="line"><span class="keyword">var</span> myPtr = malloc(<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//存</span></span><br><span class="line"><span class="comment">//默认从第一个字节开始存储，以Int型（8个字节），存入数据 11</span></span><br><span class="line">myPtr?.storeBytes(of: <span class="number">11</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"><span class="comment">//但是 myPtr 有16个自己，前面占用了8个，</span></span><br><span class="line"><span class="comment">//如果想操作后面的内存可以使用偏移量</span></span><br><span class="line"><span class="comment">//偏移8个字节，再以Int型（8个字节）存入数据22</span></span><br><span class="line">myPtr?.storeBytes(of: <span class="number">22</span>, toByteOffset: <span class="number">8</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//取</span></span><br><span class="line"><span class="comment">//以Int型（读取前8个字节）,获取指针中的数据,默认从第一个字节开始读取</span></span><br><span class="line"><span class="built_in">print</span>((myPtr?.load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>))!) <span class="comment">//11</span></span><br><span class="line"><span class="comment">//如果想从具体的某个字节数开始读，开始通过设置偏移量来完成</span></span><br><span class="line"><span class="comment">//偏移8个字节,再以Int(读取8个字节)型读取数据</span></span><br><span class="line"><span class="built_in">print</span>((myPtr?.load(fromByteOffset: <span class="number">8</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>))!) <span class="comment">//22</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//最后不要忘记销毁指针</span></span><br><span class="line">free(myPtr)</span><br></pre></td></tr></table></figure>
+
+<h4 id="第二种方式"><a href="#第二种方式" class="headerlink" title="第二种方式"></a>第二种方式</h4><p>使用<code>UnsafeMutalbeRawPointer.allocate</code>函数</p>
+<blockquote>
+<p>函数原型：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// - Parameters:</span></span><br><span class="line"><span class="comment">///   - byteCount: 要分配的字节数，不能为负数</span></span><br><span class="line"><span class="comment">///   - alignment: 已分配内存的新区域的对齐方式，以字节为单位，一般填1就可以</span></span><br><span class="line"><span class="comment">/// - Returns: 指向新分配的内存区域的指针。内存已分配，但未初始化。</span></span><br><span class="line"><span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">allocate</span><span class="params">(byteCount: Int, alignment: Int)</span></span> -&gt; <span class="type">UnsafeMutableRawPointer</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//申请一个16字节内存空间,对齐方式一般填1</span></span><br><span class="line"><span class="keyword">var</span> myPtr2 = <span class="type">UnsafeMutableRawPointer</span>.allocate(byteCount: <span class="number">8</span>, alignment: <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//向前八个字节存入Int型整数:8</span></span><br><span class="line">myPtr2.storeBytes(of: <span class="number">8</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//偏移字节除了可以用  UnsafeMutableRawPointer.storeBytes(of: T, toByteOffset: Int, as: T.Type)，也可以用advanced方法</span></span><br><span class="line"><span class="comment">//获取 myPtr2偏移8个字节后的内存指针,存入数据</span></span><br><span class="line"><span class="keyword">var</span> offset8Mem = myPtr2.advanced(by: <span class="number">8</span>)</span><br><span class="line">offset8Mem.storeBytes(of: <span class="number">30</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(myPtr2.load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)) <span class="comment">// 8</span></span><br><span class="line"><span class="built_in">print</span>(myPtr2.advanced(by: <span class="number">8</span>).load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)) <span class="comment">//30</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//销毁,除了可以使用free函数，也可以使用 UnsafeMutableRawPointer.deallocat()</span></span><br><span class="line">myPtr2.deallocate()</span><br></pre></td></tr></table></figure>
+
+<h4 id="第三种方式"><a href="#第三种方式" class="headerlink" title="第三种方式"></a>第三种方式</h4><p>使用<code>UnsafeMutablePointer&lt;T&gt;.allocte(capacity: Int)</code>来申请内存</p>
+<p>这种方式可以指定申请内存的类型，传入的容量即为多少个该类型的内存空间</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//申请3个Int型内存空间,一个Int型占8个字节,说白了就是24个字节</span></span><br><span class="line"><span class="keyword">var</span> myPtr3 = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">Int</span>&gt;.allocate(capacity: <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p>同时，可以使用<code>initalize(to: T)</code>来初始化，如果没有初始化，读到的数据就是内存中原始的数据了。另外，因为在初始化的时候，申请的内存容量不一定是1，可能有多个指定类型的内存容量单位，可以通过<code>successor()</code>函数来访问下一个类型起始位置。</p>
+<p><strong>说白了就是，在定义指针时指定的泛型T，调用每调用一次<code>successor()</code>，就返回当前指针向后偏移一个T类型变量所占内存大小的偏移量。</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">myPtr3.initialize(to: <span class="number">1</span>) <span class="comment">//第一个Int内存（前八个字节）初始化为1</span></span><br><span class="line">myPtr3.successor().initialize(to: <span class="number">20</span>) <span class="comment">// 第二个Int(中间八个字节)内存地址初始化为20</span></span><br><span class="line">myPtr3.successor().successor().initialize(to: <span class="number">33</span>) <span class="comment">//第三个Int内存（最后八个字节）初始化为33</span></span><br></pre></td></tr></table></figure>
+
+<p>除了使用<code>successor()</code>获取偏移后的指针，可以使用下标和加法。</p>
+<blockquote>
+<p>泛型指针中（UnsafePointer和UnsafeMutablePointer），指针变量  “ +n”,偏移n个泛型类型的变量的内存字节数</p>
+<p>原生指针中(UnsafeRawPointer和UnsaeMutableRawPointer) ，指针变量  “ + n”,偏移n个内存字节数</p>
+<p>var ptrT = UnsafeMutablePointer<Int>.allocate(capacity: 3);   ptrT + 1 //偏移一个Int型变量的内存字节(8个字节)</p>
+<p>var  rowPtr = UnsafeMutableRawPointer(byteCount: 3 alignment: 1); rowPtr + 1 // 偏移1个字节</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用下标来偏移指针</span></span><br><span class="line">myPtr3[<span class="number">0</span>] = <span class="number">5</span> <span class="comment">//第一个Int内存（前八个字节）初始化为5</span></span><br><span class="line">myPtr3[<span class="number">1</span>] = <span class="number">21</span> <span class="comment">//第二个Int(中间八个字节)内存地址初始化为21</span></span><br><span class="line">myPtr3[<span class="number">2</span>] = <span class="number">25</span> <span class="comment">//第三个Int内存（最后八个字节）初始化为25</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(myPtr3[<span class="number">0</span>]) <span class="comment">//5</span></span><br><span class="line"><span class="built_in">print</span>(myPtr3[<span class="number">1</span>]) <span class="comment">//21</span></span><br><span class="line"><span class="built_in">print</span>(myPtr3[<span class="number">2</span>]) <span class="comment">//25</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//使用 ”+“ 来偏移指针</span></span><br><span class="line">myPtr3.pointee = <span class="number">5</span> <span class="comment">//第一个Int内存（前八个字节）初始化为5</span></span><br><span class="line">(myPtr3 + <span class="number">1</span>).pointee = <span class="number">21</span> <span class="comment">//第二个Int(中间八个字节)内存地址初始化为21</span></span><br><span class="line">(myPtr3 + <span class="number">2</span>).pointee = <span class="number">25</span> <span class="comment">//第三个Int内存（最后八个字节）初始化为25</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(myPtr3.pointee) <span class="comment">//5</span></span><br><span class="line"><span class="built_in">print</span>((myPtr3 + <span class="number">1</span>).pointee) <span class="comment">//21</span></span><br><span class="line"><span class="built_in">print</span>((myPtr3 + <span class="number">2</span>).pointee) <span class="comment">//25</span></span><br></pre></td></tr></table></figure>
+
+<p>使用完后，要对指针进行反初始化或销毁</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//反初始化，如果不进行这一步会造成内存泄露。</span></span><br><span class="line"><span class="comment">//如果存储的是对象,即使调用了指针的deallcate()，对象依然不会销毁</span></span><br><span class="line">myPtr3.deinitialize(<span class="built_in">count</span>: <span class="number">3</span>)</span><br><span class="line"><span class="comment">//销毁</span></span><br><span class="line">myPtr3.deallocate()</span><br></pre></td></tr></table></figure>
+
+<h3 id="指针之间的转换"><a href="#指针之间的转换" class="headerlink" title="指针之间的转换"></a>指针之间的转换</h3><ul>
+<li><p><code>UnsafeMutableRawPointer</code> to <code>UnsafeMutablePointer&lt;T&gt;</code></p>
+<ul>
+<li><p>assumingMemoryBound</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> rawPtr = <span class="type">UnsafeMutableRawPointer</span>.allocate(byteCount: <span class="number">16</span>, alignment: <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// assumingMemoryBound: 假设内存绑定</span></span><br><span class="line"><span class="comment">// rawPtr指针假设为 Int型来读取 (获取前八个字节),返回一个 Int泛型的UnsafeMutablePointer</span></span><br><span class="line"><span class="comment">//top8Ptr的类型是 UnsafeMutablePointer&lt;Int&gt;</span></span><br><span class="line"><span class="keyword">var</span> top8Ptr = rawPtr.assumingMemoryBound(to: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line">top8Ptr.pointee = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//将rawPtr偏移8个字节后，获取到后8个字节</span></span><br><span class="line"><span class="comment">//将后8个字节内存假设为Double行,写入 2.0</span></span><br><span class="line">(rawPtr + <span class="number">8</span>).assumingMemoryBound(to: <span class="type">Double</span>.<span class="keyword">self</span>).pointee = <span class="number">2.0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>unsafeBitCast</p>
+<p>方法原型：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">unsafeBitCast</span>&lt;T, U&gt;<span class="params">(<span class="number">_</span> x: T, to type: U.<span class="keyword">Type</span>)</span></span> -&gt; <span class="type">U</span></span><br></pre></td></tr></table></figure>
+
+<p><code>unsafeBitCast</code>是忽略数据类型的强制转换，不会因为数据类型的变化而改变原来的内存数据(类似于C++中的reinterpret_cast)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> ptr1 : <span class="type">UnsafePointer</span>&lt;<span class="type">Int</span>&gt; = <span class="built_in">unsafeBitCast</span>(rawPtr, to: <span class="type">UnsafePointer</span>.<span class="keyword">self</span>)</span><br><span class="line"><span class="built_in">print</span>(ptr1.pointee) <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ptr2 : <span class="type">UnsafePointer</span>&lt;<span class="type">Double</span>&gt; = <span class="built_in">unsafeBitCast</span>(rawPtr + <span class="number">8</span>, to: <span class="type">UnsafePointer</span>.<span class="keyword">self</span>)</span><br><span class="line"><span class="built_in">print</span>(ptr2.pointee) <span class="comment">// 2.0</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>unsafePointer</code> to <code>unsafeRawPointer</code></p>
+<ul>
+<li><p>使用<code>unsafeBitCast</code>方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> pointerPtr = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">Int</span>&gt;.allocate(capacity: <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> rawptr = <span class="built_in">unsafeBitCast</span>(pointerPtr, to: <span class="type">UnsafeMutableRawPointer</span>.<span class="keyword">self</span>)</span><br><span class="line">rawptr.storeBytes(of: <span class="number">2.0</span>, <span class="keyword">as</span>: <span class="type">Double</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(pointerPtr.pointee) <span class="comment">//4611686018427387904</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>UnsafeRawPointer</code>或者<code>UnsafeMutableRawPointer</code>的构造函数</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> pointerPtr = <span class="type">UnsafeMutablePointer</span>&lt;<span class="type">Int</span>&gt;.allocate(capacity: <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> rawptr = <span class="built_in">unsafeBitCast</span>(pointerPtr, to: <span class="type">UnsafeMutableRawPointer</span>.<span class="keyword">self</span>)</span><br><span class="line">rawptr.storeBytes(of: <span class="number">2.0</span>, <span class="keyword">as</span>: <span class="type">Double</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(pointerPtr.pointee) <span class="comment">//4611686018427387904</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> otherRawPointer = <span class="type">UnsafeRawPointer</span>(pointerPtr)</span><br><span class="line"><span class="built_in">print</span>(otherRawPointer.load(<span class="keyword">as</span>: <span class="type">Double</span>.<span class="keyword">self</span>)) <span class="comment">// 2.0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> otherMutableRawPointer = <span class="type">UnsafeMutableRawPointer</span>(pointerPtr)</span><br><span class="line">otherMutableRawPointer.storeBytes(of: <span class="number">4</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"><span class="built_in">print</span>(pointerPtr.pointee) <span class="comment">// 4</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/18/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/" rel="prev" title="Swift5学习笔记之访问控制">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之访问控制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/03/Realm%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Realm学习笔记">
+      Realm学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#weak%E3%80%81unowned%E7%9A%84%E4%BD%BF%E7%94%A8%E9%99%90%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">weak、unowned的使用限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autoreleasepool"><span class="nav-number">3.</span> <span class="nav-text">Autoreleasepool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8-Reference-Cycle"><span class="nav-number">4.</span> <span class="nav-text">循环引用(Reference Cycle)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AD%E5%8C%85%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">闭包的循环引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%83%E9%80%B8%E9%97%AD%E5%8C%85%E4%B8%8E%E9%9D%9E%E9%80%83%E9%80%B8%E9%97%AD%E5%8C%85"><span class="nav-number">6.</span> <span class="nav-text">逃逸闭包与非逃逸闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE%E5%86%B2%E7%AA%81"><span class="nav-number">7.</span> <span class="nav-text">内存访问冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88"><span class="nav-number">8.</span> <span class="nav-text">指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8B"><span class="nav-number">8.1.</span> <span class="nav-text">常见的四种指针类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E6%8C%87%E5%90%91%E6%9F%90%E4%B8%AA%E5%8F%98%E9%87%8F%E7%9A%84%E6%8C%87%E9%92%88"><span class="nav-number">8.2.</span> <span class="nav-text">获得指向某个变量的指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%8C%87%E5%90%91%E5%A0%86%E7%A9%BA%E9%97%B4%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%8C%87%E9%92%88"><span class="nav-number">8.3.</span> <span class="nav-text">获取指向堆空间实例的指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%8C%87%E9%92%88"><span class="nav-number">8.4.</span> <span class="nav-text">创建指针</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">8.4.1.</span> <span class="nav-text">第一种方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">8.4.2.</span> <span class="nav-text">第二种方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">8.4.3.</span> <span class="nav-text">第三种方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">8.5.</span> <span class="nav-text">指针之间的转换</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

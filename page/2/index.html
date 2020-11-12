@@ -159,6 +159,357 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/" class="post-title-link" itemprop="url">Swift5学习笔记之初始化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-05 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-05T11:15:53+08:00">2019-09-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="初始化器"><a href="#初始化器" class="headerlink" title="初始化器"></a>初始化器</h2><ul>
+<li>类、结构体、枚举都可以定义初始化器。其中，类：如果<strong>没有自定初始化器会自动生成无参的初始化器</strong>，如果自定了初始化器，那么默认的无参的初始化器就不会生成了。</li>
+<li><strong>类</strong>有2种初始化器：<strong>指定初始化器（<code>designated initializer</code>）</strong>、<strong>便捷初始化器（<code>convenience initializer</code>）</strong><ul>
+<li>每个类至少有一个指定初始化器，指定初始化器是类的主要初始化器</li>
+<li>默认初始化器总是类的指定初始化器</li>
+<li>类偏向于少量的指定初始化器，一个类通常只有一个指定初始化器</li>
+</ul>
+</li>
+<li>初始化器的相互调用规则：<ul>
+<li>指定初始化器必须从它的<strong>直系父类</strong>调用指定初始化器，调用自己的不可以。<strong>不可以调用便捷初始化器</strong>。</li>
+<li>便捷初始化器必须从本类的里调用另外一个初始化器(可以是便捷初始化器，也可以是指定初始化器)，不可以调用父类的初始化器</li>
+<li>便捷初始化器最终必须调用一个指定初始化器</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> name = <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="keyword">init</span>(age: <span class="type">Int</span>,name: <span class="type">String</span>) &#123;</span><br><span class="line">      <span class="keyword">self</span>.age = age</span><br><span class="line">    <span class="keyword">self</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">convenience</span> <span class="keyword">init</span>(age: <span class="type">Int</span>) &#123;</span><br><span class="line">      <span class="keyword">self</span>.<span class="keyword">init</span>(age: age, name: <span class="string">&quot;&quot;</span>)</span><br><span class="line">    <span class="keyword">self</span>.age = age</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">convenience</span> <span class="keyword">init</span>(name: <span class="type">String</span>) &#123;</span><br><span class="line">      <span class="keyword">self</span>.<span class="keyword">init</span>(age: <span class="number">0</span>,name: name)</span><br><span class="line">    <span class="keyword">self</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> score: <span class="type">Int</span></span><br><span class="line">  <span class="keyword">init</span>(age: <span class="type">Int</span>,name: <span class="type">String</span> , score: <span class="type">Int</span>) &#123;</span><br><span class="line">      <span class="keyword">self</span>.score = score;<span class="comment">//在调用父类指定初始化器前使用self。</span></span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(age: age,name: name)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">convenience</span> <span class="keyword">init</span>(score: <span class="type">Int</span>) &#123;</span><br><span class="line">      <span class="keyword">self</span>.<span class="keyword">init</span>(age: <span class="number">0</span>,name: <span class="string">&quot;&quot;</span>, score:score)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/QQ20200906-154315.png" class="">
+
+<ul>
+<li>这一套规则保证了：使用任意初始化器，都可以完成地初始化实例。</li>
+</ul>
+<h2 id="两段式初始化"><a href="#两段式初始化" class="headerlink" title="两段式初始化"></a>两段式初始化</h2><blockquote>
+<p><code>swift</code>在编码安全方面，为了保证初始化安全，设定了<strong>两段式初始化、安全检查</strong></p>
+</blockquote>
+<ul>
+<li>第一阶段：初始化所有存储属性<ol>
+<li>外层调用指定（便捷）初始化器。</li>
+<li>分配内存给实例，但未初始化(汇编层面调用<code>alloc</code>)</li>
+<li>指定初始化器确保当前类定义的存储属性都初始化。(先对自身属性进行复制或初始化)</li>
+<li>指定初始化器调用父类的初始化器，不断向上调用，形成<strong>初始化器链</strong>.(再调用<code>super.init()</code>)</li>
+</ol>
+</li>
+<li>第2阶段： 设置新的存储属性值<ol>
+<li>从顶部初始化器往下，链中的每一个指定初始化器都有机会进一步定制实例</li>
+<li>初始化器现在能够使用<code>self</code>(访问、修改它的属性，调用它的实例方法等等)</li>
+<li>最终，链中任何便捷初始化器都有机会定制实例以及使用<code>self</code></li>
+</ol>
+</li>
+</ul>
+<h2 id="安全检查"><a href="#安全检查" class="headerlink" title="安全检查"></a>安全检查</h2><ul>
+<li>指定初始化器必须保证在调用父类初始化器之前，其所在类定义的所有存储属性都要初始化成功。</li>
+<li>指定初始化器必须先调用父类初始化器，然后才能为继承的属性设置新值</li>
+<li>便捷初始化器必须先调用同类中的其他初始化器，然后再为任意属性设置新值。</li>
+<li>初始化器在第1阶段初始化完成之前，不能调用任何实例方法、不能读取任何实例属性的值，也不能引用<code>self</code>。</li>
+<li>直到第1阶段结束，实例才算完全合法。</li>
+</ul>
+<h2 id="重写"><a href="#重写" class="headerlink" title="重写"></a>重写</h2><ul>
+<li>当重写父类的指定初始化器，必须加上<code>override</code>(即使子类的实现是便捷初始化器)</li>
+<li>如果子类写了一个匹配父类便捷初始化器的初始化器，不用加<code>override</code><ul>
+<li>因为父类的便捷初始化器永远不会通过子类直接调用，因此，严格来说，子类无法重写父类的便捷初始化器</li>
+</ul>
+</li>
+</ul>
+<h2 id="自动继承"><a href="#自动继承" class="headerlink" title="自动继承"></a>自动继承</h2><ol>
+<li><p>如果子类没有自定义任何指定初始化器，它会自动继承父类所有的指定初始化器</p>
+</li>
+<li><p>如果子类提供了父类所有指定初始化器的实现(要么通过上述方式继承，要么重写)</p>
+<ul>
+<li>子类自动继承所有的父类便捷初始化器</li>
+</ul>
+</li>
+<li><p>就算子类添加了更多的便捷初始化器，这些规则仍然适用</p>
+</li>
+<li><p>子类以便捷初始化器的形式重写父类的指定初始化器，也可作为满足规则②的一部分</p>
+</li>
+</ol>
+<h2 id="required关键字"><a href="#required关键字" class="headerlink" title="required关键字"></a><code>required</code>关键字</h2><ul>
+<li><p>用<code>required</code>修饰指定初始化器，表明其所有子类都必须实现该初始化器(通过继承或者重写实现)</p>
+<ul>
+<li><p>根据<strong>自动继承</strong>的原则(<em>如果子类没有自定义任何指定初始化器，它会自动继承父类所有的指定初始化器</em>)，所以这种情况下(<em>没有自定义初始化器</em>)，子类自动通过继承的方式实现了该初始化器。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>() &#123;&#125;</span><br><span class="line">  <span class="keyword">init</span>(age: <span class="type">Int</span>) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果子类添加了自定义的初始化器，则需要通过重写的方式重写<code>required</code>初始化器</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>() &#123;&#125;</span><br><span class="line">  <span class="keyword">init</span>(age: <span class="type">Int</span>) &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">init</span>(no: <span class="type">Int</span>) &#123;</span><br><span class="line">      <span class="keyword">super</span>.<span class="keyword">init</span>(age: <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">required</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">      <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>如果子类重写了<code>required</code>初始化器，也必须加上<code>required</code>，不用加<code>override</code></p>
+</li>
+</ul>
+<h2 id="属性观察器"><a href="#属性观察器" class="headerlink" title="属性观察器"></a>属性观察器</h2><ul>
+<li><p>父类的属性在它自己的初始化器中赋值不会触发属性观察器，但在子类中初始化器中赋值会触发属性观察器</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;willSet:&quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;didSet:&quot;</span>,oldValue,<span class="string">&quot;:&quot;</span>,age)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">init</span>() &#123;</span><br><span class="line">      <span class="keyword">self</span>.age = <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> : <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">      <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">    <span class="keyword">self</span>.age = <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;    </span><br><span class="line"><span class="comment">//willSet: 1</span></span><br><span class="line"><span class="comment">//didSet: 0 : 1</span></span><br><span class="line"><span class="keyword">var</span> <span class="number">_</span> = <span class="type">Student</span>()</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="可失败初始化器"><a href="#可失败初始化器" class="headerlink" title="可失败初始化器"></a>可失败初始化器</h2><ul>
+<li><p>类、结构体、枚举都可以使用<code>init?</code>定义可失败初始化器</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">  <span class="keyword">init</span>?(name: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> name.isEmpty &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>(name: <span class="string">&quot;&quot;</span>) <span class="comment">// p的类型是 Person?</span></span><br></pre></td></tr></table></figure>
+
+<p>常见的可失败是初始化器有：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num = <span class="type">Int</span>(<span class="string">&quot;123&quot;</span>) <span class="comment">// public init?(_ description: String)</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Answer</span>: <span class="title">Int</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> wrong, <span class="keyword">right</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> an = <span class="type">Answer</span>(rawValue: <span class="number">1</span>)<span class="comment">// an的类型是 Answer?</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>不允许</strong>同时定义参数标签、参数个数、参数类型相同的可失败初始化器和非可失败初始化器</p>
+<ul>
+<li>这种写法会让编译器在调用时无法知道调用哪一个</li>
+</ul>
+</li>
+<li><p>可以用<code>init!</code>定义隐式解包的可失败初始化器</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">  <span class="keyword">init</span>!(name: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> name.isEmpty &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果初始化器(非可失败、可失败)调用一个可失败初始化器导致初始化失败，那么整个初始化过程都失败，并且后面的代码都停止执行</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">  <span class="keyword">var</span> age : <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="keyword">init</span>?(name: <span class="type">String</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> name.isEmpty &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">convenience</span> <span class="keyword">init</span>(age: <span class="type">Int</span>,name: <span class="type">String</span>) &#123;</span><br><span class="line">      <span class="keyword">self</span>.<span class="keyword">init</span>(name: name)!<span class="comment">//调用可失败初始化器需要强制解包，假如 init!(name: String),就不需要强制解包了</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;exec&quot;</span>)</span><br><span class="line">    <span class="keyword">self</span>.age = age</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> <span class="number">_</span> = <span class="type">Person</span>(age: <span class="number">12</span>, name: <span class="string">&quot;&quot;</span>)<span class="comment">//直接崩溃在self.init(name:name)!</span></span><br><span class="line"><span class="keyword">var</span> <span class="number">_</span> = <span class="type">Person</span>(age: <span class="number">12</span>, name: <span class="string">&quot;agb&quot;</span>) <span class="comment">//可以正常执行</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以用一个非可失败初始化器重写一个可失败的初始化器，但反过来不行</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">  <span class="keyword">init</span>?(name: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> name.isEmpty &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.name = name</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(name: <span class="type">String</span>) &#123;</span><br><span class="line">      <span class="keyword">var</span> default_name = <span class="string">&quot;default&quot;</span></span><br><span class="line">      <span class="keyword">if</span> name.isEmpty &#123;</span><br><span class="line">          default_name = name</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="keyword">super</span>.<span class="keyword">init</span>(name: default_name)!</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="反初始化器-deinit"><a href="#反初始化器-deinit" class="headerlink" title="反初始化器(deinit)"></a>反初始化器(<code>deinit</code>)</h2><ul>
+<li><p><code>deinit</code>叫做反初始化器，类似于<code>C++</code>的析构函数、<code>OC</code>的<code>dealloc</code>方法。当类的实例对象被释放内存时，就会调用实例对象的<code>deinit</code>方法</p>
+</li>
+<li><p><code>deinit</code>不接受任何参数，不能写<strong>小括号</strong>，不能自行调用</p>
+</li>
+<li><p>父类的<code>deinit</code>能被子类继承</p>
+</li>
+<li><p>子类的<code>deinit</code>实现执行完毕后会调用父类的<code>deinit</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">deinit</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;person deinit&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> : <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">deinit</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;student deinit&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">控制台输出：</span></span><br><span class="line"><span class="comment">-----</span></span><br><span class="line"><span class="comment">student deinit</span></span><br><span class="line"><span class="comment">person deinit</span></span><br><span class="line"><span class="comment">......</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----&quot;</span>)</span><br><span class="line"><span class="keyword">var</span> <span class="number">_</span> = <span class="type">Student</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;......&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/04/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/04/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/" class="post-title-link" itemprop="url">Swift5学习笔记之继承</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-04 15:27:29" itemprop="dateCreated datePublished" datetime="2019-09-04T15:27:29+08:00">2019-09-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>值类型(枚举、结构体)不支持继承，只有类支持继承</li>
+<li>没有父类的类，称为：基类<ul>
+<li><code>Swift</code>并没有像<code>OC</code>，<code>Java</code>那样的规定：任何类最终都要继承自某个基类</li>
+</ul>
+</li>
+<li>子类可以重写父类的<strong>下标</strong>、<strong>方法</strong>、<strong>属性</strong>，重写必须加上<code>override</code>关键字</li>
+</ul>
+<h2 id="内存结构"><a href="#内存结构" class="headerlink" title="内存结构"></a>内存结构</h2><p><code>Swift</code>中，实例的内存布局：前八个字节存储<code>class</code>的<strong>类型信息</strong>，第二个八个字节存放着该实例的<strong>引用计数信息</strong>。后面的内存存放着实例的属性数据。在<code>Swift</code>中，为实例分配的字节数必须是<strong>16</strong>的倍数。</p>
+<p>例如：在如下场景中，有基类<code>Animal</code>,<code>Dog</code>继承自<code>Animal</code>，<code>ErHa</code>继承自<code>Dog</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> : <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> weight = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ErHa</span> : <span class="title">Dog</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> iq = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Animal</code>的实例在内存中，前16个字节，分别存放着类型信息和引用计数信息，第三个八个字节存放着属性<code>age</code>的数据，攻击占24个字节。因为内存分配必须是16的倍数，所以<code>Animal</code>的一个实例会占有32个字节。</p>
+<p><code>Dog</code>继承自<code>Animal</code>,前16个字节，依旧分别存放着类型信息和引用计数信息。第三个八个字节存放着从父类继承来的属性<code>age</code>的属性，第四个八个字节存放着自身<code>weight</code>属性的数据。<strong>一般来说，在内存中，从父类继承来的属性会排列在自身属性前边。</strong></p>
+<p><code>ErHa</code>继承自<code>Dog</code>,前16个字节，依旧分别存放着类型信息和引用计数信息，第三个和第四个八个字节分别存放着属性<code>age</code>和<code>weight</code>的属性，第五个八个字节存放着<code>iq</code>的数据，一个实例占用40个字节，因为内存分配必须是16的倍数，所以<code>ErHa</code>的一个实例会占有48个字节。</p>
+<h2 id="重写实例方法、下标"><a href="#重写实例方法、下标" class="headerlink" title="重写实例方法、下标"></a>重写实例方法、下标</h2><p>实例代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Aniaml speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> anim : <span class="type">Animal</span></span><br><span class="line">anim = <span class="type">Animal</span>()</span><br><span class="line">anim.speak()</span><br><span class="line"><span class="built_in">print</span>(anim[<span class="number">6</span>])<span class="comment">//6</span></span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cat</span> : <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="keyword">super</span>.speak()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Cat speak&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">     <span class="keyword">override</span> <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>[index] + <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">anim = <span class="type">Cat</span>()</span><br><span class="line">anim.speak()</span><br><span class="line"><span class="built_in">print</span>(anim[<span class="number">6</span>])<span class="comment">//7</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="重写类型方法、下标"><a href="#重写类型方法、下标" class="headerlink" title="重写类型方法、下标"></a>重写类型方法、下标</h2><ul>
+<li>被<code>class</code>修饰的类型方法、下标<strong>允许</strong>被子类重写，重写后可以被<code>static</code>修饰</li>
+<li>被<code>static</code>修饰的类型方法，下标<strong>不允许</strong>被子类重写</li>
+</ul>
+<p>示例代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">speak</span>() </span>&#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Animal speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cat</span> : <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="keyword">super</span>.speak()</span><br><span class="line">       <span class="built_in">print</span>(<span class="string">&quot;Cat speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="重写属性"><a href="#重写属性" class="headerlink" title="重写属性"></a>重写属性</h2><ul>
+<li>子类<strong>可以</strong>将父类的属性(存储、计算)重写为<strong>计算属性</strong></li>
+<li>子类<strong>不可以</strong>将父类属性重写为<strong>存储属性</strong></li>
+<li>只能重写**<code>var</code><strong>属性，不能重写</strong><code>let</code>**属性</li>
+<li>重写时，属性名、类型要一致</li>
+<li>子类重写后属性权限<strong>不能小于</strong>父类属性的权限<ul>
+<li>如果父类属性是只读的，那么子类重写后属性可以是只读的，也可以是可读写的。</li>
+<li>如果父类属性是可读写的，那么子类重写后的属性也是必须可读写的。</li>
+</ul>
+</li>
+</ul>
+<h3 id="实例属性"><a href="#实例属性" class="headerlink" title="实例属性"></a>实例属性</h3><ul>
+<li>子类将父类的<strong>存储属性</strong>重写为<strong>计算属性</strong>时，储存属性的内存依旧会分配，如果想要访问这段存储要使用<code>super</code>。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="keyword">var</span> diameter : <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle setDiameter&quot;</span>)</span><br><span class="line">      radius = newValue / <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle getDiameter&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span> radius * <span class="number">2</span></span><br><span class="line">     &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span>: <span class="title">Circle</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;SubCircle setRadius&quot;</span>)</span><br><span class="line">        <span class="keyword">super</span>.radius = newValue &gt; <span class="number">0</span> ? newValue : <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">get</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;SubCircle getRadius&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.radius</span><br><span class="line">      &#125;</span><br><span class="line">     &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">var</span> diameter: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle setDiameter&quot;</span>)</span><br><span class="line">         <span class="keyword">super</span>.diameter = newValue &gt; <span class="number">0</span> ? newValue : <span class="number">0</span></span><br><span class="line">       &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle getDiameter&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.diameter</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//SubCircle setRadius</span></span><br><span class="line">circle.radius = <span class="number">6</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//SubCircle getDiameter</span></span><br><span class="line"><span class="comment">//Circle getDiameter</span></span><br><span class="line"><span class="comment">//SubCircle getRadius</span></span><br><span class="line"><span class="built_in">print</span>(circle.diameter)</span><br><span class="line">    </span><br><span class="line"><span class="comment">//SubCircle setDiameter</span></span><br><span class="line"><span class="comment">//Circle setDiameter</span></span><br><span class="line"><span class="comment">//SubCircle setRadius</span></span><br><span class="line">circle.diameter = <span class="number">20</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">//SubCircle getRadius</span></span><br><span class="line"><span class="comment">//10</span></span><br><span class="line"><span class="built_in">print</span>(circle.radius)</span><br></pre></td></tr></table></figure>
+
+<p>对于上述实例代码中，<code>print(circle.diameter)</code>这一句</p>
+<ol>
+<li>会先访问<code>SubCircle.diameter.get </code>方法(输出：<code>SubCircle getDiamater</code>)</li>
+<li><code>SubCircle.diameter.get</code>中调用<code>super.diameter</code>,由此又会调用<code>Circle.diamater.get</code>,输出：<code>Circle getDiameter</code></li>
+<li><code>Circle.diamater.get</code>中又返回了<code>radius * 2</code>,由此调用了<code>SubCircle.radius.get</code>，输出：<code>SubCircle getRadius</code></li>
+</ol>
+<h3 id="类型属性"><a href="#类型属性" class="headerlink" title="类型属性"></a>类型属性</h3><ul>
+<li>被<code>class</code>修饰的<strong>计算类型属性</strong>，<strong>可以</strong>被子类重写。(存储属性不能用<code>class</code>修饰)</li>
+<li>被<code>static</code>修饰的<strong>类型属性（存储、计算）</strong>，<strong>不可以</strong>被子类重写。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">var</span> <span class="title">diameter</span>: <span class="title">Int</span> </span>&#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle setDiameter&quot;</span>)</span><br><span class="line">        radius = newValue / <span class="number">2</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">get</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle getDiameter&quot;</span>)</span><br><span class="line">           <span class="keyword">return</span> radius * <span class="number">2</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span> : <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">static</span> <span class="keyword">var</span> diameter: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle setDiameter&quot;</span>)</span><br><span class="line">      radius = newValue &gt; <span class="number">0</span> ? newValue : <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle getDiameter&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.diameter</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性观察器"><a href="#属性观察器" class="headerlink" title="属性观察器"></a>属性观察器</h2><p>可以在子类中为父类属性(除了只读计算属性、<code>let</code>属性)增加属性观察器</p>
+<h3 id="子类中为存储属性增加属性观察器"><a href="#子类中为存储属性增加属性观察器" class="headerlink" title="子类中为存储属性增加属性观察器"></a>子类中为存储属性增加属性观察器</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span>: <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle willSetRadius&quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;SubCircle didSetRadius&quot;</span>,oldValue)</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//SubCircle willSetRadius 10</span></span><br><span class="line"><span class="comment">//SubCircle didSetRadius 0</span></span><br><span class="line">circle.radius = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="子类重写父类属性观察器"><a href="#子类重写父类属性观察器" class="headerlink" title="子类重写父类属性观察器"></a>子类重写父类属性观察器</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> = <span class="number">1</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle willSetRadius &quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Circle didSetRadius &quot;</span>,oldValue)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span>: <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle willSetRadius &quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle didSetRadius &quot;</span>,oldValue)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//SubCircle willSetRadius  10</span></span><br><span class="line"><span class="comment">//Circle willSetRadius  10</span></span><br><span class="line"><span class="comment">//Circle didSetRadius  1</span></span><br><span class="line"><span class="comment">//SubCircle didSetRadius  1</span></span><br><span class="line">circle.radius = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>当给<code>cirle.radius</code>赋值时，首先先触发<code>SubCircle.radius.willSet</code>方法</li>
+<li>其次会触发<code>Circle.radius.willSet</code></li>
+<li>当修改完成时，会触发<code>Circle.radius.didSet</code></li>
+<li>最后触发<code>SubCirlce.radius.didSet</code></li>
+</ol>
+<h3 id="子类为父类计算属性添加属性观察器"><a href="#子类为父类计算属性添加属性观察器" class="headerlink" title="子类为父类计算属性添加属性观察器"></a>子类为父类计算属性添加属性观察器</h3><p>在同一个类中，计算属性是无法添加属性观察器的，但是如果使用继承可以实现。(类计算属性同理)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle set Radius&quot;</span>,newValue)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">get</span> &#123;</span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;Circle getRadius&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">20</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCircle</span> : <span class="title">Circle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> radius: <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">willSet</span> &#123;</span><br><span class="line">           <span class="built_in">print</span>(<span class="string">&quot;SubCircle willSetRadius &quot;</span>,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">didSet</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;SubCircle didSetRadius&quot;</span>,oldValue,radius)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> circle = <span class="type">SubCircle</span>()</span><br><span class="line"><span class="comment">//Circle getRadius</span></span><br><span class="line"><span class="comment">//SubCircle willSetRadius  10</span></span><br><span class="line"><span class="comment">//Circle set Radius 10</span></span><br><span class="line"><span class="comment">//Circle getRadius</span></span><br><span class="line"><span class="comment">//SubCircle didSetRadius 20 20</span></span><br><span class="line">circle.radius = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>当<code>circle.radius</code>赋值时，会先触发<code>SubCircle.radius.willSet</code>方法，但是并不是首先输出`</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Circle &#123;</span><br><span class="line">  var radius: Int &#123;</span><br><span class="line">    set &#123;</span><br><span class="line">      print(&quot;Circle set Radius&quot;,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    get &#123;</span><br><span class="line">      print(&quot;Circle getRadius&quot;)</span><br><span class="line">      return 20</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">class SubCircle : Circle &#123;</span><br><span class="line">  override var radius: Int &#123;</span><br><span class="line">    willSet &#123;</span><br><span class="line">      print(&quot;SubCircle willSetRadius &quot;,newValue)</span><br><span class="line">    &#125;</span><br><span class="line">    didSet &#123;</span><br><span class="line">      print(&quot;SubCircle didSetRadius&quot;,oldValue,radius)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">let circle &#x3D; SubCircle()</span><br><span class="line">&#x2F;&#x2F;Circle getRadius</span><br><span class="line">&#x2F;&#x2F;SubCircle willSetRadius  10</span><br><span class="line">&#x2F;&#x2F;Circle set Radius 10</span><br><span class="line">&#x2F;&#x2F;Circle getRadius</span><br><span class="line">&#x2F;&#x2F;SubCircle didSetRadius 20 20</span><br><span class="line">circle.radius &#x3D; 10</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>当<code>circle.radius</code>赋值时，会先触发<code>SubCircle.radius.willSet</code>方法，但是并不是首先输出<code>SubCircle willSetRadius</code>，而是先输出了<code>Circle getRadius</code>。造成这样的原因是，**在执行属性观察器<code>set</code>之前会先执行计算属性的<code>get</code>方法并将之赋值给<code>oldValue</code>**。</li>
+<li>赋值给<code>oldValue</code>后，随后触发子类中<code>willSet</code>方法输出<code>SubCircle willSetRadius  10</code></li>
+<li><code>willSet</code>之后随即触发父类<code>set</code>方法，输出<code>Circle set Radius 10</code></li>
+<li><code>set</code>方法执行后再次执行子类中<code>didSet</code>方法，但因为<code>didSet</code>中访问了<code>radius</code>属性，所以先执行父类中<code>get</code>方法。</li>
+<li>最后执行了子类中<code>didSet</code>方法</li>
+</ol>
+</li>
+</ol>
+<h2 id="final关键字"><a href="#final关键字" class="headerlink" title="final关键字"></a><code>final</code>关键字</h2><ul>
+<li>被<code>final</code>修饰的方法、下标、属性，禁止被重写</li>
+<li>被<code>final</code>修饰的类，禁止被继承</li>
+</ul>
+<h2 id="Swfit实现多态的原理"><a href="#Swfit实现多态的原理" class="headerlink" title="Swfit实现多态的原理"></a><code>Swfit</code>实现多态的原理</h2><p>在<code>OC</code>中，实现多态的原理是用<code>Runtime</code>,<code>C++</code>使用的是虚函数表。</p>
+<p>在<code>swift</code>中，对象实例的前八个字节存放着指向类型信息的地址(存放在全局区)。在类型信息中，重写的方法和父类的方法的内存地址会存放其中，编译期类型信息就已经确定。在运营时，实例对象调用方法，会从类型信息中，找到方法的地址进行调用。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Animal speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Animal eat&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">sleep</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Animal sleep&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">speak</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Dog speak&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Dog eat&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Dog run&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img src="/2019/09/04/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/QQ20200906-132914.png" class="">
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -345,6 +696,21 @@
 <h2 id="discardableResult"><a href="#discardableResult" class="headerlink" title="@discardableResult"></a>@discardableResult</h2><p>在<code>func</code>前面加关键字<code>@discardableResult</code>，可以消除函数调用后返回值未被使用的警告</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>,y = <span class="number">0.0</span></span><br><span class="line">    <span class="meta">@discardableResult</span> <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">moveBy</span><span class="params">(deltaX: Double)</span></span> -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      x += deltaX</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Point</span>()</span><br><span class="line">p.moveBy(deltaX: <span class="number">9</span>)</span><br></pre></td></tr></table></figure>
 
+<h2 id="将方法赋值给var-let"><a href="#将方法赋值给var-let" class="headerlink" title="将方法赋值给var/let"></a>将方法赋值给var/let</h2><p>方法可以像函数那样赋值给一个<code>let</code>或者<code>var</code></p>
+<ul>
+<li><p>获取实例方法(2种)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;func run &quot;</span>,age,v)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//第一种，通过实例获取方法</span></span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>(age: <span class="number">10</span>)</span><br><span class="line"><span class="keyword">let</span> fun1 = p.run</span><br><span class="line">fun1(<span class="number">10</span>)<span class="comment">//func run  10 10</span></span><br><span class="line"><span class="comment">//第二种通过类型获取方法，绑定实例</span></span><br><span class="line"><span class="keyword">let</span> fun2 = <span class="type">Person</span>.run <span class="comment">//fun2的类型： (Person) -&gt; ((Int) -&gt; ())</span></span><br><span class="line"><span class="keyword">let</span> fun3 = fun2(p) <span class="comment">//绑定实例，获取实例方法</span></span><br><span class="line">fun3(<span class="number">15</span>) <span class="comment">//func run  10 15</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取类型方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span></span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;static func run &quot;</span>,v)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> fun = <span class="type">Person</span>.run</span><br><span class="line">fun(<span class="number">20</span>)<span class="comment">//static func run  20</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>假如存在同名的实例方法和类型方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span></span><br><span class="line">      <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;func run &quot;</span>,age,v)&#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">(<span class="number">_</span> v: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;static func run &quot;</span>,v)&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> fun = <span class="type">Person</span>.run <span class="comment">//默认会获取类型方法</span></span><br><span class="line"><span class="comment">//如果想通过Person.run获取实例方法，则需要指定变量的类型</span></span><br><span class="line"><span class="keyword">let</span> fun1 : (<span class="type">Person</span>) -&gt; ((<span class="type">Int</span>) -&gt; ()) = <span class="type">Person</span>.run</span><br><span class="line"><span class="keyword">let</span> fun2 = fun1(<span class="type">Person</span>(age: <span class="number">10</span>)) <span class="comment">//绑定实例，获取实例方法</span></span><br><span class="line">fun2(<span class="number">10</span>) <span class="comment">//func run  10 10</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
 
       
     </div>
@@ -569,7 +935,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
