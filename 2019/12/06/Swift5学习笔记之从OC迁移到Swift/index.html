@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="标记&#x2F;&#x2F;MARK: 类似于OC中的 #pragma mark&#x2F;&#x2F;MARK: - 类似于OC中的#pragma mark -&#x2F;&#x2F;TODO: 用于标记未完成的任务&#x2F;&#x2F;FIXME: 用于标记待修复的问题  条件编译常用的几种条件编译的宏： &#x2F;&#x2F;操作系统可选值：macOS\iOS\tvOS\watchOS\Linux\Android\Windows\FreeBSD#if os(macOS) || os(i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之从OC迁移到Swift">
+<meta property="og:url" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="标记&#x2F;&#x2F;MARK: 类似于OC中的 #pragma mark&#x2F;&#x2F;MARK: - 类似于OC中的#pragma mark -&#x2F;&#x2F;TODO: 用于标记未完成的任务&#x2F;&#x2F;FIXME: 用于标记待修复的问题  条件编译常用的几种条件编译的宏： &#x2F;&#x2F;操作系统可选值：macOS\iOS\tvOS\watchOS\Linux\Android\Windows\FreeBSD#if os(macOS) || os(i">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111215@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111915@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-115601@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142541@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142844@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-145511@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-153944@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-155652@2x.png">
+<meta property="article:published_time" content="2019-12-06T02:33:41.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111215@2x.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之从OC迁移到Swift | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之从OC迁移到Swift
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-06 10:33:41" itemprop="dateCreated datePublished" datetime="2019-12-06T10:33:41+08:00">2019-12-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//MARK: 类似于OC中的 #pragma mark</span></span><br><span class="line"><span class="comment">//MARK: - 类似于OC中的#pragma mark -</span></span><br><span class="line"><span class="comment">//<span class="doctag">TODO:</span> 用于标记未完成的任务</span></span><br><span class="line"><span class="comment">//<span class="doctag">FIXME:</span> 用于标记待修复的问题</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="条件编译"><a href="#条件编译" class="headerlink" title="条件编译"></a>条件编译</h2><p>常用的几种条件编译的宏：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//操作系统可选值：macOS\iOS\tvOS\watchOS\Linux\Android\Windows\FreeBSD</span></span><br><span class="line">#<span class="keyword">if</span> os(macOS) || os(iOS)</span><br><span class="line"><span class="comment">//CPU架构： i386\x86_64\arm\arm64</span></span><br><span class="line">#elseif arch(i386) || arch(arm)</span><br><span class="line"><span class="comment">//swift版本</span></span><br><span class="line">#elseif swift(&lt;<span class="number">5</span>) &amp;&amp; swift(&gt;=<span class="number">3</span>)</span><br><span class="line"><span class="comment">//模拟器</span></span><br><span class="line">#elseif targetEnvironment(simulator)</span><br><span class="line"><span class="comment">//可以导入某模块</span></span><br><span class="line">#elseif canImport(<span class="type">Foundation</span>)</span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>另外还可以设定自定义的宏。</p>
+<p>在 Build Setting -&gt; Swift Compiler - Custom Flags中，在Activie Compliation Conditions选项下，可以分别为Debug模式或者Release模式添加跟多的宏</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111215@2x.png" class="" title="This is an example image">
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//根据上述截图，我们在代码中就可以这样写</span></span><br><span class="line">#<span class="keyword">if</span> <span class="type">TEST</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;TEST&quot;</span>) <span class="comment">//TEST</span></span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Release&quot;</span>)</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>除了 DEBUG和Release这个宏，我们还可以在Other Swift Flags下为这个模式下添加不同的宏。不过要在宏前面加**- D**</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111915@2x.png" class="" title="This is an example image">
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//根据上述截图，我们在代码中就可以这样写</span></span><br><span class="line">#<span class="keyword">if</span> <span class="type">OTHER</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;other&quot;</span>)</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">#<span class="keyword">if</span> <span class="type">AAA</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;AAA&quot;</span>)</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="打印"><a href="#打印" class="headerlink" title="打印"></a>打印</h2><p>我们可以参照OC中的<code>NSLog</code>来重新定义一个打印函数</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span>&lt;T&gt;<span class="params">(<span class="number">_</span> msg: T,</span></span></span><br><span class="line"><span class="function"><span class="params">            file: NSString = #file,</span></span></span><br><span class="line"><span class="function"><span class="params">            line: Int = #line,</span></span></span><br><span class="line"><span class="function"><span class="params">            fn: String = #function)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">prefix</span> = <span class="string">&quot;\(file.lastPathComponent)_\(line)_\(fn):&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="keyword">prefix</span>,msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">log(<span class="string">&quot;Release&quot;</span>) <span class="comment">//main.swift_34_swift之从OC迁移: Release</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="系统版本检测"><a href="#系统版本检测" class="headerlink" title="系统版本检测"></a>系统版本检测</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> #available(iOS <span class="number">10</span>,macOS <span class="number">10.12</span>, *) &#123;</span><br><span class="line">    <span class="comment">//对于iOS平台，只在iOS10及以上版本执行</span></span><br><span class="line">    <span class="comment">//对于macOS平台，只在macOS 10.12及以上版本执行</span></span><br><span class="line">    <span class="comment">//最后的*, 表示在其他所有平台都执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="API可用性说明"><a href="#API可用性说明" class="headerlink" title="API可用性说明"></a>API可用性说明</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//在iOS10及以上版本可用</span></span><br><span class="line"><span class="comment">//在macOS 10.25及以上版本可用</span></span><br><span class="line"><span class="comment">//其他平台皆可用</span></span><br><span class="line"><span class="meta">@available</span>(iOS <span class="number">10</span>, macOS <span class="number">10.25</span>, *) </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">      <span class="comment">//不可用，方法命名为study</span></span><br><span class="line">    <span class="meta">@available</span>(*, unavailable, renamed: <span class="string">&quot;study&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">learn</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">study</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    </span><br><span class="line">      <span class="comment">//在iOS11及以上版本方法被弃用</span></span><br><span class="line">    <span class="meta">@available</span>(iOS, deprecated: <span class="number">11</span>)</span><br><span class="line">      <span class="comment">//在macOs10.12及以上版本方法被弃用</span></span><br><span class="line">    <span class="meta">@available</span>(macOS, deprecated: <span class="number">10.12</span>)</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> s = <span class="type">Student</span>()</span><br><span class="line">s.run() <span class="comment">//warn:&#x27;run()&#x27; was deprecated in macOS 10.12</span></span><br><span class="line">s.learn() <span class="comment">//error:&#x27;learn()&#x27; has been renamed to &#x27;study&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>() <span class="comment">//error:&#x27;Person&#x27; is only available in macOS 10.25 or newer</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="iOS程序的入口"><a href="#iOS程序的入口" class="headerlink" title="iOS程序的入口"></a>iOS程序的入口</h2><p>在<code>AppDelegate</code>上默认有个<code>@UIApplicationMain</code>或者<code>@mian</code>的标记，这表示编译器自动生成入口代码(main函数代码)，自动设置<code>AppDelegate</code>为App的代理</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line">@main</span><br><span class="line"><span class="comment">//@UIApplicationMain</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">UIResponder</span>, <span class="title">UIApplicationDelegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> window: <span class="type">UIWindow?</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: <span class="keyword">Any</span>]?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="comment">// Override point for customization after application launch.</span></span><br><span class="line">        <span class="keyword">self</span>.window? = <span class="type">UIWindow</span>()</span><br><span class="line">        <span class="keyword">let</span> mainVc = <span class="type">ViewController</span>()</span><br><span class="line">        <span class="keyword">self</span>.window?.rootViewController = mainVc</span><br><span class="line">        <span class="keyword">self</span>.window?.backgroundColor = <span class="type">UIColor</span>.white</span><br><span class="line">        <span class="keyword">self</span>.window?.makeKeyAndVisible()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以删掉<code>@UIApplicationMain</code>，自定义入口代码：新建一个main.swift文件</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-115601@2x.png" class="" title="This is an example image">
+
+<h2 id="Swift调用OC"><a href="#Swift调用OC" class="headerlink" title="Swift调用OC"></a>Swift调用OC</h2><p>在Swift工程中，如果想要调用OC，需要使用桥接文件。文件名格式默认为：<code>&#123;targetName&#125;-Bridging-Header.h</code>。在桥接文件中，<code>#import</code> OC需要暴露给<code>Swift</code>内容。</p>
+<p>并且在Build Setting -&gt; Swift Compiler - General -&gt; Objective-C Bridging Header中填入桥接文件的地址。</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142541@2x.png" class="" title="This is an example image">
+
+<p>以下是OC中类的内容：</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142844@2x.png" class="" title="This is an example image">
+
+<p>在桥接文件中引入：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">#<span class="keyword">import</span> &quot;OCPerson.h&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在Swift中调用：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="type">OCPerson</span>(age: <span class="number">10</span>, name: <span class="string">&quot;Jack&quot;</span>)</span><br><span class="line">p.age = <span class="number">19</span></span><br><span class="line">p.name = <span class="string">&quot;Rose&quot;</span></span><br><span class="line">p.run()<span class="comment">//19 Rose -run</span></span><br><span class="line">p.eat(<span class="string">&quot;Apple&quot;</span>, other: <span class="string">&quot;Water&quot;</span>)<span class="comment">//19 Rose -eat Apple Water</span></span><br><span class="line">        </span><br><span class="line"><span class="type">OCPerson</span>.run() <span class="comment">//OCPerson + run</span></span><br><span class="line"><span class="type">OCPerson</span>.eat(<span class="string">&quot;Pizza&quot;</span>, other: <span class="string">&quot;Banana&quot;</span>)<span class="comment">//OCPerson +eat Pizza Banana</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：OC中NSInteger会转换为Swift中的Int,OC中的Int类型会转换为Swift的Int32</strong></p>
+<ul>
+<li><p>调用OC中的C语言函数</p>
+<p>桥接文件中引入的.h文件中的C语言函数会自然暴露给Swift。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;OC文件中</span><br><span class="line">int sum(int a,int b);</span><br><span class="line">int sum(int a,int b) &#123;</span><br><span class="line">    return a + b;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;Swift文件中</span><br><span class="line"> print(sum(32, 34)) &#x2F;&#x2F;66</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果C语言暴露给Swift的函数名跟Swift中的其他函数名冲突了，那么在调用时会优先调用Swift中的实现。可以在Swift中使用@_silgen_name修改C函数名</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(<span class="number">_</span> a: Int32,<span class="number">_</span> b: Int32)</span></span> -&gt; <span class="type">Int32</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (a + b) * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@_silgen_name(<span class="string">&quot;sum&quot;</span>) <span class="function"><span class="keyword">func</span> <span class="title">oc_sum</span><span class="params">(<span class="number">_</span> a: Int32,<span class="number">_</span> b: Int32)</span></span> -&gt; <span class="type">Int32</span></span><br><span class="line"><span class="built_in">print</span>(sum(<span class="number">32</span>, <span class="number">34</span>)) <span class="comment">//132</span></span><br><span class="line"><span class="built_in">print</span>(oc_sum(<span class="number">32</span>, <span class="number">34</span>))<span class="comment">//66</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="OC调用Swift代码"><a href="#OC调用Swift代码" class="headerlink" title="OC调用Swift代码"></a>OC调用Swift代码</h2><p>Xcode已经默认生成一个用于OC调用Swift的头文件，文件名格式是：{targetName}-Swift.h</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-145511@2x.png" class="" title="This is an example image">
+
+<p>Swift暴露给OC需要有几个需要注意的点</p>
+<ul>
+<li>如果Swift暴露给OC的类需要最终继承自<code>NSObject</code></li>
+<li>使用<code>@objc</code>修饰需要暴露给OC的成员</li>
+<li>使用<code>@objcMembers</code>修饰类，代表默认所有成员都会暴露给OC(包括扩展中定义的成员)。不过最终是否暴露成功，还需要考虑成员自身的访问级别</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="meta">@objc</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> price: <span class="type">Double</span></span><br><span class="line">    <span class="keyword">var</span> band: <span class="type">String</span></span><br><span class="line">    <span class="keyword">init</span>(price: <span class="type">Double</span>, band: <span class="type">String</span>)&#123;</span><br><span class="line">        <span class="keyword">self</span>.price = price</span><br><span class="line">        <span class="keyword">self</span>.band = band</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(price,band,<span class="string">&quot;run&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Car run&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(price,band,<span class="string">&quot;test&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Xcode会根据Swift代码生成对应的OC声明，写入{targetName}-Swift.h文件</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-153944@2x.png" class="" title="This is an example image">
+
+<p>在OC中调用，需要先引入{targetName}-Swift.h文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#import &quot;iOS从OC迁移到Swift-Swift.h&quot;</span><br><span class="line">Car *car &#x3D; [[Car alloc] initWithPrice:20.2 band:@&quot;banz&quot;];</span><br><span class="line">car.band &#x3D; @&quot;Bently&quot;;</span><br><span class="line">car.price &#x3D; 108.5;</span><br><span class="line">[car run];</span><br><span class="line">[car test];</span><br><span class="line">[Car run];</span><br></pre></td></tr></table></figure>
+
+<p>可以通过<code>@objc</code>重命名Swift暴露给OC的符号名(类名、属性名、函数名等)</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-155652@2x.png" class="" title="This is an example image">
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SwiftCar</span> *car = [[<span class="type">SwiftCar</span> alloc] initWithPrice:<span class="number">20.2</span> band:@<span class="string">&quot;banz&quot;</span>];</span><br><span class="line">car.name = @<span class="string">&quot;Bently&quot;</span>;</span><br><span class="line">car.price = <span class="number">108.5</span>;</span><br><span class="line">[car drive];</span><br><span class="line">[car exec];</span><br><span class="line">[<span class="type">SwiftCar</span> run];</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/13/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%AD%97%E9%9D%A2%E9%87%8F/" rel="prev" title="Swift5学习笔记之字面量">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之字面量
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/03/Realm%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Realm学习笔记">
+      Realm学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">标记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E7%BC%96%E8%AF%91"><span class="nav-number">2.</span> <span class="nav-text">条件编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%8D%B0"><span class="nav-number">3.</span> <span class="nav-text">打印</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC%E6%A3%80%E6%B5%8B"><span class="nav-number">4.</span> <span class="nav-text">系统版本检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API%E5%8F%AF%E7%94%A8%E6%80%A7%E8%AF%B4%E6%98%8E"><span class="nav-number">5.</span> <span class="nav-text">API可用性说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%85%A5%E5%8F%A3"><span class="nav-number">6.</span> <span class="nav-text">iOS程序的入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swift%E8%B0%83%E7%94%A8OC"><span class="nav-number">7.</span> <span class="nav-text">Swift调用OC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OC%E8%B0%83%E7%94%A8Swift%E4%BB%A3%E7%A0%81"><span class="nav-number">8.</span> <span class="nav-text">OC调用Swift代码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

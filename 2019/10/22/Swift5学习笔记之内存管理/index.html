@@ -327,6 +327,9 @@
 <h3 id="获取指向堆空间实例的指针"><a href="#获取指向堆空间实例的指针" class="headerlink" title="获取指向堆空间实例的指针"></a>获取指向堆空间实例的指针</h3><p>在上一节中，使用<code>withUnsafePointer</code>函数**获取了引用类型变量本身的指针，并不是引用类型在堆空间的地址值。若要获取引用类型变型中保存的指向堆空间的地址值则需要通过<code>UnsafeRawPointer(bitPattern: )</code>**。</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person4</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person4</span>()</span><br><span class="line"><span class="keyword">var</span> pptr = <span class="built_in">withUnsafePointer</span>(to: &amp;p) &#123; <span class="type">UnsafeRawPointer</span>($<span class="number">0</span>) &#125;</span><br><span class="line"><span class="comment">//pptr 是 变量p的地址值</span></span><br><span class="line"><span class="built_in">print</span>(pptr) <span class="comment">//0x0000000100010b60</span></span><br><span class="line"><span class="built_in">print</span>(pptr.load(<span class="keyword">as</span>: <span class="type">Person4</span>.<span class="keyword">self</span>)) <span class="comment">//Person4</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> heapPtr = <span class="type">UnsafeRawPointer</span>(bitPattern: pptr.load(<span class="keyword">as</span>: <span class="type">UInt</span>.<span class="keyword">self</span>))</span><br><span class="line"><span class="built_in">print</span>(heapPtr!) <span class="comment">//0x0000000102155a80 堆空间地址值</span></span><br><span class="line"><span class="built_in">print</span>(heapPtr?.load(<span class="keyword">as</span>: <span class="type">Person4</span>.<span class="keyword">self</span>) <span class="keyword">as</span> <span class="type">Any</span>) <span class="comment">//Optional(Person4)</span></span><br></pre></td></tr></table></figure>
 
+<p>也可以使用<code>unsafeBitCast</code>函数</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> p4ptr = <span class="built_in">unsafeBitCast</span>(p, to: <span class="type">UnsafeRawPointer</span>.<span class="keyword">self</span>)</span><br><span class="line"><span class="built_in">print</span>(p4ptr) <span class="comment">//0x0000000102155a80</span></span><br></pre></td></tr></table></figure>
+
 <h3 id="创建指针"><a href="#创建指针" class="headerlink" title="创建指针"></a>创建指针</h3><p>上面讲的是已有一个在堆空间的变量，获取指向这个变量的指针。那么是否能直接向堆空间申请一段内存呢。答案是肯定的，<code>Swfit</code>同样也支持这样的操作，并且在<code>HandyJson</code>这个库中大量的使用了指针的代码。</p>
 <h4 id="第一种方式"><a href="#第一种方式" class="headerlink" title="第一种方式"></a>第一种方式</h4><p>引入<code>Foundtion</code>框架，使用<code>malloc</code>函数。</p>
 <figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建，</span></span><br><span class="line"><span class="comment">//向堆空间申请16个字节的内存，</span></span><br><span class="line"><span class="comment">//返回 UnsafeMutableRawPointer? 类型的变量（可读写）</span></span><br><span class="line"><span class="keyword">var</span> myPtr = malloc(<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//存</span></span><br><span class="line"><span class="comment">//默认从第一个字节开始存储，以Int型（8个字节），存入数据 11</span></span><br><span class="line">myPtr?.storeBytes(of: <span class="number">11</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"><span class="comment">//但是 myPtr 有16个自己，前面占用了8个，</span></span><br><span class="line"><span class="comment">//如果想操作后面的内存可以使用偏移量</span></span><br><span class="line"><span class="comment">//偏移8个字节，再以Int型（8个字节）存入数据22</span></span><br><span class="line">myPtr?.storeBytes(of: <span class="number">22</span>, toByteOffset: <span class="number">8</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//取</span></span><br><span class="line"><span class="comment">//以Int型（读取前8个字节）,获取指针中的数据,默认从第一个字节开始读取</span></span><br><span class="line"><span class="built_in">print</span>((myPtr?.load(<span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>))!) <span class="comment">//11</span></span><br><span class="line"><span class="comment">//如果想从具体的某个字节数开始读，开始通过设置偏移量来完成</span></span><br><span class="line"><span class="comment">//偏移8个字节,再以Int(读取8个字节)型读取数据</span></span><br><span class="line"><span class="built_in">print</span>((myPtr?.load(fromByteOffset: <span class="number">8</span>, <span class="keyword">as</span>: <span class="type">Int</span>.<span class="keyword">self</span>))!) <span class="comment">//22</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//最后不要忘记销毁指针</span></span><br><span class="line">free(myPtr)</span><br></pre></td></tr></table></figure>
@@ -407,8 +410,8 @@
       <i class="fa fa-chevron-left"></i> Swift5学习笔记之访问控制
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/08/03/Realm%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Realm学习笔记">
-      Realm学习笔记 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/11/13/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/" rel="next" title="Swift5学习笔记之模式匹配">
+      Swift5学习笔记之模式匹配 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -482,20 +485,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
