@@ -159,6 +159,151 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%B3%9B%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%B3%9B%E5%9E%8B/" class="post-title-link" itemprop="url">Swift5学习笔记之泛型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-09 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-09T11:15:53+08:00">2019-09-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="在函数中使用泛型"><a href="#在函数中使用泛型" class="headerlink" title="在函数中使用泛型"></a>在函数中使用泛型</h2><ul>
+<li><p>泛型可以将类型参数化，提高代码复用率，减少代码量。在函数中使用泛型，可以在函数名上加上<code>&lt;T,...&gt;</code>。当然这里的<code>T</code>可以自定义。参数的类型使用<code>T</code>代替。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapValues</span>&lt;T&gt;<span class="params">(<span class="number">_</span> a: <span class="keyword">inout</span> T,<span class="number">_</span> b: <span class="keyword">inout</span> T)</span></span> &#123;</span><br><span class="line">    (a,b) = (b,a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> n1 = <span class="number">5</span></span><br><span class="line"><span class="keyword">var</span> n2 = <span class="number">6</span></span><br><span class="line">swapValues(&amp;n1, &amp;n2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;n1:\(n1),n2:\(n2)&quot;</span>) <span class="comment">//n1:6,n2:5</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> s1 = <span class="string">&quot;abc&quot;</span></span><br><span class="line"><span class="keyword">var</span> s2 = <span class="string">&quot;test&quot;</span></span><br><span class="line">swapValues(&amp;s1, &amp;s2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;s1:\(s1),s2:\(s2)&quot;</span>) <span class="comment">//s1:test,s2:abc</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数使用泛型时，也可以指定多种类型，例如：<code>test&lt;T1,T2&gt;</code>。并且将函数赋值给另外一个参数时，需要指定类型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mutilType</span>&lt;T1,T2&gt;<span class="params">(<span class="number">_</span> t1: T1, <span class="number">_</span> t2: T2)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> fn: (<span class="type">Int</span>, <span class="type">Double</span>) -&gt; <span class="type">Int</span> = mutilType</span><br><span class="line">fn(<span class="number">10</span>,<span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="在类、结构体或枚举中使用泛型"><a href="#在类、结构体或枚举中使用泛型" class="headerlink" title="在类、结构体或枚举中使用泛型"></a>在类、结构体或枚举中使用泛型</h2><ul>
+<li><p>在类、结构体或枚举中使用泛型，需要在类名，结构体或枚举名后加泛型例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化时需要指定类型</span></span><br><span class="line"><span class="keyword">var</span> intStack = <span class="type">Stack</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line"><span class="keyword">var</span> anyStack = <span class="type">Stack</span>&lt;<span class="type">Any</span>&gt;()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Score</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> point(<span class="type">T</span>)</span><br><span class="line">    <span class="keyword">case</span> grade(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在继承时，也要使用泛型：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubStack</span>&lt;<span class="title">E</span>&gt;: <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于要不要指定泛型的类型，一个基本原则就是<strong>如果编译器推断出泛型的类型就不用显式的写出，否则就要指定。</strong></p>
+<p>譬如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对于如下代码，初始化时编译器无法推断出T的类型，就需要显式指明 </span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> stack = <span class="type">Stack</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line"><span class="keyword">var</span> anyStack = <span class="type">Stack</span>&lt;<span class="type">Any</span>&gt;()</span><br><span class="line"></span><br><span class="line"><span class="comment">//如果在某些方法中可以使编译器推断出类型,比如有构造器中使用T，编译器就可以匹配出T的具体类型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> elements = [<span class="type">E</span>]()</span><br><span class="line">      <span class="keyword">init</span>(firstElement: <span class="type">E</span>) &#123;</span><br><span class="line">            elements.append(firstElement)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span>&#123; elements.append(element) &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> stack = <span class="type">Stack</span>(firstElements: <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Score</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> point(<span class="type">T</span>)</span><br><span class="line">    <span class="keyword">case</span> grade(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//对于枚举来说，也是同样的原则</span></span><br><span class="line"><span class="keyword">let</span> score0 = <span class="type">Score</span>&lt;<span class="type">Int</span>&gt;.point(<span class="number">100</span>)</span><br><span class="line"><span class="keyword">let</span> score1 = <span class="type">Score</span>.point(<span class="number">100</span>)</span><br><span class="line"><span class="keyword">let</span> score2 = <span class="type">Score</span>.point(<span class="number">99.5</span>)</span><br><span class="line"><span class="comment">//报错无法匹配出泛型的类型，应该使用 Score&lt;Int&gt;.grade(&quot;11&quot;)</span></span><br><span class="line"><span class="keyword">let</span> score3 = <span class="type">Score</span>.grade(<span class="string">&quot;11&quot;</span>)</span><br><span class="line"><span class="keyword">let</span> score4 = <span class="type">Score</span>&lt;<span class="type">Int</span>&gt;.grade(<span class="string">&quot;abc&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="协议中使用泛型"><a href="#协议中使用泛型" class="headerlink" title="协议中使用泛型"></a>协议中使用泛型</h2><p>在协议中使用泛型可以使用关联类型( Associated Type )</p>
+<p>关联类型的作用：给协议中用的类型定义一个占位符。协议中可以拥有多个关联类型。在遵循此协议的类型中使用<code>typealias</code>指定类型。<strong>如果编译器通过类型内的方法中推断出泛型的类型，<code>typealias</code>可以省略。</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Stackable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Element</span> <span class="comment">// 关联类型</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: Element)</span></span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">Element</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">Element</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StringStack</span>: <span class="title">Stackable</span> </span>&#123;</span><br><span class="line">        <span class="comment">//编译器可以通过其他方法中推断出Element的类型，typealias可以省略</span></span><br><span class="line">      <span class="comment">//typealias Element = String</span></span><br><span class="line">      <span class="keyword">var</span> elements = [<span class="type">String</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: String)</span></span> &#123; elements.append(element) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123; elements.removeLast() &#125;</span><br><span class="line">       <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">String</span> &#123; elements.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elements.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//遵循协议的类型中也可以继续使用泛型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span>&lt;<span class="title">E</span>&gt;: <span class="title">Stackable</span> </span>&#123;</span><br><span class="line">     <span class="comment">//可以省略</span></span><br><span class="line">        <span class="comment">//typealias Element = E</span></span><br><span class="line">        <span class="keyword">var</span> elementes = [<span class="type">E</span>]()</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">push</span><span class="params">(<span class="number">_</span> element: E)</span></span> &#123; elementes.append(element) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elementes.removeLast() &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">top</span><span class="params">()</span></span> -&gt; <span class="type">E</span> &#123; elementes.last! &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">size</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; elementes.<span class="built_in">count</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="类型约束"><a href="#类型约束" class="headerlink" title="类型约束"></a>类型约束</h2><ul>
+<li><p>可以对泛型的类型进行约束，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runnable</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"><span class="comment">//T的类型必须是 遵循Runable协议，Person类型或Person子类的类型</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">swapValues</span>&lt;T: Person &amp; Runnable&gt;<span class="params">(<span class="number">_</span> a: <span class="keyword">inout</span> T,<span class="number">_</span> b: <span class="keyword">inout</span> T)</span></span> &#123;</span><br><span class="line">        (a,b) = (b,a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在协议中使用泛型的场景中，使用类型约束</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Arrayable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Element</span>: <span class="type">Equatable</span> <span class="comment">//关联类型Element遵守Equatable协议</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Array</span>&lt;<span class="title">E</span>: <span class="title">Equatable</span>&gt; : <span class="title">Arrayable</span> </span>&#123;</span><br><span class="line">      <span class="comment">//遵循Arrayable协议，并指定泛型E为关联类型。</span></span><br><span class="line">      <span class="comment">//为了避免出错泛型E也要和关联类型有相同的类型约束 ( &lt;E: Equatable&gt;)</span></span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Element</span> = <span class="type">E</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>where</code>增加类型约束。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//指定了两个泛型，S1(遵循协议Arrayable)、S2(遵循协议Arrayable),</span></span><br><span class="line"><span class="comment">// where指定了类型约束的条件</span></span><br><span class="line"><span class="comment">// S1的关联类型 等于 S2的关联类型，并且 S1的关联类型遵循协议Hashable</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">equal</span>&lt;S1: Arrayable,S2: Arrayable&gt;<span class="params">(<span class="number">_</span> s1: S1, <span class="number">_</span> s2:S2)</span></span> -&gt; <span class="type">Bool</span></span><br><span class="line">        <span class="keyword">where</span> <span class="type">S1</span>.<span class="type">Element</span> == <span class="type">S2</span>.<span class="type">Element</span>, <span class="type">S1</span>.<span class="type">Element</span>: <span class="type">Hashable</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> stack1 = <span class="type">Array</span>&lt;<span class="type">Int</span>&gt;()</span><br><span class="line"><span class="keyword">var</span> stack2 = <span class="type">Array</span>&lt;<span class="type">String</span>&gt;()</span><br><span class="line"><span class="built_in">equal</span>(stack1,stack2) <span class="comment">//报错，function &#x27;equal&#x27; requires the types &#x27;Array&lt;Int&gt;.Element&#x27; (aka &#x27;Int&#x27;) and &#x27;Array&lt;String&gt;.Element&#x27; (aka &#x27;String&#x27;) be equivalent</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="不透明类型"><a href="#不透明类型" class="headerlink" title="不透明类型"></a>不透明类型</h2><p>对于某个函数要求返回遵守某个协议的类型，如果协议中不含有泛型或<code>Self</code>，函数是可以返回不同类类型的值。例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runable</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">Runnable</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">Runnable</span> </span>&#123; &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span><span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; <span class="type">Runnable</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> type == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Person</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Car</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是如果协议中使用泛型或<code>Self</code>，这是编译不通过的。因为在实现该协议的类型中，最终确定的泛型的类型可能是不一样的，所以就因此造成崩溃。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Speed</span></span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Speed</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">      <span class="keyword">var</span> speed: <span class="type">Double</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span><span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; <span class="type">Runable</span> &#123; <span class="comment">//Protocol &#x27;Runable&#x27; can only be used as a generic constraint because it has Self or associated type requirements</span></span><br><span class="line">        <span class="keyword">if</span> type == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Person</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Car</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解决方案有两个：方案1：使用泛型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span>&lt;T: Runable&gt;<span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; <span class="type">T</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> type == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Person</span>() <span class="keyword">as</span>! <span class="type">T</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Car</span>() <span class="keyword">as</span>! <span class="type">T</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> r1: <span class="type">Person</span> = <span class="keyword">get</span>(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">var</span> r2: <span class="type">Car</span> = <span class="keyword">get</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>方案2：使用<code>some</code>关键字来声明一个不透明类型。<code>some</code>关键字限制了只能返回一个参数类型。<code>some</code>关键字的一个作用就是隐藏返回值的真实类型。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Speed</span></span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Speed</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> speed: <span class="type">Double</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">Runable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> speed: <span class="type">Int</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">get</span><span class="params">(<span class="number">_</span> type: Int)</span></span> -&gt; some <span class="type">Runable</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Car</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>some</code>除了用在返回值类型上，一般还可以用在属性类型上</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">RunProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">associatedtype</span> <span class="type">Speed</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> :<span class="title">RunProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Speed</span> = <span class="type">Double</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonSignle</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> pet: some <span class="type">RunProtocol</span> &#123;</span><br><span class="line">        <span class="type">Dog</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="可选项的本质"><a href="#可选项的本质" class="headerlink" title="可选项的本质"></a>可选项的本质</h2><p>可选项的本质就是<code>enmu</code>类型（使用泛型）。</p>
+<p><code>Swift</code>中对于可选项的实现：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">Optional</span>&lt;<span class="title">Wrapped</span>&gt; : <span class="title">ExpressibleByNilLiteral</span> </span>&#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">none</span></span><br><span class="line">    <span class="keyword">case</span> some(<span class="type">Wrapped</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">init</span>(<span class="number">_</span> some: <span class="type">Wrapped</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从源码中可以看出：可选项的枚举有两个<code>case</code>。其中<code>none</code>就是<code>nil</code>。而另外一个case：<code>some</code>是一个<code>Wrapperd</code>类型的关联值。例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age: <span class="type">Int?</span> = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> age0: <span class="type">Optional</span>&lt;<span class="type">Int</span>&gt; = <span class="type">Optional</span>&lt;<span class="type">Int</span>&gt;.some(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> age1: <span class="type">Optional</span> = .some(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> age2 = <span class="type">Optional</span>.some(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> age3 = <span class="type">Optional</span>(<span class="number">10</span>)</span><br><span class="line">age = <span class="literal">nil</span></span><br><span class="line">age3 = .<span class="keyword">none</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> age4: <span class="type">Int?</span> = <span class="literal">nil</span></span><br><span class="line"><span class="keyword">var</span> age5 = <span class="type">Optional</span>&lt;<span class="type">Int</span>&gt;.<span class="keyword">none</span> <span class="comment">//这里必须要指明类型，否则编译器推断不出</span></span><br><span class="line"><span class="keyword">var</span> age6: <span class="type">Optional</span>&lt;<span class="type">Int</span>&gt; = .<span class="keyword">none</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> age7: <span class="type">Int?</span> = .<span class="keyword">none</span></span><br><span class="line">age7 = <span class="number">10</span></span><br><span class="line">age7 = .some(<span class="number">20</span>)</span><br><span class="line">age7 = <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+
+<p>因为可选项本质上就是枚举，也可以使用<code>switch</code>遍历操作：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age: <span class="type">Int?</span> = <span class="number">10</span></span><br><span class="line"><span class="keyword">switch</span> age &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> v?: <span class="comment">//注意这里要加&quot;?&quot;,否则就变成无条件可选项绑定了</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;some:\(v)&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> <span class="literal">nil</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;none&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> age &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">let</span> .some(v):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;some:\(v)&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> <span class="literal">nil</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;nil&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>对于上述代码中：<code>case let v?:</code>,这里的<code>?</code>必不可少。因为<code>case let v：</code>就变成无条件绑定了，无论<code>age</code>的值是啥都会赋值给<code>v</code>。</strong></p>
+<p>绑定通常会附加条件，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//修改前</span></span><br><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="keyword">switch</span> age &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="keyword">let</span> a:</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line"><span class="keyword">default</span>: <span class="comment">//编译器提示：Default will never be executed</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;default&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//修改后</span></span><br><span class="line"><span class="keyword">var</span> age = <span class="number">10</span></span><br><span class="line"><span class="keyword">switch</span> age &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="keyword">let</span> a <span class="keyword">where</span> a &gt; <span class="number">20</span>:</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;default&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于多个可选项包装(<code>??</code>)的情况，则是<code>Optional</code>多层包装。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> age_: <span class="type">Int?</span> = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> age: <span class="type">Int?</span>? = age_</span><br><span class="line">age = <span class="literal">nil</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> age0 = <span class="type">Optional</span>.some(<span class="type">Optional</span>.some(<span class="number">10</span>))</span><br><span class="line">age0 = .<span class="keyword">none</span></span><br><span class="line"><span class="keyword">var</span> age1: <span class="type">Optional</span>&lt;<span class="type">Optional</span>&gt; = .some(.some(<span class="number">10</span>))</span><br><span class="line">age1 = .<span class="keyword">none</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> age2: <span class="type">Int?</span>? = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> age3: <span class="type">Optional</span>&lt;<span class="type">Optional</span>&gt; = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/08/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1629,7 +1774,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/04/Hexo%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/16/%E4%BB%8E%E4%B8%80%E9%81%93%E9%9D%A2%E8%AF%95%E7%9C%8BOC%E5%AF%B9%E8%B1%A1%E6%9C%AC%E8%B4%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1643,7 +1788,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/08/04/Hexo%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">Hexo使用说明</a>
+            <a href="/2017/01/16/%E4%BB%8E%E4%B8%80%E9%81%93%E9%9D%A2%E8%AF%95%E7%9C%8BOC%E5%AF%B9%E8%B1%A1%E6%9C%AC%E8%B4%A8/" class="post-title-link" itemprop="url">从一道面试看OC对象本质</a>
         </h2>
 
         <div class="post-meta">
@@ -1653,7 +1798,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-08-04 10:09:32" itemprop="dateCreated datePublished" datetime="2016-08-04T10:09:32+08:00">2016-08-04</time>
+              <time title="创建时间：2017-01-16 16:38:10" itemprop="dateCreated datePublished" datetime="2017-01-16T16:38:10+08:00">2017-01-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1661,7 +1806,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%BB%98%E8%AE%A4%E5%88%86%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">默认分类</span></a>
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
                 </span>
             </span>
 
@@ -1676,81 +1825,109 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="项目的使用"><a href="#项目的使用" class="headerlink" title="项目的使用"></a>项目的使用</h2><ol>
-<li><p>在当前文件夹中，初始化<code>Hexo</code>项目</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在<code>Hexo</code>项目中编译生成静态页面</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash"> 编译好的静态资源会在项目中 Public 文件夹中</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>启动本地服务预览博客</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo s </span><br><span class="line"><span class="meta">#</span><span class="bash"> hexo server</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>部署</p>
-<p>用文本编辑器打开_config.yml,打开后往下滑到最后，修改<code>deploy</code>配置</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span> </span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span> </span><br><span class="line">    <span class="attr">repository:</span> <span class="string">https://github.com/xxx/xxx.git</span> </span><br><span class="line">    <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-<p>再执行配置命令：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hexo deploy <span class="comment">#或者：hexo d</span></span></span><br></pre></td></tr></table></figure>
-
-<p>无法连接git或找不到git，则执行如下命令来安装<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-deployer-git">hexo-deployer-git</a>：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> npm install hexo-deployer-git --save</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="博客配置"><a href="#博客配置" class="headerlink" title="博客配置"></a>博客配置</h2><h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p><code>Hexo</code>有默认的主题，在<code>init</code>文件夹中的<code>themes</code>(存放主题文件)</p>
-<p>以<code>nexT</code>注意为例：</p>
-<ol>
-<li><p>下载主题</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> https://github.com/iissnan/hexo-theme-next themes/next</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>解压所下载的压缩包至站点的 themes 目录下， 并将解压后的文件夹名称更改为 next </p>
-</li>
-<li><p>打开站点配置文件 _config.yml，找到 theme 字段，并将其值更改为 next。</p>
-<p> NexT 默认的 Scheme是<code>Muse</code>,通过修改主题配置文件 _config.yml的 Schemes 字段的值可以更改</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><ol>
-<li><p>创建一篇新文章或者新的页面的命令</p>
+          <p>先上一道面试题：</p>
 <blockquote>
-<p>您可以在命令中指定文章的布局（layout），默认为 <code>post</code>，可以通过修改 <code>_config.yml</code> 中的 <code>default_layout</code> 参数来指定默认布局。</p>
+<p>一个NSObject对象占用多少内存？</p>
 </blockquote>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hexo new [layout] &lt;title&gt;</span></span><br></pre></td></tr></table></figure>
+<p>想要弄清这个问题，那么我们如果知道了一个NSObject对象在内存中是如何布局的，就知道了这个对象占用了多少内存。</p>
+<p>想必小伙伴们都知道，OC作为C语言的超集，它的面向对象的能力是以<code>C/C++</code>来实现的。Xcode也是支持将OC转成C++代码的：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc OC源文件 -o 输出的CPP文件</span><br></pre></td></tr></table></figure>
 
-<p>在新建文章时，Hexo 会根据 <code>scaffolds</code> 文件夹内相对应的文件来建立文件，例如：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hexo new photo <span class="string">&quot;My Gallery&quot;</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="OC对象的底层实现"><a href="#OC对象的底层实现" class="headerlink" title="OC对象的底层实现"></a>OC对象的底层实现</h2><p>了解了如何将OC代码重写为C++代码，我们首先看一下在<code>NSObject.h</code>中是如何定义<code>NSObjcet</code>的呢？</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// NSObject.h</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NSObject</span> &lt;<span class="title">NSObject</span>&gt; </span>&#123;</span><br><span class="line">    Class isa;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>在执行这行指令时，Hexo 会尝试在 <code>scaffolds</code> 文件夹中寻找 <code>photo.md</code>，并根据其内容建立文章</p>
-</li>
-<li><p>在文章中可以使用的文章配置</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line"><span class="meta">#</span><span class="bash"> 名称</span></span><br><span class="line">title: &#123;&#123; title &#125;&#125;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章日期</span></span><br><span class="line">date: &#123;&#123; date &#125;&#125;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 是否在页面推荐文章列表展示</span></span><br><span class="line">top: false</span><br><span class="line"><span class="meta">#</span><span class="bash"> 是否在首页轮播</span></span><br><span class="line">cover: false</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看文章的密码, sha256 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</span></span><br><span class="line">password: </span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章目录</span></span><br><span class="line">toc: true</span><br><span class="line"><span class="meta">#</span><span class="bash"> 统计文章</span></span><br><span class="line">mathjax: true</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章摘要</span></span><br><span class="line">summary:</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章标签</span></span><br><span class="line">tags:</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章分类</span></span><br><span class="line">categories:</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文档关联图片,可以配置 url,没配置的话,自动从主题配置文件的 featureImages 属性中自动选取一个</span></span><br><span class="line">img:</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用父子分类</p>
-<p>Hexo原生支持父子分类，只需要在 <code>Front-matter</code>中的分类标记后面写下多个分类就行了。写在后面的分类就在前面分类的子分类，例如：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">categories:</span><br><span class="line"><span class="bullet">-</span> iOS</span><br><span class="line"><span class="bullet">-</span> 数据持久化</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>关于文章中的图片资源</p>
-<ol>
-<li><p>可以使用图床</p>
-</li>
-<li><p>使用文章资源文件夹，通过配置<code>config.yml</code>中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">_config.yml</span><br><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+<p>从框架的头文件中可以看到，<code>NSObject</code>只有一个<code>isa</code>的成员变量。我们将如下代码重写为C++然后观察一下。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="built_in">NSObject</span> *obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流。</p>
-<p><strong>相对路径引用的标签插件</strong></p>
-<p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的标签插件被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+<p>细心的话可以发现的这样一段代码：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> &#123;</span></span><br><span class="line">    Class isa;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
+<p>从结构体的名称就可以看出，<code>NSObject</code>在底层被重写为一个结构体。只有一个成员变量<code>isa</code>。而<code>NSObjcet</code>作为OC中所有类的基类，我们可以得出一条结论：<strong>OC对象在底层是用结构体来实现的。</strong></p>
+<p>我们还可以追溯<code>Class</code>的定义:</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class *Class;</span><br></pre></td></tr></table></figure>
 
-</li>
-</ol>
-</li>
-</ol>
+<p>所以<code>Class</code>类型，是一个指向<code>objc_class</code>结构体的指针。同时我们知道，一个指针在64位系统上占用8个字节，32位系统上占用4个字节。所以我们可以推断出，<strong>只有一个成员变量的结构体<code>NSObject_IMPL</code>所占的内存大小就是<code>isa</code>所占的内存空间空间大小。</strong>即64位环境下：一个NSObject对象占8个字节。</p>
+<p>但实际上不是，实际上是16个字节。</p>
+<h2 id="通过API来获取对象大小"><a href="#通过API来获取对象大小" class="headerlink" title="通过API来获取对象大小"></a>通过API来获取对象大小</h2><p>先介绍两个用来获取对象大小的函数</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 通过类型来获取该类型实例对象所占的内存大小</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></span><br><span class="line">size_t class_getInstanceSize(Class _Nullable cls);</span><br></pre></td></tr></table></figure>
 
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 通过一个指针来获取该指针指向内存的大小</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;malloc/malloc.h&gt;</span></span></span><br><span class="line">size_t malloc_size(<span class="keyword">const</span> <span class="keyword">void</span> *ptr);</span><br></pre></td></tr></table></figure>
+
+<p>我们通过这两个函数来获取一下<code>NSObject</code>的实例对象所占内存的大小：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="built_in">NSObject</span> *obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">    </span><br><span class="line">        <span class="comment">// &gt;&gt;8</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>, class_getInstanceSize([<span class="built_in">NSObject</span> <span class="keyword">class</span>]));</span><br><span class="line">        <span class="comment">// &gt;&gt;16</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>, malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)obj));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么系统到底为这个<code>obj</code>对象分配了多少内存呢？我们从<code>NSObject</code>的<code>alloc</code>着手分析一下。</p>
+<p>在源码中，我们可以看到<code>alloc</code>的实现：调用了<code>_obj_rootAllic()</code>，</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//NSObject.mm</span></span><br><span class="line">+ (<span class="keyword">id</span>)alloc &#123;</span><br><span class="line">    <span class="keyword">return</span> _objc_rootAlloc(<span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续搜索<code>_obj_rootAllic()</code>，其实现为：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//NSObject.mm</span></span><br><span class="line"><span class="keyword">id</span> _objc_rootAlloc(Class cls) &#123;</span><br><span class="line">    <span class="keyword">return</span> callAlloc(cls, <span class="literal">false</span><span class="comment">/*checkNil*/</span>, <span class="literal">true</span><span class="comment">/*allocWithZone*/</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续搜索<code>callAlloc</code>函数，其实现为：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//NSObject.mm</span></span><br><span class="line"><span class="keyword">static</span> ALWAYS_INLINE <span class="keyword">id</span></span><br><span class="line">callAlloc(Class cls, <span class="keyword">bool</span> checkNil, <span class="keyword">bool</span> allocWithZone=<span class="literal">false</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __OBJC2__</span></span><br><span class="line">    <span class="keyword">if</span> (slowpath(checkNil &amp;&amp; !cls)) <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    <span class="keyword">if</span> (fastpath(!cls-&gt;ISA()-&gt;hasCustomAWZ())) &#123;</span><br><span class="line">        <span class="keyword">return</span> _objc_rootAllocWithZone(cls, <span class="literal">nil</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// No shortcuts available.</span></span><br><span class="line">    <span class="keyword">if</span> (allocWithZone) &#123;</span><br><span class="line">        <span class="keyword">return</span> ((<span class="keyword">id</span>(*)(<span class="keyword">id</span>, SEL, <span class="keyword">struct</span> _NSZone *))objc_msgSend)(cls, <span class="keyword">@selector</span>(allocWithZone:), <span class="literal">nil</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ((<span class="keyword">id</span>(*)(<span class="keyword">id</span>, SEL))objc_msgSend)(cls, <span class="keyword">@selector</span>(alloc));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>搜索<code>_objc_rootAllocWithZone</code>的实现：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//NSObject.mm</span></span><br><span class="line"><span class="keyword">id</span> _objc_rootAllocWithZone(Class cls, malloc_zone_t *zone __unused)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// allocWithZone under __OBJC2__ ignores the zone parameter</span></span><br><span class="line">    <span class="keyword">return</span> _class_createInstanceFromZone(cls, <span class="number">0</span>, <span class="literal">nil</span>,</span><br><span class="line">                                         OBJECT_CONSTRUCT_CALL_BADALLOC);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>搜索<code>_class_creatInstanceFromZone</code>的实现：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> _class_createInstancesFromZone(Class cls, size_t extraBytes, <span class="keyword">void</span> *zone, </span><br><span class="line">                               <span class="keyword">id</span> *results, <span class="keyword">unsigned</span> num_requested)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> num_allocated;</span><br><span class="line">    <span class="keyword">if</span> (!cls) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    size_t size = cls-&gt;instanceSize(extraBytes);</span><br><span class="line"></span><br><span class="line">    num_allocated = </span><br><span class="line">        malloc_zone_batch_malloc((malloc_zone_t *)(zone ? zone : malloc_default_zone()), </span><br><span class="line">                                 size, (<span class="keyword">void</span>**)results, num_requested);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> i = <span class="number">0</span>; i &lt; num_allocated; i++) &#123;</span><br><span class="line">        bzero(results[i], size);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Construct each object, and delete any that fail construction.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> shift = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">bool</span> ctor = cls-&gt;hasCxxCtor();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> i = <span class="number">0</span>; i &lt; num_allocated; i++) &#123;</span><br><span class="line">        <span class="keyword">id</span> obj = results[i];</span><br><span class="line">        obj-&gt;initIsa(cls);    <span class="comment">// fixme allow nonpointer</span></span><br><span class="line">        <span class="keyword">if</span> (ctor) &#123;</span><br><span class="line">            obj = object_cxxConstructFromClass(obj, cls,</span><br><span class="line">                                               OBJECT_CONSTRUCT_FREE_ONFAILURE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (obj) &#123;</span><br><span class="line">            results[i-shift] = obj;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            shift++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> num_allocated - shift;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从这里我们可以看到，到<code>_class_creatInstanceFromZone</code>中:</p>
+<p><code>size_t size = cls-&gt;instanceSize(extraBytes);</code>，而<code>instanceSize</code>中：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">size_t instanceSize(size_t extraBytes) <span class="keyword">const</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (fastpath(cache.hasFastInstanceSize(extraBytes))) &#123;</span><br><span class="line">            <span class="keyword">return</span> cache.fastInstanceSize(extraBytes);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        size_t size = alignedInstanceSize() + extraBytes;</span><br><span class="line">        <span class="comment">// CF requires all objects be at least 16 bytes.</span></span><br><span class="line">        <span class="keyword">if</span> (size &lt; <span class="number">16</span>) size = <span class="number">16</span>;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 如果size最小为16，所以<code>NSObject</code>的实例对象占用16个字节是源代码中影响规定的，而实际上，一个<code>NSObject</code>只用了8个字节(64位)。</p>
+<p>整体的调用流程为：</p>
+<img src="/2017/01/16/%E4%BB%8E%E4%B8%80%E9%81%93%E9%9D%A2%E8%AF%95%E7%9C%8BOC%E5%AF%B9%E8%B1%A1%E6%9C%AC%E8%B4%A8/alloc%E7%9A%84%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B.jpg" class="" title="This is an example image">
+
+<h2 id="API结果的含义"><a href="#API结果的含义" class="headerlink" title="API结果的含义"></a>API结果的含义</h2><p>根据我们前面一系列的探索，我们最终得知，一个<code>NSObject</code>对象系统分配了16个字节。</p>
+<p>前面我们使用的两个函数，也应该知道了获取的真正含义：</p>
+<ul>
+<li><code>malloc_size()</code>：获取指针所指向内存的大小</li>
+<li><code>class_getInstanceSize()</code>:获取类型实例对象的成员变量所占用的大小(内存对齐后的)</li>
+</ul>
+<h2 id="NSObject的子类"><a href="#NSObject的子类" class="headerlink" title="NSObject的子类"></a>NSObject的子类</h2><p>通过前边我们了解了<code>NSObject</code>的底层实现，以及实例对象所占内存的大小。那么对于<code>NSObject</code>的子类情况又是如何呢?</p>
+<p>我们先自定义一个<code>Student</code>类</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Student</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_no = <span class="number">4</span>;</span><br><span class="line">stu-&gt;_age = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们将其重写为C++,可以看到<code>Student</code>在底层的实现为：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student_IMPL</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> <span class="title">NSObject_IVARS</span>;</span>    <span class="comment">//父类的结构体</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到底层的结构体，第一个成员为父类的结构体，其余依次为自身成员属性。</p>
+<p>在代码中显示声明结构体<code>Student_IMPL</code>，也可以将<code>Student</code>对象转换为<code>Student_IMPL</code>结构体：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_no = <span class="number">4</span>;</span><br><span class="line">stu-&gt;_age = <span class="number">5</span>;</span><br><span class="line">        </span><br><span class="line"><span class="keyword">struct</span> Student_IMPL *stu2 = (__bridge  <span class="keyword">struct</span> Student_IMPL *)stu;<span class="comment">//OC转C，需要使用__bridge</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%d,%d&quot;</span>,stu2-&gt;_no,stu2-&gt;_age);<span class="comment">//4,5</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>那么<code>Student</code>的实例对象占用多少内存呢？</strong></p>
+<p>我们打一个断点，来获取代码中<code>stu</code>的内存地址：<code>0x100713890</code>。通过Xcode Debug -&gt; Debug Workflow -&gt; View Memory来查看实时内存。我们大概的可以推断出<code>Student</code>也占16个字节。</p>
+<img src="/2017/01/16/%E4%BB%8E%E4%B8%80%E9%81%93%E9%9D%A2%E8%AF%95%E7%9C%8BOC%E5%AF%B9%E8%B1%A1%E6%9C%AC%E8%B4%A8/WX20201221-231232.png" class="" title="This is an example image">
+
+<p>从<code>Student</code>在底层转换实现的结构体可以看出，<code>Student_IMPL</code>结构体一共有三个成员变量，其中<code>NSObject_IVARS</code>分配了16个字节，但是只是用了8个字节，还有八个字节，正好可以存放两个<code>int</code>型变量。</p>
+<img src="/2017/01/16/%E4%BB%8E%E4%B8%80%E9%81%93%E9%9D%A2%E8%AF%95%E7%9C%8BOC%E5%AF%B9%E8%B1%A1%E6%9C%AC%E8%B4%A8/WX20201221-232722.png" class="" title="This is an example image">
+
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)stu));</span><br><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,class_getInstanceSize([Student <span class="keyword">class</span>]));</span><br></pre></td></tr></table></figure>
+
+<p>当然如果<code>Student</code>的再多一个<code>int</code>成员变量，原来的16个字节就存放不下了，系统分配的空间为32个字节，实例所占的内存空间而是24个字节不是20个字节。此时就涉及到了iOS系统的内存对齐规则。这个我们在文章最后讲。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">    <span class="keyword">int</span> _height;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Student</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_no = <span class="number">4</span>;</span><br><span class="line">stu-&gt;_age = <span class="number">5</span>;</span><br><span class="line">stu-&gt;_height = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &gt;&gt;32</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)stu));</span><br><span class="line"><span class="comment">// &gt;&gt;24</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,class_getInstanceSize([Student <span class="keyword">class</span>]));</span><br></pre></td></tr></table></figure>
+
+<h2 id="更为复杂的场景"><a href="#更为复杂的场景" class="headerlink" title="更为复杂的场景"></a>更为复杂的场景</h2><p>现在我们假设有这样的场景：</p>
+<p>现在有两个类: <code>Student</code>和<code>Person</code>。其中他们的继承关系为：<code>Student</code> -&gt; <code>Person</code> -&gt; <code>NSObject</code>。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">Person</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>那么Person实例对象，Student的实例对象分别占用多少内存呢？</strong>。答案都是16个字节。</p>
+<p>我们知道，<code>Person</code>和<code>Student</code>对象在底层都是这样实现的：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person_IMPL</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> <span class="title">NSObject_IVARS</span>;</span> <span class="comment">//8个字节</span></span><br><span class="line">    <span class="keyword">int</span> _age; <span class="comment">//4个字节</span></span><br><span class="line">&#125;; <span class="comment">//16个字节：结构体的大小必须是最大成员大小的倍数（内存对齐）。</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student_IMPL</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Person_IMPL</span> <span class="title">Person_IVARS</span>;</span><span class="comment">//16个字节，但是空余4个字节</span></span><br><span class="line">    <span class="keyword">int</span> _no; <span class="comment">//4个字节，因为前边正好有4个空余的字节，正好用来存放_no。</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们来证实一下：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">Person *p = [[Person alloc] init];</span><br><span class="line"><span class="comment">// &gt;&gt;16，这里从上面的分析来看应该返回12，但是这个函数是返回对齐后的内存大小。</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;Person:%zd&quot;</span>,class_getInstanceSize([Person <span class="keyword">class</span>]));</span><br><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;p:%zd&quot;</span>,malloc_size((__bridge  <span class="keyword">const</span> <span class="keyword">void</span> *)p));</span><br><span class="line">        </span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;Student:%zd&quot;</span>,class_getInstanceSize([Student <span class="keyword">class</span>]));</span><br><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;stu:%zd&quot;</span>,malloc_size((__bridge  <span class="keyword">const</span> <span class="keyword">void</span> *)stu));</span><br></pre></td></tr></table></figure>
+
+<h2 id="property-成员"><a href="#property-成员" class="headerlink" title="@property 成员"></a>@property 成员</h2><p>对于<code>@property</code>修饰的成员变量，编译器自动生成成员变量：<code>_</code> + 变量名；并且生成<code>setter</code>&amp;<code>getter</code>方法。</p>
+<p>OC实现：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="keyword">int</span> height;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>底层实现：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person_IMPL</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> <span class="title">NSObject_IVARS</span>;</span></span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">    <span class="keyword">int</span> _height;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> _I_Person_height(Person * self, SEL _cmd) &#123; </span><br><span class="line">  <span class="keyword">return</span> (*(<span class="keyword">int</span> *)((<span class="keyword">char</span> *)self + OBJC_IVAR_$_Person$_height)); </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> _I_Person_setHeight_(Person * self, SEL _cmd, <span class="keyword">int</span> height) &#123; </span><br><span class="line">  (*(<span class="keyword">int</span> *)((<span class="keyword">char</span> *)self + OBJC_IVAR_$_Person$_height)) = height; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h2>
       
     </div>
 
@@ -1768,7 +1945,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1834,20 +2011,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
