@@ -273,9 +273,14 @@
 <h2 id="API结果的含义"><a href="#API结果的含义" class="headerlink" title="API结果的含义"></a>API结果的含义</h2><p>根据我们前面一系列的探索，我们最终得知，一个<code>NSObject</code>对象系统分配了16个字节。</p>
 <p>前面我们使用的两个函数，也应该知道了获取的真正含义：</p>
 <ul>
-<li><code>malloc_size()</code>：获取指针所指向内存的大小</li>
-<li><code>class_getInstanceSize()</code>:获取类型实例对象的成员变量所占用的大小(内存对齐后的)</li>
+<li><code>malloc_size()</code>：创建一个实例对象，实际上分配了多少内存。</li>
+<li><code>class_getInstanceSize()</code>:创建一个实例对象，至少需要多少内存(结果等同于<code>sizeof()</code>运算符)</li>
 </ul>
+<blockquote>
+<p><code>sizeof()</code>的注意点：</p>
+<p><code>sizeof</code>是一个运算符，并不是一个函数。传入一个类型，返回该类型的所占用的内存。在编译的时候就编译为常数。</p>
+<p>假如传入一个指针连变量，则返回这个指针变量所占的内存大小。至于这个指针指向内存的大小，则需要<code>malloc_size()</code>。</p>
+</blockquote>
 <h2 id="NSObject的子类"><a href="#NSObject的子类" class="headerlink" title="NSObject的子类"></a>NSObject的子类</h2><p>通过前边我们了解了<code>NSObject</code>的底层实现，以及实例对象所占内存的大小。那么对于<code>NSObject</code>的子类情况又是如何呢?</p>
 <p>我们先自定义一个<code>Student</code>类</p>
 <figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Student</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_no = <span class="number">4</span>;</span><br><span class="line">stu-&gt;_age = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
@@ -296,9 +301,13 @@
 
 <figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)stu));</span><br><span class="line"><span class="comment">// &gt;&gt;16</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,class_getInstanceSize([Student <span class="keyword">class</span>]));</span><br></pre></td></tr></table></figure>
 
-<p>当然如果<code>Student</code>的再多一个<code>int</code>成员变量，原来的16个字节就存放不下了，系统分配的空间为32个字节，实例所占的内存空间而是24个字节不是20个字节。此时就涉及到了iOS系统的内存对齐规则。这个我们在文章最后讲。</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">    <span class="keyword">int</span> _height;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Student</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_no = <span class="number">4</span>;</span><br><span class="line">stu-&gt;_age = <span class="number">5</span>;</span><br><span class="line">stu-&gt;_height = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &gt;&gt;32</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)stu));</span><br><span class="line"><span class="comment">// &gt;&gt;24</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,class_getInstanceSize([Student <span class="keyword">class</span>]));</span><br></pre></td></tr></table></figure>
+<h3 id="再多一个成员"><a href="#再多一个成员" class="headerlink" title="再多一个成员"></a>再多一个成员</h3><p>当然如果<code>Student</code>的再多一个<code>int</code>成员变量：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">    <span class="keyword">int</span> _height;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Student</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">Student *stu = [[Student alloc] init];</span><br><span class="line">stu-&gt;_no = <span class="number">4</span>;</span><br><span class="line">stu-&gt;_age = <span class="number">5</span>;</span><br><span class="line">stu-&gt;_height = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &gt;&gt;32</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)stu));</span><br><span class="line"><span class="comment">// &gt;&gt;24</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,class_getInstanceSize([Student <span class="keyword">class</span>]));</span><br><span class="line"><span class="comment">// &gt;&gt; 24</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%zd&quot;</span>,<span class="keyword">sizeof</span>(<span class="keyword">struct</span> Student_IMPL));</span><br></pre></td></tr></table></figure>
 
+<p>我们可以看到系统分配的空间为32个字节，实例所占的内存空间而是24个字节。这就涉及到了iOS系统底部内存优化和内存对齐的问题。通过跟踪<code>alloc</code>函数，程序最终调用了：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">obj = (<span class="keyword">id</span>)calloc(<span class="number">1</span>, size); <span class="comment">// size即24</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>可以看出，这个对象至少需要24个字节。当向系统申请24个字节内存的时候，系统分配了32个字节。通过在<code>libmalloc</code>开源代码中，了解到iOS系统分配内存都是16的倍数(推测是加快内存分配速度和访问速度)。所以系统向其分配了32个字节。</strong></p>
 <h2 id="更为复杂的场景"><a href="#更为复杂的场景" class="headerlink" title="更为复杂的场景"></a>更为复杂的场景</h2><p>现在我们假设有这样的场景：</p>
 <p>现在有两个类: <code>Student</code>和<code>Person</code>。其中他们的继承关系为：<code>Student</code> -&gt; <code>Person</code> -&gt; <code>NSObject</code>。</p>
 <figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Student</span> : <span class="title">Person</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">@public</span></span><br><span class="line">    <span class="keyword">int</span> _no;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
@@ -317,7 +326,11 @@
 <p>底层实现：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person_IMPL</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMPL</span> <span class="title">NSObject_IVARS</span>;</span></span><br><span class="line">    <span class="keyword">int</span> _age;</span><br><span class="line">    <span class="keyword">int</span> _height;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> _I_Person_height(Person * self, SEL _cmd) &#123; </span><br><span class="line">  <span class="keyword">return</span> (*(<span class="keyword">int</span> *)((<span class="keyword">char</span> *)self + OBJC_IVAR_$_Person$_height)); </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> _I_Person_setHeight_(Person * self, SEL _cmd, <span class="keyword">int</span> height) &#123; </span><br><span class="line">  (*(<span class="keyword">int</span> *)((<span class="keyword">char</span> *)self + OBJC_IVAR_$_Person$_height)) = height; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h2>
+
+
+
+
+
     </div>
 
     
@@ -339,8 +352,8 @@
       <i class="fa fa-chevron-left"></i> 高仿新浪微博①准备工作
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/11/26/HTML%E6%9C%9D%E8%8A%B1%E5%A4%95%E6%8B%BE/" rel="next" title="HTML朝花夕拾">
-      HTML朝花夕拾 <i class="fa fa-chevron-right"></i>
+    <a href="/2017/01/20/OC%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E7%B1%BB/" rel="next" title="OC对象的分类">
+      OC对象的分类 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -400,7 +413,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OC%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">OC对象的底层实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87API%E6%9D%A5%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E5%A4%A7%E5%B0%8F"><span class="nav-number">2.</span> <span class="nav-text">通过API来获取对象大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API%E7%BB%93%E6%9E%9C%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">API结果的含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSObject%E7%9A%84%E5%AD%90%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">NSObject的子类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E4%B8%BA%E5%A4%8D%E6%9D%82%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">5.</span> <span class="nav-text">更为复杂的场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#property-%E6%88%90%E5%91%98"><span class="nav-number">6.</span> <span class="nav-text">@property 成员</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="nav-number">7.</span> <span class="nav-text">内存对齐</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OC%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">OC对象的底层实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87API%E6%9D%A5%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E5%A4%A7%E5%B0%8F"><span class="nav-number">2.</span> <span class="nav-text">通过API来获取对象大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API%E7%BB%93%E6%9E%9C%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">API结果的含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSObject%E7%9A%84%E5%AD%90%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">NSObject的子类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E5%A4%9A%E4%B8%80%E4%B8%AA%E6%88%90%E5%91%98"><span class="nav-number">4.1.</span> <span class="nav-text">再多一个成员</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E4%B8%BA%E5%A4%8D%E6%9D%82%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">5.</span> <span class="nav-text">更为复杂的场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#property-%E6%88%90%E5%91%98"><span class="nav-number">6.</span> <span class="nav-text">@property 成员</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -414,7 +427,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -427,7 +440,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
