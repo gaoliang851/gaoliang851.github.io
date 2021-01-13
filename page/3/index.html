@@ -159,6 +159,286 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Category底层原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-21 16:38:10" itemprop="dateCreated datePublished" datetime="2017-02-21T16:38:10+08:00">2017-02-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>OC是一门动态语言，所有的工作会尽可能在运行时才去决定完成，而非编译时。Category作为OC的一种特性，是开发中很常用的一种特性。</p>
+<h2 id="Category与Class-Extension"><a href="#Category与Class-Extension" class="headerlink" title="Category与Class Extension"></a>Category与Class Extension</h2><p>不同于Class Extension，Category是在运行时，才会将数据合并到类信息中，而Class Extension在编译的时候，它的数据就已经包含在类信息中了。</p>
+<h2 id="Category的底层结构"><a href="#Category的底层结构" class="headerlink" title="Category的底层结构"></a>Category的底层结构</h2><p>根据objc源码可以在<code>objc-runtime-new.h</code>文件中找到<code>Category</code>的底层数据结构：<strong>category_t</strong>。并且我们对一个已有的Category重写为C++, ,发现<code>Category</code>底层被转换为<strong>_category_t</strong>这种类型的结构。</p>
+<img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E7%BB%93%E6%9E%84.png" class="">
+
+<h2 id="Category的加载过程"><a href="#Category的加载过程" class="headerlink" title="Category的加载过程"></a>Category的加载过程</h2><img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B.png" class="">
+
+<ul>
+<li><p>_objc_init ：objc的入口函数，包含了环境变量，线程的处理，C++静态函数，Runtime，缓存条件的初始化和回调机制的启动。</p>
+</li>
+<li><p>map_images : 在dyld已将images加载入内存中时，回调该函数。</p>
+</li>
+<li><p>map_images_nolock ： 会在map_images中调用。</p>
+</li>
+<li><p>_read_images : 是map_images_nolock的核心函数，内部做了如下处理，<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/290568369761">参考</a></p>
+<ul>
+<li><p>加载所有类到类的<code>gdb_objc_realized_classes</code>表中。</p>
+</li>
+<li><p>对所有类做重映射。</p>
+</li>
+<li><p>将所有<code>SEL</code>都注册到<code>namedSelectors</code>表中。</p>
+</li>
+<li><p>修复函数指针遗留。</p>
+</li>
+<li><p>将所有<code>Protocol</code>都添加到<code>protocol_map</code>表中。</p>
+</li>
+<li><p>对所有<code>Protocol</code>做重映射。</p>
+</li>
+<li><p>初始化所有非懒加载的类，进行<code>rw、ro</code>等操作。</p>
+</li>
+<li><p>遍历已标记的懒加载的类，并做初始化操作。</p>
+</li>
+<li><p>处理所有<code>Category</code>，包括<code>Class</code>和<code>Meta Class</code>。</p>
+</li>
+<li><p>初始化所有<code>未初始化</code>的类。</p>
+</li>
+</ul>
+</li>
+<li><p>_load_categories_nolock : 加载分类</p>
+</li>
+<li><p>remapClass : 重映射类。</p>
+</li>
+<li><p>attachCategories : 遍历分类数组，将分类的信息添加到类上</p>
+</li>
+<li><p>attachLists : 方法数组，属性数组，协议数组均会调用该方法，将分类相应的数据进行拼接。内部逻辑为：</p>
+<ul>
+<li>将原有数组扩容到 原有数组长度+分类中数组的长度</li>
+<li>将类中（方法、属性、协议）数组原有数据移动到数组尾端。</li>
+<li>将分类中（方法、属性、协议）数组添加到类中相应数组的首部。</li>
+</ul>
+</li>
+</ul>
+<h3 id="memmove与memcpy"><a href="#memmove与memcpy" class="headerlink" title="memmove与memcpy"></a>memmove与memcpy</h3><p>在attchList函数中，新数组拼接到原有数组上时，用到了<strong>memmove</strong>与<strong>memcpy</strong>函数。<strong>这俩函数作用是一样的，唯一的区别是，当内存发生局部重叠的时候，memmove保证拷贝的结果是正确的，memcpy不保证拷贝的结果的正确。</strong>而源码中：<strong>memmove</strong>操作的是原数组内移动，需要保证结果正确。<strong>memcpy</strong>是新数组拷贝到旧数组，所以不会发生内存重叠的问题。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//将数组中原有的数据放到数组末尾。数组内操作，需保证拷贝结果不会因内存重叠发生错误。</span></span><br><span class="line">memmove(<span class="built_in">array</span>()-&gt;lists + addedCount, <span class="built_in">array</span>()-&gt;lists, </span><br><span class="line">                    oldCount * <span class="keyword">sizeof</span>(<span class="built_in">array</span>()-&gt;lists[<span class="number">0</span>]));</span><br><span class="line"><span class="comment">//将新数组添加到开头；两个数组之间操作，不会发生内存重叠的问题。</span></span><br><span class="line"><span class="built_in">memcpy</span>(<span class="built_in">array</span>()-&gt;lists, addedLists, </span><br><span class="line">                   addedCount * <span class="keyword">sizeof</span>(<span class="built_in">array</span>()-&gt;lists[<span class="number">0</span>]));</span><br></pre></td></tr></table></figure>
+
+<h3 id="调用原有实现"><a href="#调用原有实现" class="headerlink" title="调用原有实现"></a>调用原有实现</h3><p>从Category的加载流程中可以看到，在类或元类的方法数组，属性数组，协议数组中，分类的实现排在了原有的实现，这就意味着：<strong>假如分类中有和类中同名的方法，会优先调用分类的中的方法。</strong>那么如果想调用原有的方法实现，那么就需要倒序遍历方法数组，找到方法后执行。</p>
+<p>示例：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// 在 GLObject 中定义一个start方法</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLObject</span> : <span class="title">NSObject</span></span></span><br><span class="line">- (<span class="keyword">void</span>)start;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLObject</span></span></span><br><span class="line">- (<span class="keyword">void</span>)start &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;GLObject start&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLObject</span> (<span class="title">Test</span>)</span></span><br><span class="line"><span class="comment">/// 覆盖原有类中的start实现</span></span><br><span class="line">- (<span class="keyword">void</span>)start &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;Test start&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 调用原有start实现</span></span><br><span class="line">- (<span class="keyword">void</span>) oldStart &#123;</span><br><span class="line">    Class clazz = [<span class="keyword">self</span> <span class="keyword">class</span>];</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> methodCount;</span><br><span class="line">    <span class="comment">//获取方法类表</span></span><br><span class="line">    Method *methodList = class_copyMethodList(clazz, &amp;methodCount);</span><br><span class="line">    <span class="comment">//倒序遍历方法数组</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = methodCount; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">        Method method = methodList[i];</span><br><span class="line">        <span class="comment">//通过SEL来对比</span></span><br><span class="line">        SEL methodSel = method_getName(method);</span><br><span class="line">        <span class="keyword">if</span> ([<span class="built_in">NSStringFromSelector</span>(methodSel) isEqualToString:<span class="built_in">NSStringFromSelector</span>(<span class="keyword">@selector</span>(start))]) &#123;</span><br><span class="line">            <span class="comment">//获取方法实现</span></span><br><span class="line">            IMP last_start_imp = method_getImplementation(method);</span><br><span class="line">            <span class="keyword">typedef</span> <span class="keyword">void</span> (*fn)(<span class="keyword">id</span>,SEL);</span><br><span class="line">            <span class="comment">//调用</span></span><br><span class="line">            fn f = (fn)last_start_imp;</span><br><span class="line">            f(<span class="keyword">self</span>,methodSel);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        GLObject *obj = [[GLObject alloc] init];</span><br><span class="line">        [obj start]; <span class="comment">//Test start</span></span><br><span class="line">        [obj oldStart]; <span class="comment">//GLObject start</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结：Category的实现原理"><a href="#总结：Category的实现原理" class="headerlink" title="总结：Category的实现原理"></a>总结：Category的实现原理</h2><p>Category编译之后的底层数据结构是<strong>struct category_t</strong>，里面存储着分类的对象方法，类方法、属性、协议信息。在程序运行的时候，Runtime会将Category的数据合并到类信息中（类对象、元类对象中）。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/" class="post-title-link" itemprop="url">KVO&KVC探究手记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-11 16:38:10" itemprop="dateCreated datePublished" datetime="2017-02-11T16:38:10+08:00">2017-02-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>KVO和KVC在OC中都是很常用的技术，也是技术面试中考察的标配。经常会被问起KVO和KVC的底层是如何实现的呢，如何手动触发KVO呢等等。今天就用这篇博客来记录一下对KVO和KVC的学习以及底层的原理。</p>
+<h2 id="KVO探究"><a href="#KVO探究" class="headerlink" title="KVO探究"></a>KVO探究</h2><p> KVO全称是Key-Value Observing, 翻译过来就是**”键值监听”**，可以用来监听某个对象属性值的改变。</p>
+<p>我们先来写一段简单的代码对比一下添加KVO和未添加KVO的对比。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义一个Person类</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLPerson</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="keyword">int</span> age;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">///KVO触发的场景</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) GLPerson *person1;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) GLPerson *person2;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123; </span><br><span class="line">        <span class="comment">//1. 初始化两个对象</span></span><br><span class="line">    <span class="keyword">self</span>.person1 = [[GLPerson alloc] init];</span><br><span class="line">    <span class="keyword">self</span>.person1.age = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">self</span>.person2 = [[GLPerson alloc] init];</span><br><span class="line">    <span class="keyword">self</span>.person2.age = <span class="number">2</span>;</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//2. 获取这个对象的地址</span></span><br><span class="line">      <span class="built_in">NSLog</span>(<span class="string">@&quot;self.person1:%p&quot;</span>,<span class="keyword">self</span>.person1);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;self.person2:%p&quot;</span>,<span class="keyword">self</span>.person2);</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//person1添加KVO</span></span><br><span class="line">    <span class="built_in">NSKeyValueObservingOptions</span> options = <span class="built_in">NSKeyValueObservingOptionNew</span> | <span class="built_in">NSKeyValueObservingOptionOld</span>;</span><br><span class="line">    [<span class="keyword">self</span>.person1 addObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;age&quot;</span> options:options context:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event &#123;</span><br><span class="line">    <span class="keyword">self</span>.person1.age = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">self</span>.person2.age = <span class="number">20</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span> *)change context:(<span class="keyword">void</span> *)context</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@ : %@&quot;</span>,object,change);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们触发<code>touchesBegan</code>方法时，控制台上已经有了如下信息：</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO%E4%BE%8B%E5%AD%90.png" class="">
+
+<p>可以看出，虽然<code>person1</code>和<code>person2</code>的<code>age</code>值都发生了改变，但的确只有<code>person1</code>触发了KVO。同样都是<code>GLPerson</code>，<code>setAge:</code>的实现也肯定是一样的，为什么一个可以触发，一个不能触发呢。那是不是<code>person1</code>的<code>setAge：</code>和<code>person2</code>的的<code>setAge:</code>的确不一样呢。我们来验证一下，获取一下<code>person1</code>和<code>person2</code>的<code>setAge：</code>方法。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//打印person1和person2的地址</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;self.person1:%p&quot;</span>,<span class="keyword">self</span>.person1);</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;self.person2:%p&quot;</span>,<span class="keyword">self</span>.person2);</span><br><span class="line"></span><br><span class="line"><span class="comment">//打印person1和person2中 setAge:的函数地址</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%p %p&quot;</span>,[<span class="keyword">self</span>.person1 methodForSelector:<span class="keyword">@selector</span>(setAge:)],</span><br><span class="line">                   [<span class="keyword">self</span>.person2 methodForSelector:<span class="keyword">@selector</span>(setAge:)]);</span><br><span class="line">    </span><br><span class="line"><span class="comment">//person1添加KVO</span></span><br><span class="line"><span class="built_in">NSKeyValueObservingOptions</span> options = <span class="built_in">NSKeyValueObservingOptionNew</span> | <span class="built_in">NSKeyValueObservingOptionOld</span>;</span><br><span class="line">[<span class="keyword">self</span>.person1 addObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;age&quot;</span> options:options context:<span class="literal">nil</span>];</span><br><span class="line">    </span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%p %p&quot;</span>,[<span class="keyword">self</span>.person1 methodForSelector:<span class="keyword">@selector</span>(setAge:)],</span><br><span class="line">                             [<span class="keyword">self</span>.person2 methodForSelector:<span class="keyword">@selector</span>(setAge:)]);</span><br></pre></td></tr></table></figure>
+
+<p>控制台信息输出：</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_method.png" class="">
+
+<p>可以看出，<strong>没有添加KVO之前，两个对象的<code>setAge:</code>的实现是一样的。添加KVO之后，<code>setAge:</code>方法被指向了另外的地址。</strong></p>
+<p>使用LLDB打印这个地址的方法实现：</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_method_point.png" class="">
+
+<p>可以看出，添加KVO之后，set方法的实现被指向了<code>_NSSetIntValueAndNotify</code>。我们知道，类的实例方法是存储在<code>Class</code>对象中的，如果set方法的实现是在Class对象被修改的，那么会影响所有的实例对象的调用。这显然是不对的。可以推断出，添加KVO之后的实例对象的class对象被修改了，即<strong>修改了isa的指向</strong>。</p>
+<p>我们验证一下：</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_isa.png" class="">
+
+<p>可以看出：添加KVO之后，实例对象的isa指向了一个名为<strong>NSKVONotifying_GLPerson</strong>的Class对象。可以猜想到，KVO的实现是实例对象动态的改变了<code>isa</code>的指向。我们来进一步的看一下这个类更为详细的信息，利用Runtime获取一下这个类的成员属性，方法，父类等信息。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">Class clazz = object_getClass(<span class="keyword">self</span>.person1);</span><br><span class="line"><span class="comment">///遍历方法</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> methodCount = <span class="number">0</span>;</span><br><span class="line">Method  *methods = class_copyMethodList(clazz, &amp;methodCount);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; methodCount; i++) &#123;</span><br><span class="line">    <span class="comment">///获得方法</span></span><br><span class="line">    Method method = methods[i];</span><br><span class="line">    <span class="comment">///获取方法名</span></span><br><span class="line">    <span class="built_in">NSString</span> *methodName = <span class="built_in">NSStringFromSelector</span>(method_getName(method));</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;方法名:%@&quot;</span>,methodName);</span><br><span class="line">&#125;</span><br><span class="line">free(methods);</span><br><span class="line"></span><br><span class="line"><span class="comment">///遍历属性</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> ivarCount = <span class="number">0</span>;</span><br><span class="line">Ivar *ivars = class_copyIvarList(clazz, &amp;ivarCount);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ivarCount; i++) &#123;</span><br><span class="line">    Ivar ivar = ivars[i];</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *ivarName = ivar_getName(ivar);</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *ivarType = ivar_getTypeEncoding(ivar);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;属性类型：%s，属性名称：%s&quot;</span>,ivarType,ivarName);</span><br><span class="line">&#125;</span><br><span class="line">free(ivars);</span><br><span class="line"></span><br><span class="line"><span class="comment">//打印父类</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;父类：%@&quot;</span>,[clazz superclass]);</span><br></pre></td></tr></table></figure>
+
+<p>我们得到如下信息。</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_class_info.png" class="">
+
+<p>到此KVO是如何实现的基本上就明了了。就以<code>GLPerson</code>为例:</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/unuse_kvo.png" class="">
+
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/use_kvo.png" class="">
+
+<h3 id="NSSet-ValueAndNotify"><a href="#NSSet-ValueAndNotify" class="headerlink" title="_NSSet*ValueAndNotify"></a>_NSSet*ValueAndNotify</h3><p>我们从上面的例子中看出，<code>NSKVONotifying_GLPerson</code>的<code>setAge:</code>的实现最终指向了<code>_NSSetIntValueAndNotify</code>。其实这类函数在Foundation框架中还有很多：</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/ValueAndNotify.png" class="">
+
+<p>对于<code>_NSSet*ValueAndNotify</code>的内部实现基本上可以表示为：</p>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO%E6%B5%81%E7%A8%8B.png" class="">
+
+<h2 id="KVO总结"><a href="#KVO总结" class="headerlink" title="KVO总结"></a>KVO总结</h2><ul>
+<li><p>KVO的实现原理(KVO的本质)</p>
+<ul>
+<li>利用RuntimeAPI动态生成一个子类，并且让<code>instance</code>对象的isa指向这个全新的子类。</li>
+<li>这个子类将添加KVO属性的<code>setter</code>方法的实现指向了Foundation框架的<code>_NSSetXXXValueAndNotify</code>函数。</li>
+<li>当修改<code>instance</code>对象的属性的时候，调用了<code>_NSSetXXXValueAndNotify</code>函数，这个函数内部会调用：<ul>
+<li><code>willChangeValueForKey:</code></li>
+<li>父类原来的<code>setter</code></li>
+<li><code>didChangeValueForKey:</code>，这个方法内部还会触发监听器(Observer)的监听方法(observeValueForKeyPath:ofObject:change:context:)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>如何手动触发KVO？</p>
+<p>手动调用<code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code></p>
+</li>
+<li><p>直接修改成员变量会不会触发KVO？</p>
+<p>不会。</p>
+</li>
+</ul>
+<h2 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h2><p>KVC全称是<strong>Key-Value Coding</strong>,翻译过来就是<strong>键值编码</strong>。可以通过一个key来访问某个属性。</p>
+<p>常见的API：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">///设值</span></span><br><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span>)value forKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span>)value forKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br><span class="line"><span class="comment">///取值</span></span><br><span class="line">- (<span class="keyword">id</span>)valueForKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">id</span>)valueForKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br></pre></td></tr></table></figure>
+
+<h3 id="设值的原理"><a href="#设值的原理" class="headerlink" title="设值的原理"></a>设值的原理</h3><p>调用<code>setValue:forKey:</code>方法其原理是：</p>
+<ul>
+<li>调用<code>setValue:forKey:</code>方法，会按照<code>setKey:</code>、<code>_setKey:</code>的顺序查找方法，找到了传递参数，调用方法。</li>
+<li>如果没有找到，获取类属性<code>accessInstanceVariablesDirectly</code>的值（BOOL，表示是否可以直接实例对象成员属性值，默认为YES）。如果为NO，则调用<code>setValue:forUndfineKey:</code>，这个方法默认会抛出<code>NSUnknownKeyException</code>异常。如果不想抛出异常，则需要重写该方法。</li>
+<li>如果<code>accessInstanceVariablesDirectly</code>为YES，则会按照<strong>_key,_isKey,key,isKey</strong>顺序查找成员变量。如果找到了直接赋值，没有找到也会调用<code>setValue:forUndfineKey:</code></li>
+</ul>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVC%E8%AE%BE%E5%80%BC%E6%B5%81%E7%A8%8B.png" class="">
+
+<h3 id="取值的原理"><a href="#取值的原理" class="headerlink" title="取值的原理"></a>取值的原理</h3><p>调用<code>valueForKey:</code>方法其原理是：</p>
+<ul>
+<li>调用<code>valueForKey:</code>方法，会按照**<code>getKey</code>、<code>key</code>、<code>isKey</code>、<code>_key</code>**顺序查找方法。如果找到了则调用方法。</li>
+<li>如果没有找到，获取类属性<code>accessInstanceVariablesDirectly</code>的值（BOOL，表示是否可以直接实例对象成员属性值，默认为YES）。如果为NO，则调用<code>ValueforUndfineKey:</code>，这个方法默认会抛出<code>NSUnknownKeyException</code>异常。如果不想抛出异常，则需要重写该方法。</li>
+<li>如果返回YES，则会按照<strong>_key、_isKey、key、isKey</strong>顺序查找成员变量。找到成员变量直接取值。没有找到也会调用<code>valueForUndefinedKey</code></li>
+</ul>
+<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVC%E5%8F%96%E5%80%BC%E6%B5%81%E7%A8%8B.png" class="">
+
+<h3 id="KVC触发KVO"><a href="#KVC触发KVO" class="headerlink" title="KVC触发KVO"></a>KVC触发KVO</h3><p>了解了KVC取值和设值的原理，如果没有相关的setter方法，则直接访问成员变量。在探究KVO的时候我们还知道，没有setter方法直接修改成员变量是不能触发KVO的。不过有一点值得注意，<strong>如果通过KVC去设置，不管有没有setter方法都会触发KVO。可想而知，即使没有setter方法时，KVC直接修改成员变量值的同时，内部也是主动调用<code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>两个方法。</strong></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/01/%E7%BB%86%E8%AF%B4isa/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1362,20 +1642,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

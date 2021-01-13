@@ -1357,6 +1357,356 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/30/CSS%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%86%8D%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/30/CSS%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%86%8D%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">CSS从入门到再入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-30 14:41:06" itemprop="dateCreated datePublished" datetime="2018-11-30T14:41:06+08:00">2018-11-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前面粗略的学习了HTML标签，进入CSS阶段的学习了。题目之所以叫从入门到再入门也是因为之前学习的时候因为没有找到CSS的学习方法，一味死记硬背。工作后也不怎么常用，学过的CSS都还给大学老师了😢。在此记录一下学习的CSS再入门的过程💪。</p>
+<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><img src="/2018/11/30/CSS%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%86%8D%E5%85%A5%E9%97%A8/CSS_mind_map.png" class="">
+
+<h2 id="语法规范"><a href="#语法规范" class="headerlink" title="语法规范"></a>语法规范</h2><h3 id="样式格式"><a href="#样式格式" class="headerlink" title="样式格式"></a>样式格式</h3><ul>
+<li><p>紧凑格式</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">h3</span> &#123; <span class="attribute">color</span>: deeppink;<span class="attribute">font-size</span>: <span class="number">20px</span> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>展开格式（推荐）</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">h3</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: deeppink;</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">20px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="大小写"><a href="#大小写" class="headerlink" title="大小写"></a>大小写</h3><p>选择器,属性名,属性值关键字全部使用小写字母(特殊情况除外)</p>
+<h3 id="空格规范"><a href="#空格规范" class="headerlink" title="空格规范"></a>空格规范</h3><ul>
+<li><p>属性值前面，冒号后面，保留一个空格.</p>
+</li>
+<li><p>选择器（标签）和大括号中间保留空格</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">h3</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: deeppink;</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">20px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="引入方式"><a href="#引入方式" class="headerlink" title="引入方式"></a>引入方式</h2><ul>
+<li><p>内部样式表</p>
+<p>写到HTML页面内部，&lt;style&gt;标签中，一般放在&lt;head&gt;标签中。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css">  <span class="selector-class">.box</span> &#123;</span></span><br><span class="line">    width: 100px;</span><br><span class="line">    height: 100px;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>行内样式表</p>
+<p>在元素标签内部的style属性中设定CSS样式表。适合与修改简单样式</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">style</span>=<span class="string">&quot;color: #000;font-size: 16px&quot;</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>外部样式表</p>
+<p>样式单独写到CSS文件中，之后把CSS引入Html页面文件中</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;style.css&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h2><p><strong>选择器</strong>分为基础选择器和复合选择器两个大类</p>
+<ul>
+<li>基础选择器是由单个选择器组成的</li>
+<li>基础选择器又包括：标签选择器、类选择器、id 选择器和通配符选择器</li>
+</ul>
+<h3 id="基础选择器"><a href="#基础选择器" class="headerlink" title="基础选择器"></a>基础选择器</h3><ul>
+<li><p>标签选择器</p>
+<p>作用：可以把某一类标签全部选择出来</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: green;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>类(class)选择器</p>
+<p>一个标签可以有多个类名，类名之间用空格隔开。作用：抽取公共样式，方便统一修改</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.class-name</span> &#123;</span><br><span class="line">  属性名: 属性值;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>id选择器</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-id">#id</span> &#123;</span><br><span class="line">  属性名: 属性值;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通配符选择器</p>
+<p>通配符选择器使用”*”定义，表示选取页面所有元素。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">* &#123;</span><br><span class="line">  属性名: 属性值;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="复合选择器"><a href="#复合选择器" class="headerlink" title="复合选择器"></a>复合选择器</h3><p>复合选择器是建立在基础选择器之上，对基本选择器进行组合形成的。<br>复合选择器是由两个或多个基础选择器，通过不同的方式组合而成的，可以更准确、更高效的选择目标元素（标签）<br>常用的复合选择器包括：<strong>后代选择器、子选择器、并集选择器、伪类选择器</strong>等等</p>
+<h4 id="后代选择器-重要"><a href="#后代选择器-重要" class="headerlink" title="后代选择器(重要)"></a>后代选择器(重要)</h4><p>选择父元素里面子元素</p>
+<ul>
+<li><p>语法</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">元素1 元素2 ... &#123; 样式声明 &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其中，元素1 是父级，元素2 是子级，最终选择的是<strong>元素2</strong>。</p>
+</li>
+<li><p>元素2 可以是儿子，也可以是孙子等，只要是元素1的后代即可。</p>
+</li>
+<li><p>元素1 和 元素2 可以是任意基础选择器(标签选择器，类选择器，id选择器)</p>
+</li>
+</ul>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* ol标签下的li标签 */</span></span><br><span class="line"><span class="selector-tag">ol</span> <span class="selector-tag">li</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=head标签下的p标签 */</span></span><br><span class="line"><span class="selector-class">.head</span> <span class="selector-tag">p</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: azure;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=body标签下的 id=body-p标签 */</span></span><br><span class="line"><span class="selector-class">.body</span> <span class="selector-id">#body-p</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: green;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=nav下的ul标签下的li标签下的a标签 */</span></span><br><span class="line"><span class="selector-class">.nav</span> <span class="selector-tag">ul</span> <span class="selector-tag">li</span> <span class="selector-tag">a</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="子选择器-重要"><a href="#子选择器-重要" class="headerlink" title="子选择器(重要)"></a>子选择器(重要)</h4><p>子元素选择器（子选择器）只能选择作为某元素的最近一级子元素。简单理解就是选亲儿子元素.</p>
+<p>语法：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">元素1&gt;元素2 &#123; 样式声明 &#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ol>
+<li>元素1 是父级，元素2 是子级，最终选择的是<strong>元素2</strong></li>
+<li>元素2 必须是<strong>亲儿子，</strong>其孙子、重孙之类都不归他管. 可以叫亲儿子选择器。</li>
+<li>元素1 和 元素2 可以是任意基础选择器(标签选择器，类选择器，id选择器)<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* class=div1标签中直系子元素a */</span></span><br><span class="line"><span class="selector-class">.div1</span>&gt;<span class="selector-tag">a</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="并集选择器"><a href="#并集选择器" class="headerlink" title="并集选择器"></a>并集选择器</h4><p>并集选择器可以选择多组标签, 同时为他们定义相同的样式。通常用于集体声明。<strong>并集选择器</strong>是各选择器通过英文逗号（,）连接而成，任何形式的选择器都可以作为并集选择器的一部分。</p>
+<p>语法:</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">元素1,元素2,.... &#123; 样式声明 &#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<p>元素1 和 元素2 可以是任意形式的选择器(基础选择器，复合选择器)</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 一般竖着写 */</span></span><br><span class="line"><span class="comment">/* div标签，p标签，ul标签下的li标签 */</span></span><br><span class="line"><span class="selector-tag">div</span>,</span><br><span class="line"><span class="selector-tag">p</span>,</span><br><span class="line"><span class="selector-tag">ul</span> <span class="selector-tag">li</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: brown;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="伪类选择器"><a href="#伪类选择器" class="headerlink" title="伪类选择器"></a>伪类选择器</h4><p>伪类选择器用于向某些选择器添加特殊的效果，比如给链接添加特殊效果，或选择第1个，第n个元素。 伪类选择器书写最大的特点是用冒号（:）表示，比如 :hover 、 :first-child 。因为伪类选择器很多，比如有链接伪类、结构伪类等，所以这里学习常用的链接伪类选择器。</p>
+<h5 id="链接伪类选择器"><a href="#链接伪类选择器" class="headerlink" title="链接伪类选择器"></a>链接伪类选择器</h5><p>链接的四种状态</p>
+<ol>
+<li>a:link    没有点击过的(访问过的)链接</li>
+<li>a:visited    点击过的(访问过的)链接</li>
+<li>a:hover    鼠标经过的那个链接</li>
+<li>a:active    鼠标正在按下还没有弹起鼠标的那个链接</li>
+</ol>
+<p>可以对这四种状态分别设置不同的颜色。</p>
+<p><strong>注意：为了确保生效，请按照 LVHA 的循顺序声明 :link－:visited－:hover－:active。这里也不仅可以使用a标签，也可以使用其他选择器或者其他元素也可以</strong>。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 没有点击过链接的颜色 */</span></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-pseudo">:link</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: <span class="number">#333333</span>;</span><br><span class="line">    <span class="attribute">text-decoration</span>: none;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 点击过的链接的颜色 */</span></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-pseudo">:visited</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: brown;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 鼠标经过链接的颜色 */</span></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: skyblue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 鼠标正在按下还没弹起时链接的颜色 */</span></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-pseudo">:active</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=baidu 没有点击过链接的颜色 */</span></span><br><span class="line"><span class="selector-class">.baidu</span><span class="selector-pseudo">:link</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: <span class="number">#333333</span>;</span><br><span class="line">    <span class="attribute">text-decoration</span>: none;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=baidu 点击过的链接的颜色 */</span></span><br><span class="line"><span class="selector-class">.baidu</span><span class="selector-pseudo">:visited</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: brown;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=baidu 鼠标经过链接的颜色 */</span></span><br><span class="line"><span class="selector-class">.baidu</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: skyblue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* class=baidu 鼠标正在按下还没弹起时链接的颜色 */</span></span><br><span class="line"><span class="selector-class">.baidu</span><span class="selector-pseudo">:active</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* span标签 鼠标经过链接的颜色 */</span></span><br><span class="line"><span class="selector-tag">span</span><span class="selector-pseudo">:hover</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: blue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>开发时一般只写标签a的样式和:hover的样式</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* a 是标签选择器 所有的链接 */</span> </span><br><span class="line"><span class="selector-tag">a</span> &#123; </span><br><span class="line">    <span class="attribute">color</span>: gray;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* :hover 是链接伪类选择器 鼠标经过 */</span></span><br><span class="line"><span class="selector-tag">a</span><span class="selector-pseudo">:hover</span> &#123; </span><br><span class="line">    <span class="attribute">color</span>: red; <span class="comment">/* 鼠标经过的时候，由原来的 灰色 变成了红色 */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="focus-伪类选择器"><a href="#focus-伪类选择器" class="headerlink" title=":focus 伪类选择器"></a>:focus 伪类选择器</h5><p>:focus 伪类选择器用于选取获得焦点的表单元素。焦点就是光标，一般情况&lt;input&gt; 类表单元素才能获取，因此这个选择器也主要针对于表单元素来说。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">input</span><span class="selector-pseudo">:focus</span> &#123;</span><br><span class="line">  <span class="attribute">background-color</span>: yellow;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="文本属性"><a href="#文本属性" class="headerlink" title="文本属性"></a>文本属性</h2><h3 id="字体样式"><a href="#字体样式" class="headerlink" title="字体样式"></a>字体样式</h3><h4 id="设置字体"><a href="#设置字体" class="headerlink" title="设置字体"></a>设置字体</h4><ul>
+<li><p>font-family</p>
+</li>
+<li><p>可以设置多个字体，用逗号隔开</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">&#x27;Miscrisoft YaHei&#x27;</span>,tohaoma,arial</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="字体大小"><a href="#字体大小" class="headerlink" title="字体大小"></a>字体大小</h4><ul>
+<li><p>font-size</p>
+</li>
+<li><p>设置时需要指定单位，一般常用px。可以给body整个页面的文字大小。标题标签不受影响，需单独设置</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">    <span class="comment">/* 谷歌浏览器默认值 */</span>  </span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">16px</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">h1</span> &#123;</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">22px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="字体粗细"><a href="#字体粗细" class="headerlink" title="字体粗细"></a>字体粗细</h4><ul>
+<li><p>font-weight</p>
+</li>
+<li><p>属性值有：<code>normal</code>（默认值）、<code>bold</code>（粗体）。也可以使用数字100~900，开发中常用此种方式。400等同于<code>normal</code>，700等同于<code>bold</code>。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">  <span class="attribute">font-weight</span>: bold;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="文字样式"><a href="#文字样式" class="headerlink" title="文字样式"></a>文字样式</h4><ul>
+<li><p>font-style</p>
+</li>
+<li><p>属性值有：<code>normal</code>，<code>italic</code>(斜体)。</p>
+</li>
+<li><p>注意： 平时我们很少给文字加斜体，反而要给斜体标签（em，i）改为不倾斜字体</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">em</span> &#123;</span><br><span class="line">  <span class="attribute">font-style</span>: normal;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="文字复合属性"><a href="#文字复合属性" class="headerlink" title="文字复合属性"></a>文字复合属性</h4><p>语法：<code>font: font-style font-weight font-size/line-height font-family</code></p>
+<p>使用时，必须按上面语法格式顺序书写，不能更换顺序，并且空格隔开。不需要设置的属性可以省略（取默认值），但必须保留font-size和font-family属性。否则该属性不生效。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">body</span> &#123;</span><br><span class="line">  <span class="attribute">font</span>: italic bold <span class="number">16px</span>/<span class="number">22px</span> <span class="string">&#x27;黑体&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 省略的写法 */</span></span><br><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">  <span class="attribute">font</span>: <span class="number">15px</span> <span class="string">&#x27;黑体&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="文本属性-1"><a href="#文本属性-1" class="headerlink" title="文本属性"></a>文本属性</h3><h4 id="文本颜色"><a href="#文本颜色" class="headerlink" title="文本颜色"></a>文本颜色</h4><p>语法：color</p>
+<p>其值可以使用：</p>
+<ul>
+<li><p>预定义的颜色值，如：<code>red</code></p>
+</li>
+<li><p>16进制，如：#FF00DD</p>
+</li>
+<li><p>RGB，如：rgb(255,0,0)或rgb(100%,0%,0%)</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.red</span> &#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#ff6600</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="文本对齐"><a href="#文本对齐" class="headerlink" title="文本对齐"></a>文本对齐</h4><p>用于设置元素内文本内容的水平对齐方式</p>
+<p>语法：text-align</p>
+<p>可选属性值：</p>
+<ul>
+<li><p>left，左对齐（默认）</p>
+</li>
+<li><p>right，右对齐</p>
+</li>
+<li><p>center，居中对齐</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">h1</span> &#123;</span><br><span class="line">  <span class="comment">/* 本质是让h1盒子里面的文字水平居中对齐 */</span></span><br><span class="line">    <span class="attribute">text-align</span>: center;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="文本装饰"><a href="#文本装饰" class="headerlink" title="文本装饰"></a>文本装饰</h4><p>可以用来设置下划线、删除线、上划线。也可以用来去除超链接默认的下划线。</p>
+<p>语法：text-decoration</p>
+<p>可选属性值：</p>
+<ul>
+<li><p>none，默认</p>
+</li>
+<li><p>underline, 下划线</p>
+</li>
+<li><p>overline, 上划线</p>
+</li>
+<li><p>line-through, 删除线</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">a</span> &#123;</span><br><span class="line">  <span class="comment">/* 用来去除超链接默认的下划线 */</span></span><br><span class="line">  <span class="attribute">text-decoration</span>: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="文本缩进"><a href="#文本缩进" class="headerlink" title="文本缩进"></a>文本缩进</h4><p>用来指定文本的第一行缩进，通常将段落的首行缩进</p>
+<p>语法： text-indent</p>
+<p>其值可以为正，也可以为负。通常会用em单位。em是一个相对单位，就是当前元素(font-size)1个文字的大小。如果当前元素没有设置大小，则会按照父元素的1个文字大小</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">  <span class="attribute">text-indent</span>: <span class="number">2em</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="行间距"><a href="#行间距" class="headerlink" title="行间距"></a>行间距</h4><p>语法：line-height</p>
+<p>行间距的示意图：</p>
+<img src="/2018/11/30/CSS%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%86%8D%E5%85%A5%E9%97%A8/line_height.png" class="">
+
+<p>行高 = 文本高度 + 上间距 + 下间距。文本高度是不变的(font-size)，改变行高就是改变上间距和下间距。上间距 = 下间距 。</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">p</span> &#123;</span><br><span class="line">  <span class="attribute">line-height</span>: <span class="number">26px</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="元素的显示模式"><a href="#元素的显示模式" class="headerlink" title="元素的显示模式"></a>元素的显示模式</h2><p>元素显示模式就是元素（标签）以什么方式进行显示，比如&lt;div&gt;自己占一行，比如一行可以放多个&lt;span&gt;。 HTML 元素一般分为<strong>块元素</strong>和<strong>行内元素</strong>两种类型。</p>
+<h3 id="块元素"><a href="#块元素" class="headerlink" title="块元素"></a>块元素</h3><p>常见的块元素有&lt;h1&gt;~&lt;h6&gt;、&lt;p&gt;、&lt;div&gt;、&lt;ul&gt;、&lt;ol&gt;、&lt;li&gt;等，其中&lt;div&gt; 标签是最典型的块元素。</p>
+<p>块元素有以下特点：</p>
+<ol>
+<li>自己独占一行。</li>
+<li>高度，宽度、外边距以及内边距都可以控制。 </li>
+<li>宽度默认是容器（父级宽度）的100%。</li>
+<li>是一个容器及盒子，里面可以放行内或者块级元素。</li>
+</ol>
+<p>不过需要注意以下几点：</p>
+<ul>
+<li><p>文字类的元素内不能放块级元素</p>
+<ul>
+<li>&lt;p&gt; 标签主要用于存放文字，因此&lt;p&gt; 里面不能放块级元素，特别是不能放&lt;div&gt;</li>
+</ul>
+</li>
+<li><p>同理， &lt;h1&gt;~&lt;h6&gt;等都是文字类块级标签，里面也不能放其他块级元素。</p>
+</li>
+</ul>
+<h3 id="行内元素-内联元素"><a href="#行内元素-内联元素" class="headerlink" title="行内元素(内联元素)"></a>行内元素(内联元素)</h3><p>常见的行内元素有 &lt;a&gt;、&lt;strong&gt;、&lt;b&gt;、&lt;em&gt;、&lt;i&gt;、&lt;del&gt;、&lt;s&gt;、&lt;ins&gt;、&lt;u&gt;、&lt;span&gt;等，其中&lt;span&gt; 标签是最典型的行内元素。有的地方也将行内元素称为内联元素。</p>
+<p>行内元素的特点：</p>
+<ol>
+<li>邻行内元素在一行上，一行可以显示多个。</li>
+<li>高、宽直接设置是无效的。</li>
+<li>默认宽度就是它本身内容的宽度。</li>
+<li>行内元素只能容纳文本或其他行内元素。</li>
+</ol>
+<p>不过需要注意以下几点：</p>
+<ul>
+<li>链接里面不能再放链接</li>
+<li>特殊情况链接 &lt;a&gt; 里面可以放块级元素，但是给 &lt;a&gt; 转换一下块级模式最安全</li>
+</ul>
+<h3 id="行内块元素"><a href="#行内块元素" class="headerlink" title="行内块元素"></a>行内块元素</h3><p>在行内元素中有几个特殊的标签 —— &lt;img /&gt;、&lt;input /&gt;、&lt;td&gt;，它们同时具有块元素和行内元素的特点。有些资料称它们为行内块元素。 </p>
+<p>行内块元素的特点：</p>
+<ol>
+<li>和相邻行内元素（行内块）在一行上，但是他们之间会有空白缝隙。一行可以显示多个（行内元素特点）。</li>
+<li>默认宽度就是它本身内容的宽度（行内元素特点）。</li>
+<li>高度，行高、外边距以及内边距都可以控制（块级元素特点）。</li>
+</ol>
+<h3 id="元素显示模式转换"><a href="#元素显示模式转换" class="headerlink" title="元素显示模式转换"></a>元素显示模式转换</h3><p>特殊情况下，需要元素模式的转换，简单理解: 一个模式的元素需要另外一种模式的特性。比如想要增加链接 &lt;a&gt; 的触发范围。 </p>
+<ul>
+<li><p>转换为块元素：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">display</span><span class="selector-pseudo">:block</span>;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>独占一行。</li>
+<li>设置宽高生效。</li>
+</ol>
+</li>
+<li><p>转换为行内元素：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">display</span><span class="selector-pseudo">:inline</span>;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>一行可以显示多个.</li>
+<li>设置宽高无效。宽度默认是内容的宽度</li>
+</ol>
+</li>
+<li><p>转换为行内块元素：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">display</span>: <span class="selector-tag">inline-block</span>;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>一行可以显示多个</li>
+<li>默认宽度就是它本身内容的宽度,但是可以设置宽高。</li>
+</ol>
+</li>
+</ul>
+<h3 id="侧边栏菜单案例"><a href="#侧边栏菜单案例" class="headerlink" title="侧边栏菜单案例"></a>侧边栏菜单案例</h3><img src="/2018/11/30/CSS%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%86%8D%E5%85%A5%E9%97%A8/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%8F%9C%E5%8D%95%E6%A1%88%E4%BE%8B.png" class="">
+
+<h2 id="背景属性"><a href="#背景属性" class="headerlink" title="背景属性"></a>背景属性</h2><p>背景属性可以设置<strong>背景颜色</strong>、<strong>背景图片</strong>、<strong>背景平铺</strong>、<strong>背景图片位置</strong>、<strong>背景图像固定</strong>等。</p>
+<h3 id="背景颜色"><a href="#背景颜色" class="headerlink" title="背景颜色"></a>背景颜色</h3><p>语法：<strong>background-color</strong></p>
+<p>可用值为：<strong>transparnet</strong>（透明，默认）或具体的颜色值</p>
+<p>一般情况下元素背景颜色默认值是 transparent（透明），</p>
+<h3 id="背景图片"><a href="#背景图片" class="headerlink" title="背景图片"></a>背景图片</h3><p>语法：<strong>background-image</strong></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">background-image: none | url(url地址) /* 不用加引号 */</span><br></pre></td></tr></table></figure>
+
+<p>background-image 属性描述了元素的背景图像。实际开发常见于 logo 或者一些装饰性的小图片或者是超<br>大的背景图片, <strong>优点是非常便于控制位置</strong>. (精灵图也是一种运用场景)</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.back-img</span> &#123;</span><br><span class="line">    <span class="attribute">background-image</span>: <span class="built_in">url</span>(images/pic.jpeg)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="背景平铺模式"><a href="#背景平铺模式" class="headerlink" title="背景平铺模式"></a>背景平铺模式</h3><p>添加的背景图片默认是平铺的，可以通过该属性进行修改。</p>
+<p>语法：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">background-repeat : repeat | no-repeat | repeat-x | repeat-y </span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">repeat : 　背景图像在纵向和横向上平铺</span></span><br><span class="line"><span class="comment">no-repeat : 　背景图像不平铺</span></span><br><span class="line"><span class="comment">repeat-x : 　背景图像在横向上平铺</span></span><br><span class="line"><span class="comment">repeat-y : 　背景图像在纵向平铺 </span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="背景图片位置-重要"><a href="#背景图片位置-重要" class="headerlink" title="背景图片位置(重要)"></a>背景图片位置(重要)</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/26/HTML%E6%9C%9D%E8%8A%B1%E5%A4%95%E6%8B%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1391,10 +1741,6 @@
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
                 </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%89%8D%E7%AB%AF/HTML/" itemprop="url" rel="index"><span itemprop="name">HTML</span></a>
-                </span>
             </span>
 
           
@@ -1408,9 +1754,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>之前学习前端的只是还是在大学用Java Web做课设的时候。那个时候对于前端的只是也是学习了一些皮毛中的皮毛，没有系统性的整理过这些东西。后来毕业了就从事了移动端开发的工作，接触前端的机会也是少之又少。最近几年RN,Weex,Flutter等等这些移动端跨平台框架的兴起，前端进入了<strong>Web2.0</strong>时代。</p>
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前学习前端的只是还是在大学用Java Web做课设的时候。那个时候对于前端的只是也是学习了一些皮毛中的皮毛，没有系统性的整理过这些东西。后来毕业了就从事了移动端开发的工作，接触前端的机会也是少之又少。最近几年RN,Weex,Flutter等等这些移动端跨平台框架的兴起，前端进入了<strong>Web2.0</strong>时代。</p>
 <p>了解到RN也是从前端框架React逐步演化过来，是在移动端的原生实现。为了学习RN也不得不补习一下前端知识。用以此文来记录我的HTML学习之路。</p>
-<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><h2 id="HTML语法规范"><a href="#HTML语法规范" class="headerlink" title="HTML语法规范"></a>HTML语法规范</h2><ul>
+<h2 id="HTML语法规范"><a href="#HTML语法规范" class="headerlink" title="HTML语法规范"></a>HTML语法规范</h2><ul>
 <li><code>HTML</code>标签通常是成对出现的，称之为<strong>双标签</strong>。包含开始标签和结束标签，例如<code>&lt;html&gt; &lt;/html&gt;</code>。</li>
 <li>当然也有少数的<strong>单标签</strong>,例如<code>&lt;br /&gt;</code>。</li>
 </ul>
@@ -1770,156 +2116,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dev.Gao">
-      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dev.Gao的学习笔记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/" class="post-title-link" itemprop="url">KVO&KVC探究手记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-02-11 16:38:10" itemprop="dateCreated datePublished" datetime="2017-02-11T16:38:10+08:00">2017-02-11</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>KVO和KVC在OC中都是很常用的技术，也是技术面试中考察的标配。经常会被问起KVO和KVC的底层是如何实现的呢，如何手动触发KVO呢等等。今天就用这篇博客来记录一下对KVO和KVC的学习以及底层的原理。</p>
-<h2 id="KVO探究"><a href="#KVO探究" class="headerlink" title="KVO探究"></a>KVO探究</h2><p> KVO全称是Key-Value Observing, 翻译过来就是**”键值监听”**，可以用来监听某个对象属性值的改变。</p>
-<p>我们先来写一段简单的代码对比一下添加KVO和未添加KVO的对比。</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义一个Person类</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLPerson</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>) <span class="keyword">int</span> age;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">///KVO触发的场景</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) GLPerson *person1;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) GLPerson *person2;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123; </span><br><span class="line">        <span class="comment">//1. 初始化两个对象</span></span><br><span class="line">    <span class="keyword">self</span>.person1 = [[GLPerson alloc] init];</span><br><span class="line">    <span class="keyword">self</span>.person1.age = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">self</span>.person2 = [[GLPerson alloc] init];</span><br><span class="line">    <span class="keyword">self</span>.person2.age = <span class="number">2</span>;</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//2. 获取这个对象的地址</span></span><br><span class="line">      <span class="built_in">NSLog</span>(<span class="string">@&quot;self.person1:%p&quot;</span>,<span class="keyword">self</span>.person1);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;self.person2:%p&quot;</span>,<span class="keyword">self</span>.person2);</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//person1添加KVO</span></span><br><span class="line">    <span class="built_in">NSKeyValueObservingOptions</span> options = <span class="built_in">NSKeyValueObservingOptionNew</span> | <span class="built_in">NSKeyValueObservingOptionOld</span>;</span><br><span class="line">    [<span class="keyword">self</span>.person1 addObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;age&quot;</span> options:options context:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event &#123;</span><br><span class="line">    <span class="keyword">self</span>.person1.age = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">self</span>.person2.age = <span class="number">20</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span> *)change context:(<span class="keyword">void</span> *)context</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@ : %@&quot;</span>,object,change);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当我们触发<code>touchesBegan</code>方法时，控制台上已经有了如下信息：</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO%E4%BE%8B%E5%AD%90.png" class="">
-
-<p>可以看出，虽然<code>person1</code>和<code>person2</code>的<code>age</code>值都发生了改变，但的确只有<code>person1</code>触发了KVO。同样都是<code>GLPerson</code>，<code>setAge:</code>的实现也肯定是一样的，为什么一个可以触发，一个不能触发呢。那是不是<code>person1</code>的<code>setAge：</code>和<code>person2</code>的的<code>setAge:</code>的确不一样呢。我们来验证一下，获取一下<code>person1</code>和<code>person2</code>的<code>setAge：</code>方法。</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//打印person1和person2的地址</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;self.person1:%p&quot;</span>,<span class="keyword">self</span>.person1);</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;self.person2:%p&quot;</span>,<span class="keyword">self</span>.person2);</span><br><span class="line"></span><br><span class="line"><span class="comment">//打印person1和person2中 setAge:的函数地址</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%p %p&quot;</span>,[<span class="keyword">self</span>.person1 methodForSelector:<span class="keyword">@selector</span>(setAge:)],</span><br><span class="line">                   [<span class="keyword">self</span>.person2 methodForSelector:<span class="keyword">@selector</span>(setAge:)]);</span><br><span class="line">    </span><br><span class="line"><span class="comment">//person1添加KVO</span></span><br><span class="line"><span class="built_in">NSKeyValueObservingOptions</span> options = <span class="built_in">NSKeyValueObservingOptionNew</span> | <span class="built_in">NSKeyValueObservingOptionOld</span>;</span><br><span class="line">[<span class="keyword">self</span>.person1 addObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;age&quot;</span> options:options context:<span class="literal">nil</span>];</span><br><span class="line">    </span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%p %p&quot;</span>,[<span class="keyword">self</span>.person1 methodForSelector:<span class="keyword">@selector</span>(setAge:)],</span><br><span class="line">                             [<span class="keyword">self</span>.person2 methodForSelector:<span class="keyword">@selector</span>(setAge:)]);</span><br></pre></td></tr></table></figure>
-
-<p>控制台信息输出：</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_method.png" class="">
-
-<p>可以看出，<strong>没有添加KVO之前，两个对象的<code>setAge:</code>的实现是一样的。添加KVO之后，<code>setAge:</code>方法被指向了另外的地址。</strong></p>
-<p>使用LLDB打印这个地址的方法实现：</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_method_point.png" class="">
-
-<p>可以看出，添加KVO之后，set方法的实现被指向了<code>_NSSetIntValueAndNotify</code>。我们知道，类的实例方法是存储在<code>Class</code>对象中的，如果set方法的实现是在Class对象被修改的，那么会影响所有的实例对象的调用。这显然是不对的。可以推断出，添加KVO之后的实例对象的class对象被修改了，即<strong>修改了isa的指向</strong>。</p>
-<p>我们验证一下：</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_isa.png" class="">
-
-<p>可以看出：添加KVO之后，实例对象的isa指向了一个名为<strong>NSKVONotifying_GLPerson</strong>的Class对象。可以猜想到，KVO的实现是实例对象动态的改变了<code>isa</code>的指向。我们来进一步的看一下这个类更为详细的信息，利用Runtime获取一下这个类的成员属性，方法，父类等信息。</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">Class clazz = object_getClass(<span class="keyword">self</span>.person1);</span><br><span class="line"><span class="comment">///遍历方法</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> methodCount = <span class="number">0</span>;</span><br><span class="line">Method  *methods = class_copyMethodList(clazz, &amp;methodCount);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; methodCount; i++) &#123;</span><br><span class="line">    <span class="comment">///获得方法</span></span><br><span class="line">    Method method = methods[i];</span><br><span class="line">    <span class="comment">///获取方法名</span></span><br><span class="line">    <span class="built_in">NSString</span> *methodName = <span class="built_in">NSStringFromSelector</span>(method_getName(method));</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;方法名:%@&quot;</span>,methodName);</span><br><span class="line">&#125;</span><br><span class="line">free(methods);</span><br><span class="line"></span><br><span class="line"><span class="comment">///遍历属性</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> ivarCount = <span class="number">0</span>;</span><br><span class="line">Ivar *ivars = class_copyIvarList(clazz, &amp;ivarCount);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; ivarCount; i++) &#123;</span><br><span class="line">    Ivar ivar = ivars[i];</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *ivarName = ivar_getName(ivar);</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *ivarType = ivar_getTypeEncoding(ivar);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;属性类型：%s，属性名称：%s&quot;</span>,ivarType,ivarName);</span><br><span class="line">&#125;</span><br><span class="line">free(ivars);</span><br><span class="line"></span><br><span class="line"><span class="comment">//打印父类</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;父类：%@&quot;</span>,[clazz superclass]);</span><br></pre></td></tr></table></figure>
-
-<p>我们得到如下信息。</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO_class_info.png" class="">
-
-<p>到此KVO是如何实现的基本上就明了了。就以<code>GLPerson</code>为例:</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/unuse_kvo.png" class="">
-
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/use_kvo.png" class="">
-
-<h3 id="NSSet-ValueAndNotify"><a href="#NSSet-ValueAndNotify" class="headerlink" title="_NSSet*ValueAndNotify"></a>_NSSet*ValueAndNotify</h3><p>我们从上面的例子中看出，<code>NSKVONotifying_GLPerson</code>的<code>setAge:</code>的实现最终指向了<code>_NSSetIntValueAndNotify</code>。其实这类函数在Foundation框架中还有很多：</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/ValueAndNotify.png" class="">
-
-<p>对于<code>_NSSet*ValueAndNotify</code>的内部实现基本上可以表示为：</p>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVO%E6%B5%81%E7%A8%8B.png" class="">
-
-<h2 id="KVO总结"><a href="#KVO总结" class="headerlink" title="KVO总结"></a>KVO总结</h2><ul>
-<li><p>KVO的实现原理(KVO的本质)</p>
-<ul>
-<li>利用RuntimeAPI动态生成一个子类，并且让<code>instance</code>对象的isa指向这个全新的子类。</li>
-<li>这个子类将添加KVO属性的<code>setter</code>方法的实现指向了Foundation框架的<code>_NSSetXXXValueAndNotify</code>函数。</li>
-<li>当修改<code>instance</code>对象的属性的时候，调用了<code>_NSSetXXXValueAndNotify</code>函数，这个函数内部会调用：<ul>
-<li><code>willChangeValueForKey:</code></li>
-<li>父类原来的<code>setter</code></li>
-<li><code>didChangeValueForKey:</code>，这个方法内部还会触发监听器(Observer)的监听方法(observeValueForKeyPath:ofObject:change:context:)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>如何手动触发KVO？</p>
-<p>手动调用<code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code></p>
-</li>
-<li><p>直接修改成员变量会不会触发KVO？</p>
-<p>不会。</p>
-</li>
-</ul>
-<h2 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h2><p>KVC全称是<strong>Key-Value Coding</strong>,翻译过来就是<strong>键值编码</strong>。可以通过一个key来访问某个属性。</p>
-<p>常见的API：</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">///设值</span></span><br><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span>)value forKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span>)value forKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br><span class="line"><span class="comment">///取值</span></span><br><span class="line">- (<span class="keyword">id</span>)valueForKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">id</span>)valueForKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br></pre></td></tr></table></figure>
-
-<h3 id="设值的原理"><a href="#设值的原理" class="headerlink" title="设值的原理"></a>设值的原理</h3><p>调用<code>setValue:forKey:</code>方法其原理是：</p>
-<ul>
-<li>调用<code>setValue:forKey:</code>方法，会按照<code>setKey:</code>、<code>_setKey:</code>的顺序查找方法，找到了传递参数，调用方法。</li>
-<li>如果没有找到，获取类属性<code>accessInstanceVariablesDirectly</code>的值（BOOL，表示是否可以直接实例对象成员属性值，默认为YES）。如果为NO，则调用<code>setValue:forUndfineKey:</code>，这个方法默认会抛出<code>NSUnknownKeyException</code>异常。如果不想抛出异常，则需要重写该方法。</li>
-<li>如果<code>accessInstanceVariablesDirectly</code>为YES，则会按照<strong>_key,_isKey,key,isKey</strong>顺序查找成员变量。如果找到了直接赋值，没有找到也会调用<code>setValue:forUndfineKey:</code></li>
-</ul>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVC%E8%AE%BE%E5%80%BC%E6%B5%81%E7%A8%8B.png" class="">
-
-<h3 id="取值的原理"><a href="#取值的原理" class="headerlink" title="取值的原理"></a>取值的原理</h3><p>调用<code>valueForKey:</code>方法其原理是：</p>
-<ul>
-<li>调用<code>valueForKey:</code>方法，会按照**<code>getKey</code>、<code>key</code>、<code>isKey</code>、<code>_key</code>**顺序查找方法。如果找到了则调用方法。</li>
-<li>如果没有找到，获取类属性<code>accessInstanceVariablesDirectly</code>的值（BOOL，表示是否可以直接实例对象成员属性值，默认为YES）。如果为NO，则调用<code>ValueforUndfineKey:</code>，这个方法默认会抛出<code>NSUnknownKeyException</code>异常。如果不想抛出异常，则需要重写该方法。</li>
-<li>如果返回YES，则会按照<strong>_key、_isKey、key、isKey</strong>顺序查找成员变量。找到成员变量直接取值。没有找到也会调用<code>valueForUndefinedKey</code></li>
-</ul>
-<img src="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/KVC%E5%8F%96%E5%80%BC%E6%B5%81%E7%A8%8B.png" class="">
-
-<h3 id="KVC触发KVO"><a href="#KVC触发KVO" class="headerlink" title="KVC触发KVO"></a>KVC触发KVO</h3><p>了解了KVC取值和设值的原理，如果没有相关的setter方法，则直接访问成员变量。在探究KVO的时候我们还知道，没有setter方法直接修改成员变量是不能触发KVO的。不过有一点值得注意，<strong>如果通过KVC去设置，不管有没有setter方法都会触发KVO。可想而知，即使没有setter方法时，KVC直接修改成员变量值的同时，内部也是主动调用<code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code>两个方法。</strong></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1989,20 +2185,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
