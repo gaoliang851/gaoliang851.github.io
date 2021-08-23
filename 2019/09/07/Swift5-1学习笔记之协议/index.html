@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="协议可以用来定义方法、属性、下标的声明，协议可以被枚举、结构体、类遵守(多个协议之间用逗号隔开) protocol Drawable &amp;#123;    func draw()    var x: Int &amp;#123; get set &amp;#125;    var y: Int &amp;#123; get &amp;#125;    subscript(index: Int) -&gt; Int &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之协议">
+<meta property="og:url" content="http://yoursite.com/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="协议可以用来定义方法、属性、下标的声明，协议可以被枚举、结构体、类遵守(多个协议之间用逗号隔开) protocol Drawable &amp;#123;    func draw()    var x: Int &amp;#123; get set &amp;#125;    var y: Int &amp;#123; get &amp;#125;    subscript(index: Int) -&gt; Int &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-07T03:15:53.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之协议 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之协议
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-07 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-07T11:15:53+08:00">2019-09-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li><p>协议可以用来定义方法、属性、下标的声明，协议可以被枚举、结构体、类遵守(多个协议之间用逗号隔开)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Drawable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">draw</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">var</span> x: <span class="type">Int</span> &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> y: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Test1</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Test2</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Test3</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestClass</span>: <span class="title">Test1</span>, <span class="title">Test2</span>, <span class="title">Test3</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>协议中定义方法时不能有默认参数值</p>
+</li>
+<li><p>默认情况下，协议中定义的内容必须全部都实现，也有办法办到只实现部分内容</p>
+</li>
+</ul>
+<h2 id="协议中的属性"><a href="#协议中的属性" class="headerlink" title="协议中的属性"></a>协议中的属性</h2><ul>
+<li><p>协议中定义的属性时必须用<code>var</code>关键字。如果该属性只有<code>get</code>方法时，在实现时，如果重写成存储属性，可以将其重写为<code>let</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Test4</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Test1</span>: <span class="title">Test4</span> </span></span><br><span class="line"><span class="class">    <span class="title">let</span> <span class="title">x</span> : <span class="title">Int</span> = 0</span></span><br><span class="line"><span class="class">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现协议时的属性权限要不小于协议中定义的属性权限</p>
+<ul>
+<li>协议定义的<code>get</code>、<code>set</code>,用<code>var</code>存储属性或<code>get</code>、<code>set</code>计算属性去实现</li>
+<li>协议定义<code>get</code>,用任何属性（存储、计算）都可以实现</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Drawable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">draw</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">var</span> x: <span class="type">Int</span> &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> y: <span class="type">Int</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line">    <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123; <span class="keyword">get</span> <span class="keyword">set</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person1</span> : <span class="title">Drawable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="keyword">let</span> y: <span class="type">Int</span> = <span class="number">0</span> <span class="comment">//只读，get</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">draw</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Person1 draw&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    <span class="keyword">set</span> &#123; &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123; index &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person2</span> : <span class="title">Drawable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="keyword">var</span> y: <span class="type">Int</span> &#123; <span class="number">0</span> &#125; <span class="comment">// set get,可读可写</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">draw</span><span class="params">()</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;Person2 draw&quot;</span>) &#125;</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;&#125;</span><br><span class="line">    <span class="keyword">get</span> &#123; index &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="协议中的static、class"><a href="#协议中的static、class" class="headerlink" title="协议中的static、class"></a>协议中的<code>static</code>、<code>class</code></h2><ul>
+<li><p>为了保证通用，协议中必须用<code>static</code>定义类型方法、类型属性、类型下标，因为枚举和结构体中是不能使用<code>class</code>的。但是在类中实现的时候，可以根据需要使用<code>static</code>或<code>class</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Writeable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">write</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Writeable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">write</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Student write&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wirtor</span>: <span class="title">Writeable</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">write</span>() </span>&#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Wirtor write&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span>: <span class="title">Writeable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">write</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;Person write&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="协议中的mutating"><a href="#协议中的mutating" class="headerlink" title="协议中的mutating"></a>协议中的<code>mutating</code></h2><ul>
+<li><p>只有将协议中的实例方法标记为<code>mutating</code>，才允许结构体、枚举的具体实现修改自身内存。类在实现方法时不用加<code>mutating</code>,枚举、结构体才需要加<code>mutating</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">MutatingProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">change</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Size</span>: <span class="title">MutatingProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">change</span><span class="params">()</span></span> &#123; <span class="comment">//Class 不用加 mutating</span></span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;change&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span>: <span class="title">MutatingProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">  <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">change</span><span class="params">()</span></span> &#123;</span><br><span class="line">      x = <span class="number">10</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="协议中的初始化器"><a href="#协议中的初始化器" class="headerlink" title="协议中的初始化器"></a>协议中的初始化器</h2><h3 id="init"><a href="#init" class="headerlink" title="init"></a><code>init</code></h3><p>协议中还可以定义初始化器<code>init</code></p>
+<ul>
+<li><p><strong>非<code>final</code>类</strong>实现时必须加上<code>required</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PointProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(x: <span class="type">Int</span> ,y: <span class="type">Int</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Size</span> : <span class="title">PointProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(x: <span class="type">Int</span>, y: <span class="type">Int</span>) &#123; &#125; <span class="comment">//必须加required</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> : <span class="title">PointProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(x: <span class="type">Int</span>, y: <span class="type">Int</span>) &#123; &#125; <span class="comment">//final类 可以不用加 required</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果从协议实现的初始化器，刚好是重写了父类的指定初始化器，那么这个初始化器必须同时加上<code>required</code>、<code>override</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Livable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>(age: <span class="type">Int</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; <span class="comment">//Person 和 Livable 没有关系</span></span><br><span class="line">        <span class="keyword">init</span>(age: <span class="type">Int</span>) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span>, <span class="title">Livable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">required</span> <span class="keyword">override</span> <span class="keyword">init</span>(age: <span class="type">Int</span>) &#123;</span><br><span class="line">            <span class="keyword">super</span>.<span class="keyword">init</span>(age: age)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="init-和init"><a href="#init-和init" class="headerlink" title="init?和init!"></a><code>init?</code>和<code>init!</code></h3><ul>
+<li><p>协议中定义的<code>init?</code>、<code>init!</code>，可以用<code>init</code>、<code>init?</code>、<code>init!</code>去实现。</p>
+</li>
+<li><p>协议中定义的<code>init</code>，可以用<code>init</code>、<code>init!</code>去实现。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">InitProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">init</span>()</span><br><span class="line">    <span class="keyword">init</span>?(age: <span class="type">Int</span>)</span><br><span class="line">    <span class="keyword">init</span>!(no: <span class="type">Int</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> : <span class="title">InitProtocol</span></span>&#123;</span><br><span class="line">        <span class="comment">//required init()&#123;&#125;</span></span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>!() &#123;&#125;</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(age: <span class="type">Int</span>) &#123; &#125;</span><br><span class="line">        <span class="comment">//required init!(age: Int) &#123;&#125;</span></span><br><span class="line">        <span class="comment">//required init(age: Int) &#123;&#125;</span></span><br><span class="line">         </span><br><span class="line">        <span class="comment">//required init!(no: Int) &#123; &#125;</span></span><br><span class="line">        <span class="comment">//required init?(no: Int) &#123;&#125;</span></span><br><span class="line">      <span class="keyword">required</span> <span class="keyword">init</span>(no: <span class="type">Int</span>) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="协议的继承"><a href="#协议的继承" class="headerlink" title="协议的继承"></a>协议的继承</h2><p>一个协议可以继承其他协议</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SuperProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">breath</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">ChildProtocol</span>: <span class="title">SuperProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> : <span class="title">ChildProtocol</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">breath</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="协议的组合"><a href="#协议的组合" class="headerlink" title="协议的组合"></a>协议的组合</h2><p>如果要求一个参数遵循多个协议可以使用形如：<code>FirstProtocol &amp; SecondProtocol &amp; …</code>这样的形式，将多个协议拼接起来。也可以指定参数的类类型(<code>class type</code>),但最多一个。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">FirstProtocol</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SecondProtocol</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//接受Person或者其子类的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fn0</span> <span class="params">(obj: Person)</span></span> &#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//接受遵循FirstProtocol协议的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fn1</span> <span class="params">(obj: FirstProtocol)</span></span> &#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//接受遵循FirstProtocol和SecondProtocol协议的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fn2</span> <span class="params">(obj: FirstProtocol &amp; SecondProtocol)</span></span> &#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//接受遵循FirstProtocol和SecondProtocol协议,并且是Person或者其子类的实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fn3</span> <span class="params">(obj: Person &amp; FirstProtocol &amp; SecondProtocol)</span></span> &#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Swift中常见的几个协议"><a href="#Swift中常见的几个协议" class="headerlink" title="Swift中常见的几个协议"></a><code>Swift</code>中常见的几个协议</h2><h3 id="CaseIterable"><a href="#CaseIterable" class="headerlink" title="CaseIterable"></a><code>CaseIterable</code></h3><ul>
+<li><p>让枚举遵守<code>CaseIterable</code>协议，可以实现遍历枚举值</p>
+<ul>
+<li><code>CaseIterable</code>协议中，定义了一个可以返回<code>allCases</code>数组的类属性。但不用实现该属性，编译器会自动实现</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Season</span>: <span class="title">CaseIterable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> spring, summer, autumn, winter</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> seasons = <span class="type">Season</span>.allCases</span><br><span class="line"><span class="built_in">print</span>(seasons.<span class="built_in">count</span>) <span class="comment">//4</span></span><br><span class="line"><span class="keyword">for</span> season <span class="keyword">in</span> seasons &#123;</span><br><span class="line">        <span class="built_in">print</span>(season) <span class="comment">//spring summer autumn winter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="CustomStringConvertiable"><a href="#CustomStringConvertiable" class="headerlink" title="CustomStringConvertiable"></a><code>CustomStringConvertiable</code></h3><ul>
+<li><p>遵守<code>CustomStringConvertiable</code>、<code>CustomDebugStringConvertible</code>协议，都可以定义自定义实例的打印字符串</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> : <span class="title">CustomStringConvertible</span>, <span class="title">CustomDebugStringConvertible</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> description: <span class="type">String</span> &#123; <span class="string">&quot;person_\(age)&quot;</span> &#125;</span><br><span class="line">    <span class="keyword">var</span> debugDescription: <span class="type">String</span> &#123; <span class="string">&quot;debug_person_\(age)&quot;</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Person</span>()</span><br><span class="line"><span class="built_in">print</span>(p) <span class="comment">//person_0</span></span><br><span class="line"><span class="built_in">debugPrint</span>(p) <span class="comment">//debug_person_0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>print</code>调用的是<code>CustomStringConvertible</code>协议的<code>descrition</code></p>
+</li>
+<li><p><code>debugPrint</code>和<code>po</code>调用的是<code>CustomDebugStringConvertible</code>协议的<code>debugDescription</code></p>
+</li>
+</ul>
+<h2 id="Any和AnyObject"><a href="#Any和AnyObject" class="headerlink" title="Any和AnyObject"></a><code>Any</code>和<code>AnyObject</code></h2><p><code>Swift</code>提供了2种特殊的类型：<code>Any</code>、<code>AnyObject</code></p>
+<ul>
+<li><p><code>Any</code>：可以代表任意类型(枚举、结构体、类，也包括函数类型)</p>
+</li>
+<li><p><code>AnyObject</code>：可以代表任意<strong>类类型</strong>(在协议后面写上：<code>:AnyObject</code>代表只有类能遵守这个协议，如果换成<code>: class</code>效果雷同)</p>
+<p>协议中的写法：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">AnyTypeProtocol</span>: <span class="title">Any</span> </span>&#123; &#125; <span class="comment">//枚举、结构体和类都可以遵守</span></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">AnyObjectProtocol</span>: <span class="title">AnyObject</span> </span>&#123; &#125;<span class="comment">//只有类可以遵守</span></span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">ClassProtocol</span>: <span class="title">class</span> </span>&#123; &#125;<span class="comment">//只有类可以遵守，是AnyObject的另外一种写法</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">AnyTypeProtocol</span>, <span class="title">AnyObjectProtocol</span>,<span class="title">ClassProtocol</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student</span> : <span class="title">AnyTypeProtocol</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>常见写法：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建一个能存放任意类型的变量</span></span><br><span class="line"><span class="keyword">var</span> stu: <span class="type">Any</span> = <span class="number">10</span></span><br><span class="line">stu = <span class="string">&quot;Jack&quot;</span></span><br><span class="line">stu = <span class="type">Person</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建1个能存放任意类型的数组</span></span><br><span class="line"><span class="keyword">var</span> data = <span class="type">Array</span>&lt;<span class="type">Any</span>&gt;()<span class="comment">//var data = [Any]()</span></span><br><span class="line">data.append(<span class="number">1</span>)</span><br><span class="line">data.append(<span class="number">3.14</span>)</span><br><span class="line">data.append(<span class="type">Student</span>())</span><br><span class="line">data.append(<span class="string">&quot;Jack&quot;</span>)</span><br><span class="line">data.append(&#123; <span class="number">10</span> &#125;)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="is和as"><a href="#is和as" class="headerlink" title="is和as"></a><code>is</code>和<code>as</code></h2><h3 id="is的用法"><a href="#is的用法" class="headerlink" title="is的用法"></a><code>is</code>的用法</h3><p><code>is</code>用来判断是否为某种类型或者使其子类，可以判断是否遵守某个<code>protocol</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">IsProtocol</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span>, <span class="title">IsProtocol</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stu : <span class="type">Any</span> = <span class="number">10</span></span><br><span class="line"><span class="built_in">print</span>(stu <span class="keyword">is</span> <span class="type">Int</span>)<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">stu = <span class="string">&quot;Jack&quot;</span></span><br><span class="line"><span class="built_in">print</span>(stu <span class="keyword">is</span> <span class="type">String</span>)<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">stu = <span class="type">Student</span>()</span><br><span class="line"><span class="built_in">print</span>(stu <span class="keyword">is</span> <span class="type">Person</span>)<span class="comment">//true</span></span><br><span class="line"><span class="built_in">print</span>(stu <span class="keyword">is</span> <span class="type">Student</span>)<span class="comment">//true</span></span><br><span class="line"><span class="built_in">print</span>(stu <span class="keyword">is</span> <span class="type">IsProtocol</span>)<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="as和as-as"><a href="#as和as-as" class="headerlink" title="as和as?,as!"></a><code>as</code>和<code>as?</code>,<code>as!</code></h3><p><code>as</code>用来做强制类型转换，<code>as?</code>通常用在编译器<strong>无法确定是否能转换成功</strong>的前提下，转换出来的结果也可选项。<code>as!</code>则相当于 <code>as?</code> 获取可选项后做强制解包。<code>as</code>用在确定能转换成功的情况，比如：可选项 -&gt; <code>Any</code>;<code>Int</code> -&gt; <code>Double</code>;子类转父类等等。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>: <span class="title">Person</span>, <span class="title">IsProtocol</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">study</span><span class="params">()</span></span> &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Student study&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stu: <span class="type">Any</span> = <span class="number">10</span></span><br><span class="line">stu = <span class="type">Student</span>()</span><br><span class="line">    </span><br><span class="line"><span class="comment">//(stu as? Student)?.study() 等价于下面两句：</span></span><br><span class="line"><span class="keyword">var</span> result =  stu <span class="keyword">as</span>? <span class="type">Student</span> <span class="comment">// result 是 Student? 类型</span></span><br><span class="line">result?.study()</span><br><span class="line">    </span><br><span class="line"><span class="comment">//(stu as! Student).study() 等价于下面两句。</span></span><br><span class="line"><span class="comment">//也等价于 (stu as? Student)!.study()</span></span><br><span class="line"><span class="keyword">var</span> result2 = stu <span class="keyword">as</span>! <span class="type">Student</span> <span class="comment">// result2 是Student类型</span></span><br><span class="line">result2.study()</span><br><span class="line">    </span><br><span class="line"><span class="comment">//------as------</span></span><br><span class="line"><span class="keyword">var</span> data = [<span class="type">Any</span>]()</span><br><span class="line">data.append(<span class="type">Int</span>(<span class="string">&quot;123&quot;</span>) <span class="keyword">as</span> <span class="type">Any</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> d = <span class="number">10</span> <span class="keyword">as</span> <span class="type">Double</span></span><br><span class="line"><span class="built_in">print</span>(d)<span class="comment">//10.0</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> student = <span class="type">Student</span>()</span><br><span class="line"><span class="keyword">var</span> person = student <span class="keyword">as</span> <span class="type">Person</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="元类型"><a href="#元类型" class="headerlink" title="元类型"></a>元类型</h2><ul>
+<li><p><code>X.self</code>(<code>X</code>代表类)是一个元类型(<code>metadata</code>)的指针，<code>metadata</code>存放着类型相关信息</p>
+</li>
+<li><p><code>X.self</code>属于<code>X.Type</code>类型</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> : <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"><span class="keyword">var</span> perType : <span class="type">Person</span>.<span class="type">Type</span> = <span class="type">Person</span>.<span class="keyword">self</span> <span class="comment">//perType 是 Person.Type类型</span></span><br><span class="line"><span class="keyword">var</span> stuType : <span class="type">Student</span>.<span class="type">Type</span> = <span class="type">Student</span>.<span class="keyword">self</span> <span class="comment">//stuType 是 Student.Type类型</span></span><br><span class="line">perType = <span class="type">Student</span>.<span class="keyword">self</span> <span class="comment">//父类的元类型可以指向子类的元类型，但是子类的元类型缺不能指向父类的元类型</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用函数<code>type(of: &lt;T&gt;)</code>,可以获取某个实例的元类型，但在汇编层面上这个并不是一个真正的函数(没有<code>call</code>调用)，编译器直接取到参数实例的前八个字节。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> per = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">var</span> perType2 = type(of: per) <span class="comment">//Person.Type</span></span><br><span class="line"><span class="built_in">print</span>(<span class="type">Person</span>.<span class="keyword">self</span> == perType2) <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>AnyObject.Type</code>类型可以指向任意类的元类型，在<code>Swift</code>中定义，<code>public typelias AnyClass = AnyObject.Type</code>，所以可以用<code>AnyClass</code>替代</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> anyType : <span class="type">AnyObject</span>.<span class="type">Type</span> = <span class="type">Student</span>.<span class="keyword">self</span></span><br><span class="line">anyType = <span class="type">Person</span>.<span class="keyword">self</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> anyType2 : <span class="type">AnyClass</span> = <span class="type">Student</span>.<span class="keyword">self</span></span><br><span class="line">anyType2 = <span class="type">Person</span>.<span class="keyword">self</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="元类型的应用"><a href="#元类型的应用" class="headerlink" title="元类型的应用"></a>元类型的应用</h3><p><code>X.self</code> 类似于<code>OC</code>中的实例的<code>.class</code>属性，而<code>X.Type</code>类似于<code>OC</code>中的<code>Class</code>类型。<code>X.self</code>和<code>X.Type</code>也可以像<code>OC</code>中使用<code>Class</code>调用方法。</p>
+<p><strong>注意：如果使用<code>X.Type</code>调用初始化器，必须是<code>required</code>的，因为<code>X.Type</code>也可能是子类的，只有<code>required</code>能保证子类中也有该初始化器</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>() &#123; &#125;</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">func</span> <span class="title">speak</span>() </span>&#123; <span class="built_in">print</span>(<span class="string">&quot;Animal speak&quot;</span>) &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cat</span>: <span class="title">Animal</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pig</span>: <span class="title">Animal</span> </span>&#123; &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">create</span><span class="params">(<span class="number">_</span> clses: [Animal.<span class="keyword">Type</span>])</span></span> -&gt; [<span class="type">Animal</span>] &#123;</span><br><span class="line">    <span class="keyword">var</span> arr = [<span class="type">Animal</span>]()</span><br><span class="line">  <span class="keyword">for</span> cls <span class="keyword">in</span> clses &#123;</span><br><span class="line">      cls.speak()</span><br><span class="line">    arr.append(cls.<span class="keyword">init</span>())</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(create([<span class="type">Cat</span>.<span class="keyword">self</span>,<span class="type">Dog</span>.<span class="keyword">self</span>,<span class="type">Pig</span>.<span class="keyword">self</span>]))</span><br></pre></td></tr></table></figure>
+
+<p>所以<strong>对于类属性以及类方法也可使用元类型进行调用</strong>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Person</span>.age = <span class="number">10</span></span><br><span class="line"><span class="type">Person</span>.<span class="keyword">self</span>.age = <span class="number">10</span></span><br><span class="line"><span class="type">Person</span>.run()</span><br><span class="line"><span class="type">Person</span>.<span class="keyword">self</span>.run()</span><br><span class="line">    </span><br><span class="line"><span class="keyword">var</span> p0 = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">var</span> p1 = <span class="type">Person</span>.<span class="keyword">self</span>()</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="type">Person</span>.<span class="keyword">init</span>()</span><br><span class="line"><span class="keyword">var</span> p3 = <span class="type">Person</span>.<span class="keyword">self</span>.<span class="keyword">init</span>()</span><br></pre></td></tr></table></figure>
+
+<p>在纯<code>Swift</code>中，也实现了某些<code>OC</code>中<code>Runtime</code>方法中：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> : <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> no: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(class_getInstanceSize(<span class="type">Student</span>.<span class="keyword">self</span>)) <span class="comment">//32</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//class_getSuperclass() 返回的是可选类型，需要强制解包</span></span><br><span class="line"><span class="built_in">print</span>(class_getSuperclass(<span class="type">Student</span>.<span class="keyword">self</span>)!) <span class="comment">//Person</span></span><br><span class="line"><span class="built_in">print</span>(class_getSuperclass(<span class="type">Person</span>.<span class="keyword">self</span>)!) <span class="comment">//_TtCs12_SwiftObject</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Self"><a href="#Self" class="headerlink" title="Self"></a><code>Self</code></h2><ul>
+<li><p><code>Self</code>代表当前类型。此<code>Self</code>和<code>self</code>不同。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> age = <span class="number">1</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">var</span> <span class="built_in">count</span> = <span class="number">2</span></span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="keyword">self</span>.age)</span><br><span class="line">    <span class="built_in">print</span>(<span class="type">Self</span>.<span class="built_in">count</span>)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Self</code>一般用作返回值类型，限定返回值跟方法和调用者必须是同一类型。(也可以作为参数类型)</p>
+<blockquote>
+<p><code>Self</code>和<code>OC</code>中<code>InstanceType</code>的作用差不多。再返回值为<code>Self</code>的方法中，不返回特定的类型，因为子类有可能继承。一般使用<code>type(of: T)</code>获取到元类型，再试用元类型调用方法。</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">SelfProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> -&gt; <span class="type">Self</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> : <span class="title">SelfProtocol</span> </span>&#123;</span><br><span class="line">        <span class="keyword">required</span> <span class="keyword">init</span>() &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> -&gt; <span class="type">Self</span> &#123;</span><br><span class="line">            type(of: <span class="keyword">self</span>).<span class="keyword">init</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/" rel="prev" title="Swift5学习笔记之可选链">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之可选链
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/08/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" rel="next" title="Swift5学习笔记之错误处理">
+      Swift5学习笔记之错误处理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">协议中的属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84static%E3%80%81class"><span class="nav-number">2.</span> <span class="nav-text">协议中的static、class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84mutating"><span class="nav-number">3.</span> <span class="nav-text">协议中的mutating</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">协议中的初始化器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#init"><span class="nav-number">4.1.</span> <span class="nav-text">init</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init-%E5%92%8Cinit"><span class="nav-number">4.2.</span> <span class="nav-text">init?和init!</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="nav-number">5.</span> <span class="nav-text">协议的继承</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BB%84%E5%90%88"><span class="nav-number">6.</span> <span class="nav-text">协议的组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swift%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E4%B8%AA%E5%8D%8F%E8%AE%AE"><span class="nav-number">7.</span> <span class="nav-text">Swift中常见的几个协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CaseIterable"><span class="nav-number">7.1.</span> <span class="nav-text">CaseIterable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CustomStringConvertiable"><span class="nav-number">7.2.</span> <span class="nav-text">CustomStringConvertiable</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Any%E5%92%8CAnyObject"><span class="nav-number">8.</span> <span class="nav-text">Any和AnyObject</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#is%E5%92%8Cas"><span class="nav-number">9.</span> <span class="nav-text">is和as</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#is%E7%9A%84%E7%94%A8%E6%B3%95"><span class="nav-number">9.1.</span> <span class="nav-text">is的用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#as%E5%92%8Cas-as"><span class="nav-number">9.2.</span> <span class="nav-text">as和as?,as!</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%83%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.</span> <span class="nav-text">元类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">10.1.</span> <span class="nav-text">元类型的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Self"><span class="nav-number">11.</span> <span class="nav-text">Self</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

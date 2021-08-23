@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="对于可选项的方法调用，参考如下代码： class Car &amp;#123; var price &#x3D; 0 &amp;#125;class Dog &amp;#123; var weight &#x3D; 0 &amp;#125;class Person &amp;#123;  var name: String &#x3D; &quot;&quot;  var dog: Dog &#x3D; Dog()  var car: Car? &#x3D; Car()  func ag">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之可选链">
+<meta property="og:url" content="http://yoursite.com/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="对于可选项的方法调用，参考如下代码： class Car &amp;#123; var price &#x3D; 0 &amp;#125;class Dog &amp;#123; var weight &#x3D; 0 &amp;#125;class Person &amp;#123;  var name: String &#x3D; &quot;&quot;  var dog: Dog &#x3D; Dog()  var car: Car? &#x3D; Car()  func ag">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-06T03:15:53.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之可选链 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/06/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8F%AF%E9%80%89%E9%93%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之可选链
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-06 11:15:53" itemprop="dateCreated datePublished" datetime="2019-09-06T11:15:53+08:00">2019-09-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>对于可选项的方法调用，参考如下代码：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123; <span class="keyword">var</span> price = <span class="number">0</span> &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> </span>&#123; <span class="keyword">var</span> weight = <span class="number">0</span> &#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name: <span class="type">String</span> = <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="keyword">var</span> dog: <span class="type">Dog</span> = <span class="type">Dog</span>()</span><br><span class="line">  <span class="keyword">var</span> car: <span class="type">Car?</span> = <span class="type">Car</span>()</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">age</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; <span class="number">18</span> &#125;</span><br><span class="line">  <span class="function"><span class="keyword">func</span> <span class="title">eat</span><span class="params">()</span></span>  &#123; <span class="built_in">print</span>(<span class="string">&quot;Person eat&quot;</span>) &#125;</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123; index &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>如果可选项为<code>nil</code>，调用方法、下标、属性失败，结果为<code>nil</code></p>
+<ul>
+<li>可选项为<code>nil</code>的情况下，调用方法，获取属性，使用下标<strong>不会造成崩溃异常</strong>，只是结果为<code>nil</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> person: <span class="type">Person?</span> = <span class="literal">nil</span></span><br><span class="line"><span class="keyword">var</span> age1 = person?.age() <span class="comment">//age1的类型是Int?,如果person是nil,age1是nil</span></span><br><span class="line"><span class="keyword">var</span> age2 = person!.age() <span class="comment">//age2的类型是Int,如果person是nil,使用&quot;!&quot;强制解包会崩溃</span></span><br><span class="line"><span class="keyword">var</span> name = person?.name <span class="comment">//name的类型是 String?</span></span><br><span class="line"><span class="keyword">var</span> index = person?[<span class="number">6</span>] <span class="comment">//index的类型是 Int？</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<ul>
+<li><p>如果可选项不为<code>nil</code>，调用方法、下标、属性成功，结果会被包装成可选项<code>Type？</code></p>
+<ul>
+<li>如果结果本来就是可选项，不会进行再次包装</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> person: <span class="type">Person?</span> = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">var</span> age1 = person?.age() <span class="comment">//age1的类型是Int?,如果person是nil,age1是nil</span></span><br><span class="line"><span class="keyword">var</span> age2 = person!.age() <span class="comment">//age2的类型是Int,如果person是nil,使用&quot;!&quot;强制解包会崩溃</span></span><br><span class="line"><span class="keyword">var</span> name = person?.name <span class="comment">//name的类型是 String?</span></span><br><span class="line"><span class="keyword">var</span> index = person?[<span class="number">6</span>] <span class="comment">//index的类型是 Int？</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> dog = person?.dog <span class="comment">//dog类型是Dog?</span></span><br><span class="line"><span class="keyword">var</span> weight = person?.dog.weight <span class="comment">//weight的类型Int?</span></span><br><span class="line"><span class="keyword">var</span> price = person?.car?.price <span class="comment">//price的类型是Int?</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>判断一个可选项调用方法是否成功有两种方式</p>
+<ol>
+<li><p>通过可选项绑定判断可选项是否为空</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> person: <span class="type">Person?</span> = <span class="type">Person</span>()</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> person_temp = person &#123; <span class="comment">//此时person 是 Person？类型，person_temp 是 Person类型</span></span><br><span class="line">    person_temp.eat() </span><br><span class="line">&#125; <span class="keyword">else</span></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;person:nil&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>也可以通过函数返回值来判断，对于没有返回值的方法，即返回了<code>Void</code>类型的返回值。在<code>Swift</code>中，<code>Void</code>类型就是空元组<code>()</code>。所以对于没有返回值的方法，其实是返回了一个空元组。可选项为<code>nil</code>时，调用的方法返回的是<code>nil</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="number">_</span> = person?.eat() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;eat 调用成功&quot;</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     <span class="built_in">print</span>(<span class="string">&quot;eat 调用失败&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>多个<code>?</code>可以链接在一起，如果链中任何一个节点是<code>nil</code>,那么整个链就会调用失败</p>
+<ul>
+<li>经过可选链调用获得的返回值肯定是可选项，因为有可能存在<code>nil</code>的情景。</li>
+</ul>
+</li>
+</ul>
+<h2 id="常见的场景"><a href="#常见的场景" class="headerlink" title="常见的场景"></a>常见的场景</h2><ul>
+<li><p>使用字典取值时，取出来的值都是可选类型，当可选项不为<code>nil</code>时，调用或赋值才会生效。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//scores的类型是 [String,[Int]]</span></span><br><span class="line"><span class="keyword">var</span> scores = [</span><br><span class="line">    <span class="string">&quot;Jack&quot;</span>:[<span class="number">86</span>,<span class="number">82</span>,<span class="number">64</span>],</span><br><span class="line">  <span class="string">&quot;Rose&quot;</span>:[<span class="number">79</span>,<span class="number">94</span>,<span class="number">81</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">scores[<span class="string">&quot;Jack&quot;</span>]?[<span class="number">0</span>] = <span class="number">11</span></span><br><span class="line">scores[<span class="string">&quot;Rose&quot;</span>]?[<span class="number">2</span>] += <span class="number">10</span></span><br><span class="line">scores[<span class="string">&quot;Kate&quot;</span>]?[<span class="number">0</span>] = <span class="number">88</span></span><br><span class="line"><span class="built_in">print</span>(scores)     <span class="comment">//[&quot;Jack&quot;: [11, 82, 64], &quot;Rose&quot;: [79, 94, 91]]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于定义变量时，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num1: <span class="type">Int?</span> = <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>当使用<code>num1?</code>时，当<code>num1</code>不为<code>nil</code>时赋值才会成功；为<code>nil</code>时，不生效。</p>
+</li>
+<li><p>当使用<code>num1!</code>时，当<code>num1</code>为<code>nil</code>时，会直接崩溃，不为<code>nil</code>时，赋值生效。</p>
+</li>
+<li><p>当直接使用<code>num</code>时，不管<code>num</code>是否为<code>nil</code>,都会是新值（可选类型）。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">num1? = <span class="number">10</span> <span class="comment">//Optional(10),num1为nil时，赋值后，num1还是nil</span></span><br><span class="line">num1! = <span class="number">10</span> <span class="comment">//Optional(10),num1为nil时，直接崩溃</span></span><br><span class="line">num1 = <span class="number">10</span> <span class="comment">//Optional(10)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>对于字典中存放函数的，获取的函数也是可选类型(可为<code>nil</code>)，函数运行返回值也是<strong>可选类型</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> dict: [<span class="type">String</span> : (<span class="type">Int</span>,<span class="type">Int</span>) -&gt; <span class="type">Int</span>] = [</span><br><span class="line">    <span class="string">&quot;sum&quot;</span>: (+),</span><br><span class="line">  <span class="string">&quot;difference&quot;</span> : (-)</span><br><span class="line">]</span><br><span class="line"><span class="keyword">var</span> result = dict[<span class="string">&quot;sum&quot;</span>]?(<span class="number">10</span>,<span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(result)<span class="comment">//Optional(30)</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/05/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%88%9D%E5%A7%8B%E5%8C%96/" rel="prev" title="Swift5学习笔记之初始化">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之初始化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/07/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%8D%8F%E8%AE%AE/" rel="next" title="Swift5学习笔记之协议">
+      Swift5学习笔记之协议 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">常见的场景</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

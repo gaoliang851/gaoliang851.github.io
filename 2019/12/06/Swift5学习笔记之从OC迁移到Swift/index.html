@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="标记&#x2F;&#x2F;MARK: 类似于OC中的 #pragma mark&#x2F;&#x2F;MARK: - 类似于OC中的#pragma mark -&#x2F;&#x2F;TODO: 用于标记未完成的任务&#x2F;&#x2F;FIXME: 用于标记待修复的问题  条件编译常用的几种条件编译的宏： &#x2F;&#x2F;操作系统可选值：macOS\iOS\tvOS\watchOS\Linux\Android\Windows\FreeBSD#if os(macOS) || os(i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之从OC迁移到Swift">
+<meta property="og:url" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="标记&#x2F;&#x2F;MARK: 类似于OC中的 #pragma mark&#x2F;&#x2F;MARK: - 类似于OC中的#pragma mark -&#x2F;&#x2F;TODO: 用于标记未完成的任务&#x2F;&#x2F;FIXME: 用于标记待修复的问题  条件编译常用的几种条件编译的宏： &#x2F;&#x2F;操作系统可选值：macOS\iOS\tvOS\watchOS\Linux\Android\Windows\FreeBSD#if os(macOS) || os(i">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111215@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111915@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-115601@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142541@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142844@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-145511@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-153944@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-155652@2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/stringSubstring_2x.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201207-155945.png">
+<meta property="og:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201207-222303@2x.png">
+<meta property="article:published_time" content="2019-12-06T02:33:41.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111215@2x.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之从OC迁移到Swift | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之从OC迁移到Swift
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-06 10:33:41" itemprop="dateCreated datePublished" datetime="2019-12-06T10:33:41+08:00">2019-12-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//MARK: 类似于OC中的 #pragma mark</span></span><br><span class="line"><span class="comment">//MARK: - 类似于OC中的#pragma mark -</span></span><br><span class="line"><span class="comment">//<span class="doctag">TODO:</span> 用于标记未完成的任务</span></span><br><span class="line"><span class="comment">//<span class="doctag">FIXME:</span> 用于标记待修复的问题</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="条件编译"><a href="#条件编译" class="headerlink" title="条件编译"></a>条件编译</h2><p>常用的几种条件编译的宏：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//操作系统可选值：macOS\iOS\tvOS\watchOS\Linux\Android\Windows\FreeBSD</span></span><br><span class="line">#<span class="keyword">if</span> os(macOS) || os(iOS)</span><br><span class="line"><span class="comment">//CPU架构： i386\x86_64\arm\arm64</span></span><br><span class="line">#elseif arch(i386) || arch(arm)</span><br><span class="line"><span class="comment">//swift版本</span></span><br><span class="line">#elseif swift(&lt;<span class="number">5</span>) &amp;&amp; swift(&gt;=<span class="number">3</span>)</span><br><span class="line"><span class="comment">//模拟器</span></span><br><span class="line">#elseif targetEnvironment(simulator)</span><br><span class="line"><span class="comment">//可以导入某模块</span></span><br><span class="line">#elseif canImport(<span class="type">Foundation</span>)</span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>另外还可以设定自定义的宏。</p>
+<p>在 Build Setting -&gt; Swift Compiler - Custom Flags中，在Activie Compliation Conditions选项下，可以分别为Debug模式或者Release模式添加跟多的宏</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111215@2x.png" class="" title="This is an example image">
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//根据上述截图，我们在代码中就可以这样写</span></span><br><span class="line">#<span class="keyword">if</span> <span class="type">TEST</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;TEST&quot;</span>) <span class="comment">//TEST</span></span><br><span class="line">#<span class="keyword">else</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Release&quot;</span>)</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<p>除了 DEBUG和Release这个宏，我们还可以在Other Swift Flags下为这个模式下添加不同的宏。不过要在宏前面加**- D**</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-111915@2x.png" class="" title="This is an example image">
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//根据上述截图，我们在代码中就可以这样写</span></span><br><span class="line">#<span class="keyword">if</span> <span class="type">OTHER</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;other&quot;</span>)</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">#<span class="keyword">if</span> <span class="type">AAA</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;AAA&quot;</span>)</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<h2 id="打印"><a href="#打印" class="headerlink" title="打印"></a>打印</h2><p>我们可以参照OC中的<code>NSLog</code>来重新定义一个打印函数</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span>&lt;T&gt;<span class="params">(<span class="number">_</span> msg: T,</span></span></span><br><span class="line"><span class="function"><span class="params">            file: NSString = #file,</span></span></span><br><span class="line"><span class="function"><span class="params">            line: Int = #line,</span></span></span><br><span class="line"><span class="function"><span class="params">            fn: String = #function)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">prefix</span> = <span class="string">&quot;\(file.lastPathComponent)_\(line)_\(fn):&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="keyword">prefix</span>,msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">log(<span class="string">&quot;Release&quot;</span>) <span class="comment">//main.swift_34_swift之从OC迁移: Release</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="系统版本检测"><a href="#系统版本检测" class="headerlink" title="系统版本检测"></a>系统版本检测</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> #available(iOS <span class="number">10</span>,macOS <span class="number">10.12</span>, *) &#123;</span><br><span class="line">    <span class="comment">//对于iOS平台，只在iOS10及以上版本执行</span></span><br><span class="line">    <span class="comment">//对于macOS平台，只在macOS 10.12及以上版本执行</span></span><br><span class="line">    <span class="comment">//最后的*, 表示在其他所有平台都执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="API可用性说明"><a href="#API可用性说明" class="headerlink" title="API可用性说明"></a>API可用性说明</h2><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//在iOS10及以上版本可用</span></span><br><span class="line"><span class="comment">//在macOS 10.25及以上版本可用</span></span><br><span class="line"><span class="comment">//其他平台皆可用</span></span><br><span class="line"><span class="meta">@available</span>(iOS <span class="number">10</span>, macOS <span class="number">10.25</span>, *) </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">      <span class="comment">//不可用，方法命名为study</span></span><br><span class="line">    <span class="meta">@available</span>(*, unavailable, renamed: <span class="string">&quot;study&quot;</span>)</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">learn</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">study</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    </span><br><span class="line">      <span class="comment">//在iOS11及以上版本方法被弃用</span></span><br><span class="line">    <span class="meta">@available</span>(iOS, deprecated: <span class="number">11</span>)</span><br><span class="line">      <span class="comment">//在macOs10.12及以上版本方法被弃用</span></span><br><span class="line">    <span class="meta">@available</span>(macOS, deprecated: <span class="number">10.12</span>)</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> s = <span class="type">Student</span>()</span><br><span class="line">s.run() <span class="comment">//warn:&#x27;run()&#x27; was deprecated in macOS 10.12</span></span><br><span class="line">s.learn() <span class="comment">//error:&#x27;learn()&#x27; has been renamed to &#x27;study&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>() <span class="comment">//error:&#x27;Person&#x27; is only available in macOS 10.25 or newer</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="iOS程序的入口"><a href="#iOS程序的入口" class="headerlink" title="iOS程序的入口"></a>iOS程序的入口</h2><p>在<code>AppDelegate</code>上默认有个<code>@UIApplicationMain</code>或者<code>@mian</code>的标记，这表示编译器自动生成入口代码(main函数代码)，自动设置<code>AppDelegate</code>为App的代理</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line">@main</span><br><span class="line"><span class="comment">//@UIApplicationMain</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AppDelegate</span>: <span class="title">UIResponder</span>, <span class="title">UIApplicationDelegate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> window: <span class="type">UIWindow?</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">application</span><span class="params">(<span class="number">_</span> application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: <span class="keyword">Any</span>]?)</span></span> -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="comment">// Override point for customization after application launch.</span></span><br><span class="line">        <span class="keyword">self</span>.window? = <span class="type">UIWindow</span>()</span><br><span class="line">        <span class="keyword">let</span> mainVc = <span class="type">ViewController</span>()</span><br><span class="line">        <span class="keyword">self</span>.window?.rootViewController = mainVc</span><br><span class="line">        <span class="keyword">self</span>.window?.backgroundColor = <span class="type">UIColor</span>.white</span><br><span class="line">        <span class="keyword">self</span>.window?.makeKeyAndVisible()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以删掉<code>@UIApplicationMain</code>，自定义入口代码：新建一个main.swift文件</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-115601@2x.png" class="" title="This is an example image">
+
+<h2 id="Swift调用OC"><a href="#Swift调用OC" class="headerlink" title="Swift调用OC"></a>Swift调用OC</h2><p>在Swift工程中，如果想要调用OC，需要使用桥接文件。文件名格式默认为：<code>&#123;targetName&#125;-Bridging-Header.h</code>。在桥接文件中，<code>#import</code> OC需要暴露给<code>Swift</code>内容。</p>
+<p>并且在Build Setting -&gt; Swift Compiler - General -&gt; Objective-C Bridging Header中填入桥接文件的地址。</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142541@2x.png" class="" title="This is an example image">
+
+<p>以下是OC中类的内容：</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-142844@2x.png" class="" title="This is an example image">
+
+<p>在桥接文件中引入：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">#<span class="keyword">import</span> &quot;OCPerson.h&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在Swift中调用：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> p = <span class="type">OCPerson</span>(age: <span class="number">10</span>, name: <span class="string">&quot;Jack&quot;</span>)</span><br><span class="line">p.age = <span class="number">19</span></span><br><span class="line">p.name = <span class="string">&quot;Rose&quot;</span></span><br><span class="line">p.run()<span class="comment">//19 Rose -run</span></span><br><span class="line">p.eat(<span class="string">&quot;Apple&quot;</span>, other: <span class="string">&quot;Water&quot;</span>)<span class="comment">//19 Rose -eat Apple Water</span></span><br><span class="line">        </span><br><span class="line"><span class="type">OCPerson</span>.run() <span class="comment">//OCPerson + run</span></span><br><span class="line"><span class="type">OCPerson</span>.eat(<span class="string">&quot;Pizza&quot;</span>, other: <span class="string">&quot;Banana&quot;</span>)<span class="comment">//OCPerson +eat Pizza Banana</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：OC中NSInteger会转换为Swift中的Int,OC中的Int类型会转换为Swift的Int32</strong></p>
+<ul>
+<li><p>调用OC中的C语言函数</p>
+<p>桥接文件中引入的.h文件中的C语言函数会自然暴露给Swift。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;OC文件中</span><br><span class="line">int sum(int a,int b);</span><br><span class="line">int sum(int a,int b) &#123;</span><br><span class="line">    return a + b;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;Swift文件中</span><br><span class="line"> print(sum(32, 34)) &#x2F;&#x2F;66</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果C语言暴露给Swift的函数名跟Swift中的其他函数名冲突了，那么在调用时会优先调用Swift中的实现。可以在Swift中使用@_silgen_name修改C函数名</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(<span class="number">_</span> a: Int32,<span class="number">_</span> b: Int32)</span></span> -&gt; <span class="type">Int32</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (a + b) * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@_silgen_name(<span class="string">&quot;sum&quot;</span>) <span class="function"><span class="keyword">func</span> <span class="title">oc_sum</span><span class="params">(<span class="number">_</span> a: Int32,<span class="number">_</span> b: Int32)</span></span> -&gt; <span class="type">Int32</span></span><br><span class="line"><span class="built_in">print</span>(sum(<span class="number">32</span>, <span class="number">34</span>)) <span class="comment">//132</span></span><br><span class="line"><span class="built_in">print</span>(oc_sum(<span class="number">32</span>, <span class="number">34</span>))<span class="comment">//66</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="OC调用Swift代码"><a href="#OC调用Swift代码" class="headerlink" title="OC调用Swift代码"></a>OC调用Swift代码</h2><p>Xcode已经默认生成一个用于OC调用Swift的头文件，文件名格式是：{targetName}-Swift.h</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-145511@2x.png" class="" title="This is an example image">
+
+<p>Swift暴露给OC需要有几个需要注意的点</p>
+<ul>
+<li>如果Swift暴露给OC的类需要最终继承自<code>NSObject</code></li>
+<li>使用<code>@objc</code>修饰需要暴露给OC的成员</li>
+<li>使用<code>@objcMembers</code>修饰类，代表默认所有成员都会暴露给OC(包括扩展中定义的成员)。不过最终是否暴露成功，还需要考虑成员自身的访问级别</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="meta">@objc</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> price: <span class="type">Double</span></span><br><span class="line">    <span class="keyword">var</span> band: <span class="type">String</span></span><br><span class="line">    <span class="keyword">init</span>(price: <span class="type">Double</span>, band: <span class="type">String</span>)&#123;</span><br><span class="line">        <span class="keyword">self</span>.price = price</span><br><span class="line">        <span class="keyword">self</span>.band = band</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(price,band,<span class="string">&quot;run&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Car run&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(price,band,<span class="string">&quot;test&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Xcode会根据Swift代码生成对应的OC声明，写入{targetName}-Swift.h文件</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-153944@2x.png" class="" title="This is an example image">
+
+<p>在OC中调用，需要先引入{targetName}-Swift.h文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#import &quot;iOS从OC迁移到Swift-Swift.h&quot;</span><br><span class="line">Car *car &#x3D; [[Car alloc] initWithPrice:20.2 band:@&quot;banz&quot;];</span><br><span class="line">car.band &#x3D; @&quot;Bently&quot;;</span><br><span class="line">car.price &#x3D; 108.5;</span><br><span class="line">[car run];</span><br><span class="line">[car test];</span><br><span class="line">[Car run];</span><br></pre></td></tr></table></figure>
+
+<p>可以通过<code>@objc</code>重命名Swift暴露给OC的符号名(类名、属性名、函数名等)</p>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201206-155652@2x.png" class="" title="This is an example image">
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">SwiftCar</span> *car = [[<span class="type">SwiftCar</span> alloc] initWithPrice:<span class="number">20.2</span> band:@<span class="string">&quot;banz&quot;</span>];</span><br><span class="line">car.name = @<span class="string">&quot;Bently&quot;</span>;</span><br><span class="line">car.price = <span class="number">108.5</span>;</span><br><span class="line">[car drive];</span><br><span class="line">[car exec];</span><br><span class="line">[<span class="type">SwiftCar</span> run];</span><br></pre></td></tr></table></figure>
+
+<h2 id="一个内存问题"><a href="#一个内存问题" class="headerlink" title="一个内存问题"></a>一个内存问题</h2><h2 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h2><p>Swift中依然可以使用选择器，使用<code>#selector(name)</code>定义一个选择器。必须是被<code>@objcMembers</code>或<code>@objc</code>修饰的方法才可以定义选择器。</p>
+<p><strong>根据下面的代码，注意#selector(name)中，函数名相同，形参不同的场景</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="meta">@objcMembers</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">(v1: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;test1(v1:)&quot;</span>) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">(v1: Int,v2: Int)</span></span> &#123; <span class="built_in">print</span>(<span class="string">&quot;test2(v1:v2:)&quot;</span>) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">(<span class="number">_</span> v1: Double, <span class="number">_</span> v2: Double)</span></span>  &#123; <span class="built_in">print</span>(<span class="string">&quot;test2(_:_:)&quot;</span>) &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">        perform(#selector(test1)) <span class="comment">//可以使用方法名进行反射</span></span><br><span class="line">        perform(#selector(test1(v1:))) <span class="comment">//也可以添加形参</span></span><br><span class="line">        perform(#selector(test2(v1:v2:)))</span><br><span class="line">        perform(#selector(test2(<span class="number">_</span>:<span class="number">_</span>:)))</span><br><span class="line">        <span class="comment">//根据test2名称可以找到两个方法，使用as可以根据参数匹配到相应的方法</span></span><br><span class="line">        perform(#selector(test2 <span class="keyword">as</span> (<span class="type">Double</span>,<span class="type">Double</span>) -&gt; <span class="type">Void</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p>Swift的字符串类型<code>String</code>，跟OC的<code>NSString</code>,在API设计上还是有较大差异的</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//空字符串</span></span><br><span class="line"><span class="keyword">var</span> emptyStr1 = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">var</span> emptyStr2 = <span class="type">String</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str1:<span class="type">String</span> = <span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="comment">//拼接字符串</span></span><br><span class="line">str1.append(<span class="string">&quot;_2&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(str1)<span class="comment">//1_2</span></span><br><span class="line"><span class="comment">//重载运算符 +</span></span><br><span class="line">str1 = str1 + <span class="string">&quot;_3&quot;</span></span><br><span class="line"><span class="built_in">print</span>(str1)<span class="comment">//1_2_3</span></span><br><span class="line">str1 += <span class="string">&quot;_4&quot;</span></span><br><span class="line"><span class="built_in">print</span>(str1) <span class="comment">//1_2_3_4</span></span><br><span class="line"><span class="comment">//插值</span></span><br><span class="line">str1 = <span class="string">&quot;\(str1)_5&quot;</span></span><br><span class="line"><span class="built_in">print</span>(str1) <span class="comment">//1_2_3_4_5</span></span><br><span class="line"><span class="comment">//长度</span></span><br><span class="line"><span class="built_in">print</span>(str1.<span class="built_in">count</span>) <span class="comment">//9</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//判断前缀和后缀</span></span><br><span class="line"><span class="built_in">print</span>(str1.hasPrefix(<span class="string">&quot;1_2&quot;</span>)) <span class="comment">//true</span></span><br><span class="line"><span class="built_in">print</span>(str1.hasSuffix(<span class="string">&quot;4_5&quot;</span>)) <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="String的插入和删除"><a href="#String的插入和删除" class="headerlink" title="String的插入和删除"></a>String的插入和删除</h3><p>下标脚本语法或者它自身的属性和方法来访问和修改字符串。但说起String的插入和删除，就不得不提String.Index。Swift在字符串的API设计上，为字符串单独设计了字符串的索引类型：String.index,并不是OC中以<code>int</code>型来进行索引。</p>
+<h4 id="字符串索引"><a href="#字符串索引" class="headerlink" title="字符串索引"></a>字符串索引</h4><p>Swift为了在字符串中兼容Unicode，不同的字符会获得不同的内存空间来储存，所以为了明确哪个 Character 在哪个特定的位置，你必须从 String的开头或结尾遍历每一个 Unicode 标量。因此，Swift 的字符串不能通过整数值索引。</p>
+<p>字符串有两个重要的索引，<code>startIndex</code>和<code>endIndex</code>，其中：</p>
+<ul>
+<li><code>startIndex</code>:String中第一个 Character的位置</li>
+<li><code>endIndex</code>:String中最后一个字符后的位置</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> testStr = <span class="string">&quot;Hello world&quot;</span></span><br><span class="line"><span class="built_in">print</span>(testStr[testStr.startIndex]) <span class="comment">//H</span></span><br><span class="line"><span class="keyword">var</span> beforeEndIndex = testStr.index(before: testStr.endIndex)</span><br><span class="line"><span class="built_in">print</span>(testStr[beforeEndIndex])<span class="comment">//d,testStr[testStr.endIndex]会崩溃</span></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>index(before:)</code> 和 <code>index(after:)</code> 方法来访问给定索引的前后。要访问给定索引更远的索引，你可以使用 <code>index(_:offsetBy:)</code> 方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> testStr = <span class="string">&quot;Hello world&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取第二个字符的索引</span></span><br><span class="line"><span class="keyword">var</span> secondCharIndex = testStr.index(after: testStr.startIndex)</span><br><span class="line"><span class="built_in">print</span>(testStr[secondCharIndex])<span class="comment">//e</span></span><br><span class="line"><span class="comment">//获取第五个字符的索引，startIndex向后偏移4个单位</span></span><br><span class="line"><span class="keyword">var</span> foursCharIndex = testStr.index(testStr.startIndex, offsetBy: <span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(testStr[foursCharIndex])<span class="comment">//o</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取最后一个字符</span></span><br><span class="line"><span class="keyword">var</span> lastCharIndex = testStr.index(before: testStr.endIndex)</span><br><span class="line"><span class="built_in">print</span>(testStr[lastCharIndex])<span class="comment">//d</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>indices</code>属性来访问字符串中每个字符的索引。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> index <span class="keyword">in</span> testStr.<span class="built_in">indices</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\(testStr[index])&quot;</span>)</span><br><span class="line">&#125;<span class="comment">//H e l l o  w o r ldee</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="字符串插入"><a href="#字符串插入" class="headerlink" title="字符串插入"></a>字符串插入</h4><p>弄明白字符串索引，那么就可以通过字符串索引来进行插入删除操作了。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//------插入</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str = <span class="string">&quot;1_2&quot;</span></span><br><span class="line"><span class="comment">//向索引位置插入一个字符,1_2_</span></span><br><span class="line">str.insert(<span class="string">&quot;_&quot;</span>, at: str.endIndex)</span><br><span class="line"><span class="comment">//向索引位置插入另外一个字符串，1_2_3_4</span></span><br><span class="line">str.insert(contentsOf: <span class="string">&quot;3_4&quot;</span>, at: str.endIndex)</span><br><span class="line"><span class="comment">//向第一个字符后插入另外一个字符串,1666_2_3_4</span></span><br><span class="line">str.insert(contentsOf: <span class="string">&quot;666&quot;</span>, at: str.index(after: str.startIndex))</span><br><span class="line"><span class="comment">//向最后一个字符前面一个位置,1666_2_3_8884</span></span><br><span class="line">str.insert(contentsOf: <span class="string">&quot;888&quot;</span>, at: str.index(before: str.endIndex))</span><br><span class="line"></span><br><span class="line"><span class="comment">//-------删除</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//fisrtCharOneIndex 是String.Index?类型，</span></span><br><span class="line"><span class="keyword">var</span> fisrtCharOneIndex = str.firstIndex(of: <span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> firstrIndex = fisrtCharOneIndex &#123;</span><br><span class="line">    str.remove(at: firstrIndex)<span class="comment">//666_2_3_8884</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//removeAll后边是一个尾随闭包，这个方法会遍历字符串中的每个char，闭包中返回Bool来表示是否要删除这个char</span></span><br><span class="line"><span class="comment">//也可以简写为：</span></span><br><span class="line"><span class="comment">//str.removeAll &#123; $0 == &quot;6&quot;&#125;</span></span><br><span class="line">str.removeAll &#123; (char) -&gt; <span class="type">Bool</span> <span class="keyword">in</span></span><br><span class="line">    char == <span class="string">&quot;6&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//str: _2_3_8884</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> range = str.index(str.endIndex, offsetBy: -<span class="number">4</span>)..&lt;str.index(before: str.endIndex)</span><br><span class="line">str.removeSubrange(range)<span class="comment">//2_3_4</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="SubString"><a href="#SubString" class="headerlink" title="SubString"></a>SubString</h3><p>String可以通过下标、<code>prefix</code>、<code>suffix</code>等截取子串，子串的类型不是String，而是SubString。</p>
+<blockquote>
+<p>注意：</p>
+<p>String 和 Substring 都遵循<a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/swift/stringprotocol"> StringProtocol</a> 协议，也就是说它基本上能很方便地兼容所有接受 StringProtocol 值的字符串操作函数。你可以无差别使用 String 或 Substring 值来调用这些函数。</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> aString = <span class="string">&quot;1_2_3_4_5&quot;</span></span><br><span class="line"><span class="comment">//1_2</span></span><br><span class="line"><span class="keyword">var</span> substr1 = aString.<span class="keyword">prefix</span>(<span class="number">3</span>)</span><br><span class="line"><span class="comment">//4_5</span></span><br><span class="line"><span class="keyword">var</span> substr2 = aString.suffix(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">var</span> subRange = str.startIndex..&lt;str.index(str.startIndex, offsetBy: <span class="number">3</span>)</span><br><span class="line"><span class="comment">//1_2</span></span><br><span class="line"><span class="keyword">var</span> substr3 = aString[subRange]</span><br><span class="line"><span class="comment">//最初的String,1_2_3_4_5</span></span><br><span class="line"><span class="built_in">print</span>(substr3.base)</span><br><span class="line"><span class="comment">//Substring -&gt; String, 1_2</span></span><br><span class="line"><span class="keyword">var</span> subString = <span class="type">String</span>(substr3)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Swift处于性能优化，SubString和它的base共享字符串数据，共享一块内存。</li>
+<li>当SubString发生修改或者转为String时，会分配新的内存存储字符串数据。</li>
+</ul>
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/stringSubstring_2x.png" class="" title="This is an example image">
+
+<h3 id="String与Character"><a href="#String与Character" class="headerlink" title="String与Character"></a>String与Character</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="built_in">c</span> <span class="keyword">in</span> <span class="string">&quot;Hello world&quot;</span> &#123; <span class="comment">//c是Character类型</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">c</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> theString = <span class="string">&quot;java&quot;</span></span><br><span class="line"><span class="comment">//c是Character类型</span></span><br><span class="line"><span class="keyword">var</span> <span class="built_in">c</span> = theString[theString.startIndex]</span><br></pre></td></tr></table></figure>
+
+<h3 id="String相关的协议"><a href="#String相关的协议" class="headerlink" title="String相关的协议"></a>String相关的协议</h3><ul>
+<li><p><code>BidirectionalCollection</code>协议包含的部分内容</p>
+<ul>
+<li><code>startIndex</code>，<code>endIndex</code>属性、<code>index</code>方法</li>
+<li><code>String</code>、<code>Array</code>都遵守这个协议</li>
+</ul>
+</li>
+<li><p><code>RangeReplaceableCollection</code>协议包含的部分内容</p>
+<ul>
+<li><code>append</code>、<code>insert</code>、<code>remove</code>方法</li>
+<li><code>String</code>、<code>Array</code>都遵守这个协议</li>
+</ul>
+</li>
+</ul>
+<p><code>Dictionary</code>、<code>Set</code>也有实现上述协议中声明的一些方法，只是并没有遵守上述协议</p>
+<h3 id="多行String"><a href="#多行String" class="headerlink" title="多行String"></a>多行String</h3><p>如果要表示多行<code>String</code>,可以用三引号</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> mutilString = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Escaping the first quote \&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Escaping two quotes \&quot;\&quot;&quot;</span></span><br><span class="line"><span class="string">Escaping all three quotes \&quot;\&quot;\&quot;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="built_in">print</span>(mutilString)</span><br></pre></td></tr></table></figure>
+
+<h3 id="String-与-NSString"><a href="#String-与-NSString" class="headerlink" title="String 与 NSString"></a>String 与 NSString</h3><p><strong>String与NSString之间可以随时随地的桥接转换。</strong>如果觉得String的API过于复杂难用，可以考虑将String转为NSString</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> str1: <span class="type">String</span> = <span class="string">&quot;jack&quot;</span></span><br><span class="line"><span class="keyword">var</span> str2: <span class="type">NSString</span> = <span class="string">&quot;rose&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str3 = str1 <span class="keyword">as</span> <span class="type">NSString</span></span><br><span class="line"><span class="keyword">var</span> str4 = str2 <span class="keyword">as</span> <span class="type">String</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> str5 = str3.substring(with: <span class="type">NSRange</span>(location: <span class="number">0</span>, length: <span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(str5)<span class="comment">//ja</span></span><br></pre></td></tr></table></figure>
+
+<p>在比较字符串内容是否等价：</p>
+<ul>
+<li><code>String</code>使用<code>==</code>运算符</li>
+<li><code>NSString</code>使用<code>isEqual</code>方法，也可以使用<code>==</code>运算符(本质还是调用了<code>isEqual</code>方法)</li>
+</ul>
+<h2 id="Swift、OC桥接转换表"><a href="#Swift、OC桥接转换表" class="headerlink" title="Swift、OC桥接转换表"></a>Swift、OC桥接转换表</h2><img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201207-155945.png" class="" title="This is an example image">
+
+<h2 id="实现可选协议"><a href="#实现可选协议" class="headerlink" title="实现可选协议"></a>实现可选协议</h2><p>继承自<code>AnyObject</code>和<code>class</code>、被<code>@objc</code>修饰的协议是<strong>只能被class继承的协议</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runnable1</span>: <span class="title">AnyObject</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runnable2</span>: <span class="title">class</span> </span>&#123; &#125;</span><br><span class="line"><span class="meta">@objc</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Runnable3</span> </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>被<code>@objc</code>修饰的协议，还可以暴露给OC去遵守实现。如果想要实现可选协议，方式有两种：</p>
+<p>第一种：使用<code>@objc optional</code>修饰的方法名，不用必须实现</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="meta">@objc</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line">    <span class="meta">@objc</span> <span class="keyword">optional</span> <span class="function"><span class="keyword">func</span> <span class="title">run2</span><span class="params">()</span></span> <span class="comment">//run2为可选方法</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run3</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run3</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第二种：给协议添加扩展,在扩展中给可选方法一个空实现，来间接实现可选协议。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run1</span><span class="params">()</span></span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run2</span><span class="params">()</span></span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run3</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run1</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run2</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run3</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="objc-dynamic"><a href="#objc-dynamic" class="headerlink" title="@objc dynamic"></a>@objc dynamic</h2><p>在Swift中，可以给属性，方法等使用<code>@objc dynamic</code>修饰来，使其调用和访问是以objective-c的方式进行。被<code>@objc dynamic</code>修饰的内容会具有动态性。</p>
+<ul>
+<li><p>修饰方法，方法在调用时会走Runtime那一套流程。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//不论类是否继承自NSObject,使用@objc dynamic修饰方法都会调用objc_msgSend</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> </span>&#123;</span><br><span class="line">    <span class="meta">@objc</span> <span class="keyword">dynamic</span> <span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> d = <span class="type">Dog</span>()</span><br><span class="line">d.test1() <span class="comment">//底层会走objc_msgSend()</span></span><br><span class="line">d.test2() <span class="comment">//底层会走Swift虚表调用方法</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/WX20201207-222303@2x.png" class="" title="This is an example image">
+</li>
+<li><p>修饰属性，支持KVC/KVO。但是有条件：</p>
+<ul>
+<li>属性所在的类、监听器最终继承自<code>NSobject</code></li>
+<li>用<code>@objc dynamic</code>修饰对应的属性</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="meta">@objc</span> <span class="keyword">dynamic</span> <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">        <span class="keyword">self</span>.addObserver(<span class="keyword">self</span>, forKeyPath: <span class="string">&quot;age&quot;</span>, options: .new, context: <span class="literal">nil</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">observeValue</span><span class="params">(forKeyPath keyPath: String?, of object: <span class="keyword">Any</span>?, change: [NSKeyValueChangeKey : <span class="keyword">Any</span>]?, context: UnsafeMutableRawPointer?)</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(keyPath!,change![.newKey]!)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">deinit</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.removeObserver(<span class="keyword">self</span>, forKeyPath: <span class="string">&quot;age&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>()</span><br><span class="line">p.age = <span class="number">10</span><span class="comment">//age 10</span></span><br><span class="line">p.setValue(<span class="number">25</span>, forKey: <span class="string">&quot;age&quot;</span>)<span class="comment">//age 25</span></span><br></pre></td></tr></table></figure>
+
+<p>当然Swift还支持block的方式进行KVO</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>: <span class="title">NSObject</span> </span>&#123;</span><br><span class="line">    <span class="meta">@objc</span> <span class="keyword">dynamic</span> <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> observation: <span class="type">NSKeyValueObservation?</span></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">        <span class="comment">//keyPath这里要用 &quot;\&quot; + keyPath 的方式</span></span><br><span class="line">        observation = observe(\<span class="type">Person</span>.age, options: .new, changeHandler: &#123;</span><br><span class="line">            (person, change) <span class="keyword">in</span></span><br><span class="line">            <span class="built_in">print</span>(change.newValue <span class="keyword">as</span> <span class="type">Any</span>)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> p = <span class="type">Person</span>()</span><br><span class="line">p.age = <span class="number">10</span><span class="comment">//Optional(10)</span></span><br><span class="line">p.setValue(<span class="number">20</span>, forKey: <span class="string">&quot;age&quot;</span>)<span class="comment">//Optional(20)</span></span><br></pre></td></tr></table></figure>
+<h2 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h2><p>在OC中，我们常用关联对象(Associated Object)来给扩展增加属性。在Swift中，class依然可以使用关联对象。</p>
+<p><strong>默认情况下，extension不可以增加存储属性。但借助关联对象，可以实现类似extension为class增加存储属性的效果。</strong></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> <span class="type">AGE_KEY</span>: <span class="type">Void?</span></span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            (objc_getAssociatedObject(<span class="keyword">self</span>, &amp;<span class="type">Self</span>.<span class="type">AGE_KEY</span>) <span class="keyword">as</span>? <span class="type">Int</span>) ?? <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            objc_setAssociatedObject(<span class="keyword">self</span>, &amp;<span class="type">Self</span>.<span class="type">AGE_KEY</span>, newValue, .<span class="type">OBJC_ASSOCIATION_ASSIGN</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> s = <span class="type">Student</span>()</span><br><span class="line">s.age = <span class="number">20</span></span><br><span class="line"><span class="built_in">print</span>(s.age)<span class="comment">//20</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="多线程开发"><a href="#多线程开发" class="headerlink" title="多线程开发"></a>多线程开发</h2><p>iOS开发中自然是少不了多线程开发的了，说到多线程又不得不提GCD。Swift对于GCD也提供了支持。</p>
+</li>
+</ul>
+<h3 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h3><p>可以直接使用 <code>DispatchQueue.async</code>来执行</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可以直接使用 .async + 尾随闭包的方式</span></span><br><span class="line"><span class="type">DispatchQueue</span>.global().async &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;1&quot;</span>,<span class="type">Thread</span>.current)</span><br><span class="line">  <span class="type">DispatchQueue</span>.main.async &#123;</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;2&quot;</span>,<span class="type">Thread</span>.current)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以将要做的操作封装成<code>DispatchWorkItem</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//也可以将尾随闭包封装成DispatchWorkItem</span></span><br><span class="line"><span class="keyword">let</span> todoItem = <span class="type">DispatchWorkItem</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;3&quot;</span>,<span class="type">Thread</span>.current)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//异步执行todoItem</span></span><br><span class="line"><span class="type">DispatchQueue</span>.global().async(execute: todoItem)</span><br><span class="line"><span class="comment">//todoItem执行完成后，再次回调主线程执行操作</span></span><br><span class="line">todoItem.notify(queue: <span class="type">DispatchQueue</span>.main) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;4&quot;</span>,<span class="type">Thread</span>.current)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="延迟执行"><a href="#延迟执行" class="headerlink" title="延迟执行"></a>延迟执行</h3><p>Swift中，DispatchQueue也提供了延迟执行函数</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//2.0秒后执行</span></span><br><span class="line"><span class="type">DispatchQueue</span>.main.asyncAfter(deadline: <span class="type">DispatchTime</span>.now() + <span class="number">2.0</span>,execute: todoItem)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Once"><a href="#Once" class="headerlink" title="Once"></a>Once</h3><p><code>dispatch_once</code>在Swift中已经被废弃，取而代之。可以使用<strong>类型属性</strong>或者<strong>全局变量\常量</strong>，这两个默认自带<strong>lazy + dispatch_once</strong>的效果</p>
+<p>第一种：使用类型属性</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Helper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> address: <span class="type">String?</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> sharedHelper : <span class="type">Helper</span> = &#123;</span><br><span class="line">        <span class="type">Helper</span>()</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Helper</span>.sharedHelper.address = <span class="string">&quot;adfdasf&quot;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="type">Helper</span>.sharedHelper.address!) <span class="comment">//adfdasf</span></span><br></pre></td></tr></table></figure>
+
+<p>第二种：使用全局变量或常量</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> sharedHelper : <span class="type">Helper</span> = &#123;</span><br><span class="line">    <span class="type">Helper</span>()</span><br><span class="line">&#125;()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Helper</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> address: <span class="type">String?</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sharedHelper.address = <span class="string">&quot;adfdasf&quot;</span></span><br><span class="line"><span class="built_in">print</span>(sharedHelper.address!) <span class="comment">//adfdasf</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="加锁"><a href="#加锁" class="headerlink" title="加锁"></a>加锁</h3><ul>
+<li><p>GCD信号量</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> data = [<span class="type">String</span>:<span class="type">Any</span>]()</span><br><span class="line">    <span class="comment">//最多允许多个线程同时访问，value就填几</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> lock = <span class="type">DispatchSemaphore</span>(value: <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">set</span><span class="params">(<span class="number">_</span> key:String,<span class="number">_</span> value: <span class="keyword">Any</span>)</span></span> &#123;</span><br><span class="line">        lock.wait()</span><br><span class="line">        <span class="keyword">defer</span> &#123; lock.signal() &#125;</span><br><span class="line">        data[key] = value</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Foundation</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> data = [<span class="type">String</span>:<span class="type">Any</span>]()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> lock = <span class="type">NSLock</span>()</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">set</span><span class="params">(<span class="number">_</span> key:String,<span class="number">_</span> value: <span class="keyword">Any</span>)</span></span> &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line">        <span class="keyword">defer</span> &#123; lock.unlock() &#125;</span><br><span class="line">        data[key] = value</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> data = [<span class="type">String</span>:<span class="type">Any</span>]()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">var</span> lock = <span class="type">NSRecursiveLock</span>()</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">set</span><span class="params">(<span class="number">_</span> key:String,<span class="number">_</span> value: <span class="keyword">Any</span>)</span></span> &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line">        <span class="keyword">defer</span> &#123; lock.unlock() &#125;</span><br><span class="line">        data[key] = value</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/13/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%AD%97%E9%9D%A2%E9%87%8F/" rel="prev" title="Swift5学习笔记之字面量">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之字面量
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="next" title="Swift5学习笔记之从函数式编程初探">
+      Swift5学习笔记之从函数式编程初探 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">标记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E7%BC%96%E8%AF%91"><span class="nav-number">2.</span> <span class="nav-text">条件编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%8D%B0"><span class="nav-number">3.</span> <span class="nav-text">打印</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC%E6%A3%80%E6%B5%8B"><span class="nav-number">4.</span> <span class="nav-text">系统版本检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API%E5%8F%AF%E7%94%A8%E6%80%A7%E8%AF%B4%E6%98%8E"><span class="nav-number">5.</span> <span class="nav-text">API可用性说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%85%A5%E5%8F%A3"><span class="nav-number">6.</span> <span class="nav-text">iOS程序的入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swift%E8%B0%83%E7%94%A8OC"><span class="nav-number">7.</span> <span class="nav-text">Swift调用OC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OC%E8%B0%83%E7%94%A8Swift%E4%BB%A3%E7%A0%81"><span class="nav-number">8.</span> <span class="nav-text">OC调用Swift代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98"><span class="nav-number">9.</span> <span class="nav-text">一个内存问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%99%A8"><span class="nav-number">10.</span> <span class="nav-text">选择器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String"><span class="nav-number">11.</span> <span class="nav-text">String</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E7%9A%84%E6%8F%92%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4"><span class="nav-number">11.1.</span> <span class="nav-text">String的插入和删除</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B4%A2%E5%BC%95"><span class="nav-number">11.1.1.</span> <span class="nav-text">字符串索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8F%92%E5%85%A5"><span class="nav-number">11.1.2.</span> <span class="nav-text">字符串插入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SubString"><span class="nav-number">11.2.</span> <span class="nav-text">SubString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E4%B8%8ECharacter"><span class="nav-number">11.3.</span> <span class="nav-text">String与Character</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E7%9B%B8%E5%85%B3%E7%9A%84%E5%8D%8F%E8%AE%AE"><span class="nav-number">11.4.</span> <span class="nav-text">String相关的协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%A1%8CString"><span class="nav-number">11.5.</span> <span class="nav-text">多行String</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-%E4%B8%8E-NSString"><span class="nav-number">11.6.</span> <span class="nav-text">String 与 NSString</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swift%E3%80%81OC%E6%A1%A5%E6%8E%A5%E8%BD%AC%E6%8D%A2%E8%A1%A8"><span class="nav-number">12.</span> <span class="nav-text">Swift、OC桥接转换表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8F%AF%E9%80%89%E5%8D%8F%E8%AE%AE"><span class="nav-number">13.</span> <span class="nav-text">实现可选协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#objc-dynamic"><span class="nav-number">14.</span> <span class="nav-text">@objc dynamic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1"><span class="nav-number">15.</span> <span class="nav-text">关联对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%80%E5%8F%91"><span class="nav-number">16.</span> <span class="nav-text">多线程开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5"><span class="nav-number">16.1.</span> <span class="nav-text">异步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C"><span class="nav-number">16.2.</span> <span class="nav-text">延迟执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Once"><span class="nav-number">16.3.</span> <span class="nav-text">Once</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E9%94%81"><span class="nav-number">16.4.</span> <span class="nav-text">加锁</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

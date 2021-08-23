@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dev.Gao的学习笔记">
+<meta property="og:url" content="http://yoursite.com/page/6/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="人类的本能是胆怯，但人类的本质是不甘心">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="iOS,Android,Java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/page/6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">高仿新浪微博②框架和全局性的设置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-12-13 14:20:25" itemprop="dateCreated datePublished" datetime="2016-12-13T14:20:25+08:00">2016-12-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/%E9%A1%B9%E7%9B%AE%E6%89%8B%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">项目手记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>现在我们要做一些全局性和框架性的需求，这种需求最好不要再业务逻辑中去写，最好能在基类和框架中去完成。</p>
+<h2 id="控制器创建代码抽取"><a href="#控制器创建代码抽取" class="headerlink" title="控制器创建代码抽取"></a>控制器创建代码抽取</h2><ul>
+<li><p>类别：代码重构优化。</p>
+</li>
+<li><p>思路：</p>
+<ul>
+<li>因为每个模块的控制器的创建过程都是类似的，不同状态的图片名也是有规律的（正常，选中）。我们可以将这段代码进行抽取，并在<code>GLMainViewController.viewDidLoad</code>中调用。</li>
+<li><code>extension</code>类似于OC中的分类，在Swift中还可以用来切分代码块。可以把功能相近的函数，放在一个<code>extension</code>中，便于代码维护。注意：和OC的分类一样，<code>extension</code>中不能定义属性</li>
+</ul>
+</li>
+<li><p>代码片段：</p>
+<ol>
+<li><p><code>Swift</code>中，通过<code>info.plist</code>获取命名空间的代码，并抽取到<code>extension</code>中。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Bundle</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 计算型属性类似于函数，没有参数，有返回值</span></span><br><span class="line">    <span class="keyword">var</span> namespace: <span class="type">String</span> &#123;</span><br><span class="line">        infoDictionary?[<span class="string">&quot;CFBundleName&quot;</span>] <span class="keyword">as</span>? <span class="type">String</span> ?? <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置子控制器的代码，并将其抽取到独立的<code>extension</code>中。并在<code>GLMainViewController.viewDidLoad</code>中调用。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// MARK: - 设置界面</span></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">GLMainViewController</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// 设置子控制器</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupChildControllers</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> array = [</span><br><span class="line">            [<span class="string">&quot;clsName&quot;</span>:<span class="string">&quot;GLHomeViewController&quot;</span>,<span class="string">&quot;title&quot;</span>:<span class="string">&quot;首页&quot;</span>,<span class="string">&quot;imageName&quot;</span>:<span class="string">&quot;home&quot;</span>],</span><br><span class="line">            [<span class="string">&quot;clsName&quot;</span>:<span class="string">&quot;GLMessageViewController&quot;</span>,<span class="string">&quot;title&quot;</span>:<span class="string">&quot;消息&quot;</span>,<span class="string">&quot;imageName&quot;</span>:<span class="string">&quot;message_center&quot;</span>],</span><br><span class="line">            [<span class="string">&quot;clsName&quot;</span>:<span class="string">&quot;UIViewController&quot;</span>],</span><br><span class="line">            [<span class="string">&quot;clsName&quot;</span>:<span class="string">&quot;GLDiscoverViewController&quot;</span>,<span class="string">&quot;title&quot;</span>:<span class="string">&quot;发现&quot;</span>,<span class="string">&quot;imageName&quot;</span>:<span class="string">&quot;discover&quot;</span>],</span><br><span class="line">            [<span class="string">&quot;clsName&quot;</span>:<span class="string">&quot;GLProfileViewController&quot;</span>,<span class="string">&quot;title&quot;</span>:<span class="string">&quot;我&quot;</span>,<span class="string">&quot;imageName&quot;</span>:<span class="string">&quot;profile&quot;</span>]</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">var</span> arrayM = [<span class="type">UIViewController</span>]()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> dict <span class="keyword">in</span> array &#123;</span><br><span class="line">            arrayM.append(controller(dict: dict))</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        viewControllers = arrayM</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// 使用一个字典创建一个控制器</span></span><br><span class="line">    <span class="comment">/// - Parameter dict: 信息字典[clsName,title,imageName]</span></span><br><span class="line">    <span class="comment">/// - Returns: 子控制器</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">controller</span><span class="params">(dict: [String:String])</span></span> -&gt; <span class="type">UIViewController</span> &#123;</span><br><span class="line">        <span class="comment">///一个guard守护多个let,后续的let可以使用前面let的值(cls)，多个let用逗号隔开</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> clsName = dict[<span class="string">&quot;clsName&quot;</span>],</span><br><span class="line">              <span class="keyword">let</span> title = dict[<span class="string">&quot;title&quot;</span>],</span><br><span class="line">              <span class="keyword">let</span> imageName = dict[<span class="string">&quot;imageName&quot;</span>],</span><br><span class="line">              <span class="comment">//NSClassFromString返回的是Class?类型。</span></span><br><span class="line">              <span class="comment">//Swift中使用该API还要加上命名空间，否则获取为nil。即namespce.className</span></span><br><span class="line">              <span class="keyword">let</span> cls = <span class="type">NSClassFromString</span>(<span class="type">Bundle</span>.main.namespace + <span class="string">&quot;.&quot;</span> + clsName) <span class="keyword">as</span>? <span class="type">GLBaseViewController</span>.<span class="type">Type</span></span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">///如果缺少相关的值，则返回一个默认的空白基类控制器</span></span><br><span class="line">            <span class="keyword">return</span> <span class="type">UIViewController</span>()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">///2. 创建子控制器</span></span><br><span class="line">        <span class="keyword">let</span> vc = cls.<span class="keyword">init</span>()</span><br><span class="line">        vc.title = title</span><br><span class="line">        </span><br><span class="line">        <span class="comment">///3. 设置图像</span></span><br><span class="line">        vc.tabBarItem.image = <span class="type">UIImage</span>(named: <span class="string">&quot;tabbar_&quot;</span> + imageName)</span><br><span class="line">        <span class="comment">// 设置tabbarItem.selectedImage时，默认的tintColor会将图片渲染成蓝色。</span></span><br><span class="line">        <span class="comment">// 通过UIImage.withRenderMode(.alwaysOriginal)来获取原始图片 【指定渲染模式】</span></span><br><span class="line">        vc.tabBarItem.selectedImage = <span class="type">UIImage</span>(named: <span class="string">&quot;tabbar_&quot;</span> + imageName + <span class="string">&quot;_selected&quot;</span>)?.withRenderingMode(.alwaysOriginal)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">///4. 设置tabbar的字体大小</span></span><br><span class="line">        vc.tabBarItem.setTitleTextAttributes([<span class="type">NSAttributedString</span>.<span class="type">Key</span>.foregroundColor: <span class="type">UIColor</span>.orange], <span class="keyword">for</span>: .selected)</span><br><span class="line">        <span class="comment">//设置字号时，必须给.nomarl状态设置，其他状态设置无效。默认字号是12pt.</span></span><br><span class="line">        vc.tabBarItem.setTitleTextAttributes([<span class="type">NSAttributedString</span>.<span class="type">Key</span>.font: <span class="type">UIFont</span>.systemFont(ofSize: <span class="number">12</span>)], <span class="keyword">for</span>: .normal)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> nav = <span class="type">GLNavigationViewController</span>(rootViewController: vc)</span><br><span class="line">        <span class="keyword">return</span> nav</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="设置撰写微博按钮"><a href="#设置撰写微博按钮" class="headerlink" title="设置撰写微博按钮"></a>设置撰写微博按钮</h2><ul>
+<li><p>类别：需求实现</p>
+</li>
+<li><p>效果：</p>
+<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/WX20201222-135733.png" class="" title="This is an example image">
+</li>
+<li><p>思路：</p>
+<ol>
+<li><code>TabbarController</code>添加一个空的<code>viewController</code>形成占位</li>
+<li>然后在<code>tabbar</code>上添加一个按钮遮挡，这个按钮的大小和其他<code>tabbarItem</code>的大小是一致的</li>
+</ol>
+</li>
+<li><p>存在的bug和解决方案：</p>
+<p>添加空白<code>ViewController</code>占位，并且用按钮盖住之后，虽然按钮的宽度和其他<code>tabbarItem</code>一样。但是<code>tabbarItem</code>之间，会留有一些缝隙，叫做容错区。如果点击到这些容错区，还是会显示后边的<code>ViewController</code>。所以还是有极小的概率点击到空白的<code>VeiwController</code>。<strong>可以将自定义按钮的宽度变大一些，盖住这些容错区。经测试左右扩大2个单位刚刚好。</strong></p>
+</li>
+<li><p>代码片段：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GLMainViewController</span>: <span class="title">UITabBarController</span> </span>&#123;</span><br><span class="line">  <span class="comment">//设置撰写按钮控件，懒加载</span></span><br><span class="line">  <span class="keyword">private</span> <span class="built_in">lazy</span> <span class="keyword">var</span> composeButton: <span class="type">UIButton</span> = <span class="type">UIButton</span>.cz_imageButton(</span><br><span class="line">        <span class="string">&quot;tabbar_compose_icon_add&quot;</span>,</span><br><span class="line">        backgroundImageName: <span class="string">&quot;tabbar_compose_button&quot;</span>)</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        setupChildControllers()</span><br><span class="line">        setupComposeButton()</span><br><span class="line">  &#125;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">/// 撰写微博按钮点击事件，允许#selector()选择的方法，都要使用@objc, 走消息发送机制</span></span><br><span class="line">  <span class="comment">/// 一般点击事件等都放在Class主体内。</span></span><br><span class="line">  <span class="meta">@objc</span> <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">clickComposedButton</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// do some things</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">GLMainViewController</span> </span>&#123;    </span><br><span class="line">    <span class="comment">/// 设置撰写微博按钮</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupComposeButton</span><span class="params">()</span></span> &#123;</span><br><span class="line">        tabBar.addSubview(composeButton)</span><br><span class="line">        <span class="comment">//计算按钮宽度，将向内缩进的宽度减少，能够让按钮的宽度变大，盖住容错点，防止穿帮！</span></span><br><span class="line">        <span class="keyword">let</span> w = <span class="type">CGFloat</span>(tabBar.bounds.size.width / <span class="number">5</span> - <span class="number">1</span>) </span><br><span class="line">        <span class="comment">//CGRectInset 正数向内缩进，负数向外扩展</span></span><br><span class="line">        composeButton.frame = tabBar.bounds.insetBy(dx: w * <span class="number">2</span>, dy: <span class="number">0</span>)</span><br><span class="line">        <span class="comment">//按钮监听方法</span></span><br><span class="line">        composeButton.addTarget(<span class="keyword">self</span>, action: #selector(clickComposedButton), <span class="keyword">for</span>: .touchUpInside)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Push页面隐藏底部Tabbar"><a href="#Push页面隐藏底部Tabbar" class="headerlink" title="Push页面隐藏底部Tabbar"></a>Push页面隐藏底部Tabbar</h2><ul>
+<li><p>类别: 需求实现，代码优化</p>
+</li>
+<li><p>思路：</p>
+<ol>
+<li>项目整体上都是在用<code>NavgationController</code>的<code>push</code>或<code>pop</code>来切换页面。每个页面如果单独去写隐藏<code>Tabbar</code>，就显得很麻烦。</li>
+<li>可以通过重写基类的<code>NavgationController</code>的<code>push</code>方法，来统一设置<code>hidesBottomBarWhenPushed</code>属性。</li>
+</ol>
+</li>
+<li><p>存在的<strong>BUG</strong>和解决方案：</p>
+<ol>
+<li>当<code>push</code>进入下一页后，再返回第一个Controller时，底部Tabbar不显示。</li>
+<li>点击tabbar进入其他模块，不显示<code>tabbar</code>。</li>
+</ol>
+<p>问题存在的<strong>原因</strong>是：创建<code>UINavgationController</code>时，传入的<code>rootViewController</code>,也会通过<code>push</code>操作进入栈底。也就给栈底的<code>Controller</code>也设置了<code>hidesBottomBarWhenPushed</code>。</p>
+<p><strong>解决方案：</strong>通过判断，<code>rootViewController</code>,不设置<code>hidesBottomBarWhenPushed</code>。</p>
+<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/tabbar_bug1.gif" class="" title="This is an example image">
+
+<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/tabbar_bug2.gif" class="" title="This is an example image">
+</li>
+<li><p>代码片段</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GLNavigationViewController</span>: <span class="title">UINavigationController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">pushViewController</span><span class="params">(<span class="number">_</span> viewController: UIViewController, animated: Bool)</span></span> &#123;</span><br><span class="line">        <span class="comment">//当rootViewController进入时，count == 0</span></span><br><span class="line">        <span class="keyword">if</span> viewControllers.<span class="built_in">count</span> &gt; <span class="number">0</span> &#123;</span><br><span class="line">            viewController.hidesBottomBarWhenPushed = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">super</span>.pushViewController(viewController, animated: animated)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="头部导航栏非融合效果"><a href="#头部导航栏非融合效果" class="headerlink" title="头部导航栏非融合效果"></a>头部导航栏非融合效果</h2><ul>
+<li><p>类别：需求实现，用户体验优化</p>
+<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/navgation_ani.gif" class="" title="This is an example image">
+</li>
+<li><p>解决思路：</p>
+<ol>
+<li>iOS系统默认都是这种融合的效果，但是用户体验不是很好。可以隐藏默认的导航栏。然后用每个页面自定义的导航栏放在原有的位置上，push时整体切换，来达到非融合的效果。</li>
+<li>由于在iOS11以后，自定义的导航栏(<code>UINavgationBar</code>)创建不管高度多少，视觉上只会显示44pt。这就会导致和状态栏重叠，并且在有刘海屏的设备上达不到预期的效果。所以我们要定制一个自定义的导航栏：<ul>
+<li>创建<code>GLNavgaionbar</code>继承自<code>UIView</code>。</li>
+<li>内部创建一个高度固定(44pt)的导航栏，位于视图下方。由于默认的导航栏颜色微微发灰，所以我们设置一个统一的颜色。</li>
+<li>暴露出<code>UINavgationbar</code>常用的Api：<code>title</code>、<code>leftNavgationItem</code>以及<code>rightNavgationItem</code>。</li>
+<li>设置<code>GLNavgationbar</code>的高度为状态栏高度+44</li>
+</ul>
+</li>
+<li>由于iPhone12等机型状态栏高度不是固定的了，所以我们要动态取状态栏的高度。并且这里发现一个问题，在第一个页面展示出来之前，代码获取的状态栏高度为0。所以自定义导航栏在懒加载时不设置frame，添加的时候再设置</li>
+<li>当然由于UINavigationBar的限制，也可以使用<code>UIView</code>完全定义一个<code>NavgationBar</code>，这样的自由度更高</li>
+</ol>
+</li>
+<li><p>代码片段</p>
+<ol>
+<li><p>在导航控制器基类<code>GLNavgationController</code>中设置隐藏导航栏：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GLNavigationViewController</span>: <span class="title">UINavigationController</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">            <span class="comment">//隐藏全局的导航栏</span></span><br><span class="line">        navigationBar.isHidden = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义自定义的导航栏</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GLNavgationBar</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="comment">///自定义的导航栏</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">lazy</span> <span class="keyword">var</span> navgationbar = <span class="type">UINavigationBar</span>()</span><br><span class="line">    <span class="comment">/// 自定定义导航栏条目</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">lazy</span> <span class="keyword">var</span> item = <span class="type">UINavigationItem</span>()</span><br><span class="line">    <span class="comment">/// 左边导航栏条目属性</span></span><br><span class="line">    <span class="keyword">var</span> leftBarButtonItem: <span class="type">UIBarButtonItem?</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span>&#123;</span><br><span class="line">            item.leftBarButtonItem = leftBarButtonItem</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/// 右边导航栏条目属性</span></span><br><span class="line">    <span class="keyword">var</span> rightBarButtonItem: <span class="type">UIBarButtonItem?</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            item.rightBarButtonItem = rightBarButtonItem</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/// 中间标题</span></span><br><span class="line">    <span class="keyword">var</span> title: <span class="type">String?</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            item.title = title</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame: <span class="type">CGRect</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(frame: frame)</span><br><span class="line">        setupUI()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>?(coder: <span class="type">NSCoder</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(coder: coder)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">var</span> frame: <span class="type">CGRect</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            navgationbar.frame = <span class="type">CGRect</span>(x: <span class="number">0</span>, y: frame.size.height - <span class="number">44</span>, width: frame.width, height: <span class="number">44</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// MARK: - 设置界面</span></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">GLNavgationBar</span> </span>&#123;</span><br><span class="line">    <span class="comment">///设置默认的UI</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupUI</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> defaultColor = <span class="type">UIColor</span>.<span class="keyword">init</span>(red: <span class="number">246</span>/<span class="number">255.0</span>, green: <span class="number">246</span>/<span class="number">255.0</span>, blue: <span class="number">245</span>/<span class="number">255.0</span>, alpha: <span class="number">1</span>)</span><br><span class="line">        backgroundColor = defaultColor</span><br><span class="line">        addSubview(navgationbar)</span><br><span class="line">        navgationbar.items = [item]</span><br><span class="line">        navgationbar.setBackgroundImage(<span class="type">UIImage</span>.creatImage(color: defaultColor), <span class="keyword">for</span>: .<span class="keyword">default</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取应该显示的导航栏高度:</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UINavigationBar</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">getStandNavigationbarHeight</span><span class="params">()</span></span> -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> statusBarHeight: <span class="type">CGFloat</span> = <span class="number">0</span></span><br><span class="line">        <span class="comment">//iOS 13以后通过statusBarManger 获取状态栏高度</span></span><br><span class="line">        <span class="keyword">if</span> #available(iOS <span class="number">13.0</span>, *) &#123;</span><br><span class="line">            <span class="keyword">let</span> statusBarManger = <span class="type">UIApplication</span>.shared.windows.first?.windowScene?.statusBarManager</span><br><span class="line">            statusBarHeight = statusBarManger?.statusBarFrame.size.height ?? <span class="number">0</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            statusBarHeight = <span class="type">UIApplication</span>.shared.statusBarFrame.height</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">let</span> navgationbarHeight = statusBarHeight + <span class="number">44</span></span><br><span class="line">        <span class="keyword">return</span> navgationbarHeight</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在基类中通过懒加载的方式创建并添加自定义的导航栏</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GLBaseViewController</span>: <span class="title">UIViewController</span> </span>&#123; </span><br><span class="line">  <span class="comment">/// 自定义导航栏</span></span><br><span class="line">     <span class="built_in">lazy</span> <span class="keyword">var</span> navigationbar = <span class="type">GLNavgationBar</span>()</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">viewDidLoad</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        setupUI()</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">var</span> title: <span class="type">String?</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            navigationbar.title = title</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//MARK: - 设置界面</span></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">GLBaseViewController</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">setupUI</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.view.backgroundColor = <span class="type">UIColor</span>.cz_random()</span><br><span class="line">        view.addSubview(navigationbar)</span><br><span class="line">        <span class="comment">//计算frame</span></span><br><span class="line">          navigationbar.frame = <span class="type">CGRect</span>(x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="type">UIScreen</span>.cz_screenWidth(), height: <span class="type">UINavigationBar</span>.getStandNavigationbarHeight())</span><br><span class="line">          <span class="comment">//  </span></span><br><span class="line">          navigationbar.rightBarButtonItem = <span class="type">UIBarButtonItem</span>(title: <span class="string">&quot;下一个&quot;</span>, style: .plain, target: <span class="keyword">self</span>, action: #selector(nextController))<span class="number">1</span></span><br><span class="line">        navigationbar.leftBarButtonItem = <span class="type">UIBarButtonItem</span>(title: <span class="string">&quot;返回&quot;</span>, style: .plain, target: <span class="keyword">self</span>, action: #selector(lastController))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>最终效果</p>
+<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/navgation_ani2.gif" class="" title="This is an example image">
+
+</li>
+</ul>
+<h2 id="返回按钮的细节"><a href="#返回按钮的细节" class="headerlink" title="返回按钮的细节"></a>返回按钮的细节</h2><ul>
+<li><p>描述：导航栏返回按钮有一个细节需要处理，返回按钮从模块的第一页进入后，返回按钮显示：”&lt;” + 前一页的title。在更深层的页面返回按钮只显示 “&lt;” + “返回”。并且返回按钮要求有高亮颜色。</p>
+</li>
+<li><p>思路：</p>
+<ol>
+<li>系统本身的UIBarButtonItem是不具备这种效果的。只能通过使用自定义按钮来创建<code>UIBarButtonItem</code>来实现高亮的效果</li>
+<li>对于不同层级的页面返回按钮的显示，可以在导航栏基类的<code>push</code>方法中，通过判断<code>viewControllers.count</code>来判断当前页面的层级来控制。</li>
+</ol>
+</li>
+<li><p>代码片段：</p>
+<ol>
+<li><p>封装通过自定义按钮视图来创建UIBarButtonItem</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">UIBarButtonItem</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// 创建 UIBarButtonItem</span></span><br><span class="line">    <span class="comment">/// - Parameters:</span></span><br><span class="line">    <span class="comment">///   - title: title</span></span><br><span class="line">    <span class="comment">///   - fontSize: fontSize,默认16号</span></span><br><span class="line">    <span class="comment">///   - target: targat</span></span><br><span class="line">    <span class="comment">///   - action: action</span></span><br><span class="line">    <span class="comment">///   - isBack: 是否是返回按钮，如果是加上箭头</span></span><br><span class="line">    <span class="keyword">convenience</span> <span class="keyword">init</span>(title: <span class="type">String</span>,fontSize:<span class="type">CGFloat</span> = <span class="number">16</span>,target: <span class="type">AnyObject?</span>,action :<span class="type">Selector</span>,isBack: <span class="type">Bool</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> btn :<span class="type">UIButton</span> = <span class="type">UIButton</span>.cz_textButton(title, fontSize: fontSize, normalColor: <span class="type">UIColor</span>.darkGray, highlightedColor: <span class="type">UIColor</span>.orange)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> isBack &#123;</span><br><span class="line">            <span class="keyword">let</span> imageName = <span class="string">&quot;navigationbar_back_withtext&quot;</span></span><br><span class="line">            btn.setImage(<span class="type">UIImage</span>(named: imageName), <span class="keyword">for</span>: .normal)</span><br><span class="line">            btn.setImage(<span class="type">UIImage</span>(named: imageName + <span class="string">&quot;_highlighted&quot;</span> ), <span class="keyword">for</span>: .highlighted)</span><br><span class="line">            btn.sizeToFit()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        btn.addTarget(target, action: action, <span class="keyword">for</span>: .touchUpInside)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">self</span>.<span class="keyword">init</span>(customView: btn)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>GLNavigationViewController</code>的push方法中来控制返回按钮</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">pushViewController</span><span class="params">(<span class="number">_</span> viewController: UIViewController, animated: Bool)</span></span> &#123;</span><br><span class="line">       <span class="comment">//当rootViewController进入时，count == 0</span></span><br><span class="line">       <span class="keyword">if</span> viewControllers.<span class="built_in">count</span> &gt; <span class="number">0</span> &#123;</span><br><span class="line">           viewController.hidesBottomBarWhenPushed = <span class="literal">true</span></span><br><span class="line">           viewController.title = <span class="string">&quot;第\(viewControllers.count)个&quot;</span></span><br><span class="line">           </span><br><span class="line">           <span class="comment">//判断控制器的类型</span></span><br><span class="line">           <span class="keyword">if</span> <span class="keyword">let</span> vc = viewController <span class="keyword">as</span>? <span class="type">GLBaseViewController</span> &#123;</span><br><span class="line">               <span class="keyword">var</span> backTitle = <span class="string">&quot;返回&quot;</span></span><br><span class="line">               <span class="comment">// 判断控制器的级数，只有一个子控制器的时候，显示栈底控制器的标题</span></span><br><span class="line">               <span class="keyword">if</span> viewControllers.<span class="built_in">count</span> == <span class="number">1</span> &#123;</span><br><span class="line">                   <span class="comment">//显示首页的标题</span></span><br><span class="line">                   backTitle = children.first?.title ?? <span class="string">&quot;返回&quot;</span></span><br><span class="line">               &#125;</span><br><span class="line">               </span><br><span class="line">               vc.navigationbar.leftBarButtonItem = <span class="type">UIBarButtonItem</span>(title: backTitle, target: <span class="keyword">self</span>, action: #selector(popToParent), isBack: <span class="literal">true</span>)</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">super</span>.pushViewController(viewController, animated: animated)</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="meta">@objc</span> <span class="function"><span class="keyword">func</span> <span class="title">popToParent</span><span class="params">()</span></span> &#123;</span><br><span class="line">       popViewController(animated: <span class="literal">true</span>)</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>最终效果</p>
+<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/navgation_back_ani.gif" class="" title="This is an example image">
+
+</li>
+</ul>
+<h2 id="设备横竖屏"><a href="#设备横竖屏" class="headerlink" title="设备横竖屏"></a>设备横竖屏</h2><ul>
+<li><p>需求描述：因为App是支持竖屏(正常浏览)和横屏(视频)。项目本身又是支持横竖屏的。所以在设备方向切换的时候，VC会转动，需要进行限制。</p>
+</li>
+<li><p>思路：</p>
+<ol>
+<li>通过控制主控制器限制为竖屏即可。</li>
+<li>视频页面单独设置。</li>
+</ol>
+</li>
+<li><p>代码片段：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// GLMainViewController.swift(主控制器)</span></span><br><span class="line"><span class="comment">/// portrait  : 竖屏</span></span><br><span class="line"><span class="comment">/// landscape : 横屏</span></span><br><span class="line"><span class="comment">/// - 使用代码控制设备的方向的好处：可以在需要横屏的时候，单独设置</span></span><br><span class="line"><span class="comment">/// - 设置支持的方向之后，当前的控制器及自控制器都会遵守这个方向</span></span><br><span class="line"><span class="comment">/// - 如果播放视频，通常是通过 model 展现的</span></span><br><span class="line"><span class="keyword">override</span> <span class="keyword">var</span> supportedInterfaceOrientations: <span class="type">UIInterfaceOrientationMask</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> .portrait</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="基类封装表格视图和刷新逻辑"><a href="#基类封装表格视图和刷新逻辑" class="headerlink" title="基类封装表格视图和刷新逻辑"></a>基类封装表格视图和刷新逻辑</h2><ul>
+<li>需求描述：每个模块的基础都是一个表格视图(游客模式除外)，并且表格视图都有相同风格的下拉刷新上拉加载</li>
+</ul>
+<h3 id="封装表格视图"><a href="#封装表格视图" class="headerlink" title="封装表格视图"></a>封装表格视图</h3><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><ul>
+<li>在基类中封装表格视图，提供一个默认的实现。但并不是每个页面肯定会用表格视图，我们将其定义为可选的。</li>
+</ul>
+<h4 id="代码片段"><a href="#代码片段" class="headerlink" title="代码片段"></a>代码片段</h4><p>在<code>GLBaseViewController.swift</code>中定义可选的表格视图</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GLBaseViewController</span>: <span class="title">UIViewController</span> </span>&#123; </span><br><span class="line">        <span class="comment">/// 表格视图</span></span><br><span class="line">    <span class="comment">/// 定义为可选的原因是，并不是肯定会用到表格视图，用不到则创建</span></span><br><span class="line">    <span class="keyword">var</span> tableView: <span class="type">UITableView?</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加<code>tableView</code>到<code>baseVc.view</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// 封装表格视图</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">setupTableView</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">/// iOS11以后，UIScrollView.contentInsetAdjustmentBehavior属性，</span></span><br><span class="line">    <span class="comment">/// 会自动设置tableView的ContentSize来避免默认的Navigationbar和tabbar遮挡，</span></span><br><span class="line">       <span class="comment">/// 但这个属性对于自定义的Navigationbar是无效的，为了解决遮挡问题，有两种解决方式</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">///第一种：关闭contentInsetAdjustmentBehavior，frame=view.bounds，手动设置contentInset</span></span><br><span class="line">    tableView = <span class="type">UITableView</span>(frame: view.bounds,style: .plain)</span><br><span class="line">    view.insertSubview(tableView!, belowSubview: navigationbar)</span><br><span class="line">    <span class="keyword">if</span> #available(iOS <span class="number">11</span>, *) &#123;</span><br><span class="line">            tableView?.contentInsetAdjustmentBehavior = .never</span><br><span class="line">    &#125;</span><br><span class="line">    tableView?.contentInset = <span class="type">UIEdgeInsets</span>(top: navigationbar.bounds.height, <span class="keyword">left</span>: <span class="number">0</span>, bottom: tabBarController?.tabBar.bounds.height ?? <span class="number">49</span>, <span class="keyword">right</span>: <span class="number">0</span>)</span><br><span class="line">  </span><br><span class="line">      <span class="comment">///第二种：直接设置不被遮挡的frame</span></span><br><span class="line">    <span class="keyword">var</span> tableViewFrame = view.bounds</span><br><span class="line">    tableViewFrame.origin.y = navigationbar.bounds.height</span><br><span class="line">    tableViewFrame.size.height =  view.bounds.height - navigationbar.bounds.height - (tabBarController?.tabBar.bounds.height ?? <span class="number">0</span>)</span><br><span class="line">    tableView = <span class="type">UITableView</span>(frame: tableViewFrame,style: .plain)</span><br><span class="line">    view.insertSubview(tableView!, belowSubview: navigationbar)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>设置代理和数据源，提供一个默认的实现</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line">tableView?.delegate = <span class="keyword">self</span></span><br><span class="line">tableView?.dataSource = <span class="keyword">self</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//MARK: - UITableViewDelegate,UITableViewDataSource</span></span><br><span class="line"><span class="comment">/// 这里只提供一个默认的实现，需要子类自己实现这里的方法</span></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">GLBaseViewController</span>: <span class="title">UITableViewDelegate</span>,<span class="title">UITableViewDataSource</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, numberOfRowsInSection section: Int)</span></span> -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">tableView</span><span class="params">(<span class="number">_</span> tableView: UITableView, cellForRowAt indexPath: IndexPath)</span></span> -&gt; <span class="type">UITableViewCell</span> &#123;</span><br><span class="line">        <span class="type">UITableViewCell</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="封装刷新逻辑"><a href="#封装刷新逻辑" class="headerlink" title="封装刷新逻辑"></a>封装刷新逻辑</h3><h4 id="需求描述"><a href="#需求描述" class="headerlink" title="需求描述"></a>需求描述</h4><ul>
+<li>使用苹果原生刷新控件添加到表格。监听刷新控件触发加载数据加载方法。</li>
+<li>通过<code>UITableView</code>代理方法中监听来自动加载新的数据。</li>
+</ul>
+<h4 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h4><ul>
+<li>原生控件<code>UIRefreshControl</code>添加到<code>tableView</code>。下拉刷新会发出<code>UIControlEventValueChanged</code>事件，以此来判断是否是下拉刷新。</li>
+<li>通过<code>tableView</code>的<code>-tableView:willDisplayCell:forRowAtIndexPath</code>方法来监控是否是上拉加载。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>完成上述的需求可以看到，我们并没有在各个模块的控制器中写任何一句代码，就将这些框架类全局性的这种需求已经完成。要好好体会这样的做法以及思路。对于以后项目的可扩展性，可维护性有很大帮助。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/04/Hexo%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/04/Hexo%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">Hexo使用说明</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-04 10:09:32" itemprop="dateCreated datePublished" datetime="2016-08-04T10:09:32+08:00">2016-08-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%BB%98%E8%AE%A4%E5%88%86%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">默认分类</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="项目的使用"><a href="#项目的使用" class="headerlink" title="项目的使用"></a>项目的使用</h2><ol>
+<li><p>在当前文件夹中，初始化<code>Hexo</code>项目</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>Hexo</code>项目中编译生成静态页面</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br><span class="line"><span class="meta">#</span><span class="bash"> 编译好的静态资源会在项目中 Public 文件夹中</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动本地服务预览博客</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo s </span><br><span class="line"><span class="meta">#</span><span class="bash"> hexo server</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>部署</p>
+<p>用文本编辑器打开_config.yml,打开后往下滑到最后，修改<code>deploy</code>配置</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span> </span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span> </span><br><span class="line">    <span class="attr">repository:</span> <span class="string">https://github.com/xxx/xxx.git</span> </span><br><span class="line">    <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+
+<p>再执行配置命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hexo deploy <span class="comment">#或者：hexo d</span></span></span><br></pre></td></tr></table></figure>
+
+<p>无法连接git或找不到git，则执行如下命令来安装<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-deployer-git">hexo-deployer-git</a>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> npm install hexo-deployer-git --save</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="博客配置"><a href="#博客配置" class="headerlink" title="博客配置"></a>博客配置</h2><h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p><code>Hexo</code>有默认的主题，在<code>init</code>文件夹中的<code>themes</code>(存放主题文件)</p>
+<p>以<code>nexT</code>注意为例：</p>
+<ol>
+<li><p>下载主题</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git <span class="built_in">clone</span> https://github.com/iissnan/hexo-theme-next themes/next</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压所下载的压缩包至站点的 themes 目录下， 并将解压后的文件夹名称更改为 next </p>
+</li>
+<li><p>打开站点配置文件 _config.yml，找到 theme 字段，并将其值更改为 next。</p>
+<p> NexT 默认的 Scheme是<code>Muse</code>,通过修改主题配置文件 _config.yml的 Schemes 字段的值可以更改</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><ol>
+<li><p>创建一篇新文章或者新的页面的命令</p>
+<blockquote>
+<p>您可以在命令中指定文章的布局（layout），默认为 <code>post</code>，可以通过修改 <code>_config.yml</code> 中的 <code>default_layout</code> 参数来指定默认布局。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hexo new [layout] &lt;title&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在新建文章时，Hexo 会根据 <code>scaffolds</code> 文件夹内相对应的文件来建立文件，例如：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> hexo new photo <span class="string">&quot;My Gallery&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在执行这行指令时，Hexo 会尝试在 <code>scaffolds</code> 文件夹中寻找 <code>photo.md</code>，并根据其内容建立文章</p>
+</li>
+<li><p>在文章中可以使用的文章配置</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line"><span class="meta">#</span><span class="bash"> 名称</span></span><br><span class="line">title: &#123;&#123; title &#125;&#125;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章日期</span></span><br><span class="line">date: &#123;&#123; date &#125;&#125;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 是否在页面推荐文章列表展示</span></span><br><span class="line">top: false</span><br><span class="line"><span class="meta">#</span><span class="bash"> 是否在首页轮播</span></span><br><span class="line">cover: false</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看文章的密码, sha256 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</span></span><br><span class="line">password: </span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章目录</span></span><br><span class="line">toc: true</span><br><span class="line"><span class="meta">#</span><span class="bash"> 统计文章</span></span><br><span class="line">mathjax: true</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章摘要</span></span><br><span class="line">summary:</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章标签</span></span><br><span class="line">tags:</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文章分类</span></span><br><span class="line">categories:</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文档关联图片,可以配置 url,没配置的话,自动从主题配置文件的 featureImages 属性中自动选取一个</span></span><br><span class="line">img:</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用父子分类</p>
+<p>Hexo原生支持父子分类，只需要在 <code>Front-matter</code>中的分类标记后面写下多个分类就行了。写在后面的分类就在前面分类的子分类，例如：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">categories:</span><br><span class="line"><span class="bullet">-</span> iOS</span><br><span class="line"><span class="bullet">-</span> 数据持久化</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关于文章中的图片资源</p>
+<ol>
+<li><p>可以使用图床</p>
+</li>
+<li><p>使用文章资源文件夹，通过配置<code>config.yml</code>中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">_config.yml</span><br><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+
+<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流。</p>
+<p><strong>相对路径引用的标签插件</strong></p>
+<p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的标签插件被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

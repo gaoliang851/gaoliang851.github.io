@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Super的本质super方法调用如果转为C++代码可以看到被转成了： objc_msgSendSuper()方法调用。  该方法需要两个参数： &#x2F;&#x2F;第一个参数：是一个objc_super的结构体。该结构体有两个成员。struct objc_super &amp;#123;  id receiver; &#x2F;&#x2F;消息接受者  Class cls;    &#x2F;&#x2F; 消息接受者的父类，方法查找从该类开始。&amp;#125;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Super探究">
+<meta property="og:url" content="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="Super的本质super方法调用如果转为C++代码可以看到被转成了： objc_msgSendSuper()方法调用。  该方法需要两个参数： &#x2F;&#x2F;第一个参数：是一个objc_super的结构体。该结构体有两个成员。struct objc_super &amp;#123;  id receiver; &#x2F;&#x2F;消息接受者  Class cls;    &#x2F;&#x2F; 消息接受者的父类，方法查找从该类开始。&amp;#125;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/isa_%E8%B5%B0%E4%BD%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png">
+<meta property="og:image" content="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/super_%E9%9D%A2%E8%AF%95%E9%A2%98.png">
+<meta property="og:image" content="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/super_%E9%9D%A2%E8%AF%95%E9%A2%98_demo1.png">
+<meta property="og:image" content="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/super_%E9%9D%A2%E8%AF%95%E9%A2%98_demo2.png">
+<meta property="article:published_time" content="2017-05-11T22:41:05.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="iOS,Android,Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/isa_%E8%B5%B0%E4%BD%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png">
+
+<link rel="canonical" href="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Super探究 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/12/Super%E6%8E%A2%E7%A9%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Super探究
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-05-12 06:41:05" itemprop="dateCreated datePublished" datetime="2017-05-12T06:41:05+08:00">2017-05-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Super的本质"><a href="#Super的本质" class="headerlink" title="Super的本质"></a>Super的本质</h2><p><code>super</code>方法调用如果转为<code>C++</code>代码可以看到被转成了：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">objc_msgSendSuper()方法调用。</span><br></pre></td></tr></table></figure>
+
+<p>该方法需要两个参数：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//第一个参数：是一个objc_super的结构体。该结构体有两个成员。</span></span><br><span class="line"><span class="keyword">struct</span> objc_super &#123;</span><br><span class="line">  <span class="keyword">id</span> receiver; <span class="comment">//消息接受者</span></span><br><span class="line">  Class cls;    <span class="comment">// 消息接受者的父类，方法查找从该类开始。</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//第二个参数：是调用的方法</span></span><br><span class="line"><span class="keyword">@selector</span>(method_name);</span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>super</code>是通过<code>objc_msgSendSuper</code>发送消息，其中消息接收者还是self。然后要发送的消息是从父类中开始查找，而不是跟往常一样从当前对象查找。</p>
+<p><strong>例如：</strong></p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLStudent</span></span></span><br><span class="line">- (<span class="keyword">void</span>)run &#123;</span><br><span class="line">    [<span class="keyword">super</span> run];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;GLStudent run&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>转化为C++代码：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> __rw_objc_super arg = &#123;</span><br><span class="line">        <span class="keyword">self</span>,<span class="comment">//消息接收者</span></span><br><span class="line">        class_getSuperclass(objc_getClass(<span class="string">&quot;GLStudent&quot;</span>))</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">objc_msgSendSuper(</span><br><span class="line">                  arg,</span><br><span class="line">                  sel_registerName(<span class="string">&quot;run&quot;</span>)</span><br><span class="line">                   );</span><br></pre></td></tr></table></figure>
+
+<p>有些时候转换的C++代码只能作为一个参考，真正的底层调用还要从汇编的角度分析。</p>
+<p>从汇编角度看，super方法调用被转换成了<code>objc_msgSendSuper2()</code>,<code>objc_msgSendSuper2()</code>由汇编实现。描述是这样的：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">id</span> objc_msgSendSuper2(<span class="keyword">struct</span> objc_super2 *<span class="keyword">super</span>, SEL op, ...)</span><br><span class="line">  </span><br><span class="line"><span class="keyword">struct</span> objc_super2 &#123;</span><br><span class="line">    <span class="keyword">id</span> receiver;  <span class="comment">// 消息接收者</span></span><br><span class="line">    Class current_class;  <span class="comment">// receiverClass（消息接收者的class对象）</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>尽管第一个参数发生了变化，其实无非实在<code>objc_msgSendSuper2()</code> 内部，根据<code>current_class</code>获取了superClass。之后的逻辑与<code>objc_msgSendSuper()</code>是一样的</p>
+<h2 id="self-class-与-super-class"><a href="#self-class-与-super-class" class="headerlink" title="[self class] 与 [super class]"></a>[self class] 与 [super class]</h2><p>关于Runtime有一道很经典的题目：</p>
+<ul>
+<li><p>打印结果是什么呢？</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLPerson</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLStudent</span> : <span class="title">GLPerson</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)init</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;[self class] = %@&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>]); <span class="comment">//GLStudent</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;[self superclass] = %@&quot;</span>,[<span class="keyword">self</span> superclass]); <span class="comment">//GLPerson</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;[super class] = %@&quot;</span>,[<span class="keyword">super</span> <span class="keyword">class</span>]); <span class="comment">//GLStudent</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;[super superclass] = %@&quot;</span>,[<span class="keyword">super</span> superclass]); <span class="comment">//GLPerson</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>[super class]</code>输出的是<code>GLStudent</code>，</p>
+<p><code>[super superClass]</code>输出的是<code>GLPerson</code>。</p>
+<p>这两个方法的输出与<code>self</code>调用输出无异。根据<code>Super</code>的底层原理可知:</p>
+<ul>
+<li>虽然使用<code>super</code>调用，但消息接受者仍然是<code>self</code>，只不过方法查找是在父类中开始查找。</li>
+<li><code>class</code>方法与<code>superClass</code>方法，都是<code>NSObject</code>中实现的。所以无论调用者是谁，最终都是在<code>NSObject</code>中找到的方法。</li>
+</ul>
+<p>所以<code>[self class]</code>与<code>[super class]</code>调用结果都是一样的，<code>[self superClass]</code>与<code>[super superClass]</code>也同理。</p>
+<h2 id="isKindOfClass-amp-isMemberOfClass"><a href="#isKindOfClass-amp-isMemberOfClass" class="headerlink" title="isKindOfClass &amp; isMemberOfClass"></a>isKindOfClass &amp; isMemberOfClass</h2><p><code>isKindOfClass</code>与<code>isMemberOfClass</code>是两个常用的方法，又因为语义相近常常容易混淆。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">+ (Class)<span class="keyword">class</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (Class)<span class="keyword">class</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> object_getClass(<span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>isKindOfClass</code>:</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">+ (<span class="built_in">BOOL</span>)isKindOfClass:(Class)cls &#123;</span><br><span class="line">    <span class="keyword">for</span> (Class tcls = object_getClass((<span class="keyword">id</span>)<span class="keyword">self</span>); tcls; tcls = tcls-&gt;superclass) &#123;</span><br><span class="line">        <span class="keyword">if</span> (tcls == cls) <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)isKindOfClass:(Class)cls &#123;</span><br><span class="line">    <span class="keyword">for</span> (Class tcls = [<span class="keyword">self</span> <span class="keyword">class</span>]; tcls; tcls = tcls-&gt;superclass) &#123;</span><br><span class="line">        <span class="keyword">if</span> (tcls == cls) <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>只要能通过该对象<code>superclass</code>链能找到<code>cls</code>，就会返回<code>YES</code>。反之，则返回<code>NO</code>。</strong></p>
+</li>
+<li><p><code>isMemberOfClass</code>：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">+ (<span class="built_in">BOOL</span>)isMemberOfClass:(Class)cls &#123;</span><br><span class="line">    <span class="keyword">return</span> object_getClass((<span class="keyword">id</span>)<span class="keyword">self</span>) == cls;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)isMemberOfClass:(Class)cls &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> <span class="keyword">class</span>] == cls;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>直接作比较，看是否相等。</strong></p>
+<p><code>isKindOfClass</code>和<code>isMemberOfClass</code>的类方法中都用到了<code>object_getClass()</code>。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">Class object_getClass(<span class="keyword">id</span> obj) </span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> (obj) <span class="keyword">return</span> obj-&gt;getIsa();</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从源码可以看出，<code>object_getClass()</code>获取的是obj的<code>isa</code>指针。实例对象获取的是类对象，类对象获取的是元类对象。</p>
+<img src="/2017/05/12/Super%E6%8E%A2%E7%A9%B6/isa_%E8%B5%B0%E4%BD%8D%E5%8E%9F%E7%90%86%E5%9B%BE.png" class="">
+
+<h4 id="示例1"><a href="#示例1" class="headerlink" title="示例1"></a>示例1</h4><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">1.[NSObject class]获取了基类对象，+isKindOfClass方法中，匹配时会获取[NSObject class]的isa指针获取NSObject的元类对象</span></span><br><span class="line"><span class="comment">2. NSObject的元类对象的superclass指针又指向[NSObjcet class]，故返回YES.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="built_in">BOOL</span> ret1 = [[<span class="built_in">NSObject</span> <span class="keyword">class</span>] isKindOfClass:[<span class="built_in">NSObject</span> <span class="keyword">class</span>]]; <span class="comment">//YES</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">最终比较的是，NSObject的类对象和NSObjcet的元类对象是否相等，故返回NO</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="built_in">BOOL</span> ret2 = [[<span class="built_in">NSObject</span> <span class="keyword">class</span>] isMemberOfClass:[<span class="built_in">NSObject</span> <span class="keyword">class</span>]]; <span class="comment">//NO</span></span><br><span class="line"><span class="built_in">BOOL</span> ret3 = [[GLPerson <span class="keyword">class</span>] isKindOfClass:[GLPerson <span class="keyword">class</span>]]; <span class="comment">//NO</span></span><br><span class="line"><span class="built_in">BOOL</span> ret4 = [[GLPerson <span class="keyword">class</span>] isMemberOfClass:[GLPerson <span class="keyword">class</span>]]; <span class="comment">//NO</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="示例2"><a href="#示例2" class="headerlink" title="示例2"></a>示例2</h4><img src="/2017/05/12/Super%E6%8E%A2%E7%A9%B6/super_%E9%9D%A2%E8%AF%95%E9%A2%98.png" class="">
+
+<p>可以运行，运行的结果类似于：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">my name is &lt;ViewController: 0x7f88dbc055c0&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2017/05/12/Super%E6%8E%A2%E7%A9%B6/super_%E9%9D%A2%E8%AF%95%E9%A2%98_demo1.png" class="">
+
+<img src="/2017/05/12/Super%E6%8E%A2%E7%A9%B6/super_%E9%9D%A2%E8%AF%95%E9%A2%98_demo2.png" class="">
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/04/28/msgSend%E6%8E%A2%E7%A9%B6/" rel="prev" title="msgSend探究">
+      <i class="fa fa-chevron-left"></i> msgSend探究
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/05/30/Runtime%E5%B8%B8%E7%94%A8API%E6%80%BB%E7%BB%93/" rel="next" title="Runtime常用API总结">
+      Runtime常用API总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Super%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">1.</span> <span class="nav-text">Super的本质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#self-class-%E4%B8%8E-super-class"><span class="nav-number">2.</span> <span class="nav-text">[self class] 与 [super class]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isKindOfClass-amp-isMemberOfClass"><span class="nav-number">3.</span> <span class="nav-text">isKindOfClass &amp; isMemberOfClass</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1"><span class="nav-number">3.0.1.</span> <span class="nav-text">示例1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2"><span class="nav-number">3.0.2.</span> <span class="nav-text">示例2</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

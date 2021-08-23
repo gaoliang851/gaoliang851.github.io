@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="定义和使用下标(subscript)可以给任意类型(枚举，结构体，类)增加下标功能，也叫做**下标脚本**  subscript的语法类似于实例方法、计算属性，本质上就是方法(函数) class Point &amp;#123;    var x &#x3D; 0.0, y &#x3D; 0.0  subscript(index: Int) -&gt; Double &amp;#123;      set &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之下标">
+<meta property="og:url" content="http://yoursite.com/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="定义和使用下标(subscript)可以给任意类型(枚举，结构体，类)增加下标功能，也叫做**下标脚本**  subscript的语法类似于实例方法、计算属性，本质上就是方法(函数) class Point &amp;#123;    var x &#x3D; 0.0, y &#x3D; 0.0  subscript(index: Int) -&gt; Double &amp;#123;      set &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-03T08:33:59.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之下标 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%B8%8B%E6%A0%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之下标
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-03 16:33:59" itemprop="dateCreated datePublished" datetime="2019-09-03T16:33:59+08:00">2019-09-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="定义和使用"><a href="#定义和使用" class="headerlink" title="定义和使用"></a>定义和使用</h2><p><strong>下标</strong>(<code>subscript</code>)可以给任意类型(枚举，结构体，类)增加下标功能，也叫做**<em>下标脚本**</em></p>
+<ul>
+<li><p><code>subscript</code>的语法类似于实例方法、计算属性，本质上就是方法(函数)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>, y = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      <span class="keyword">set</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">          x = newValue</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">        y = newValue</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> x</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line">p[<span class="number">0</span>] = <span class="number">11.1</span> <span class="comment">//调用 subscript set方法</span></span><br><span class="line">p[<span class="number">1</span>] = <span class="number">22.2</span>    <span class="comment">//调用 subscript set方法</span></span><br><span class="line"><span class="built_in">print</span>(p.x)    </span><br><span class="line"><span class="built_in">print</span>(p.y)</span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">0</span>])    <span class="comment">//调用 subscript get方法</span></span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">1</span>])    <span class="comment">//调用 subscript get方法</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>subscript</code>中可以定义<code>set</code>方法和<code>get</code>方法，接受的参数即为下标传入的值，<code>set</code>方法中使用<code>newValue</code>来接受设置的值</p>
+</li>
+<li><p><code>subscript</code>中定义的返回值类型决定了：</p>
+<ul>
+<li><code>get</code>方法的返回值类型</li>
+<li><code>set</code>方法中<code>newValue</code>的类型</li>
+</ul>
+</li>
+<li><p><code>subscript</code>可以接受多个参数，并且类型任意(eg:<code>String</code>)</p>
+</li>
+</ul>
+<h2 id="下标的使用细节"><a href="#下标的使用细节" class="headerlink" title="下标的使用细节"></a>下标的使用细节</h2><ul>
+<li><p><code>subscript</code>可以没有<code>set</code>方法，但必须要有<code>get</code>方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">10.0</span>, y = <span class="number">11.0</span></span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">1</span>]) <span class="comment">//11.0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果只有<code>get</code>方法，可以省略<code>get</code></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">10.0</span>, y = <span class="number">11.0</span></span><br><span class="line">    <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> index == <span class="number">0</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> x</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> index == <span class="number">1</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> y</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line"><span class="built_in">print</span>(p[<span class="number">1</span>]) <span class="comment">//11.0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以设置参数标签，外部调用使用参数标签，内部使用形参</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="number">0.0</span>,y = <span class="number">0.0</span></span><br><span class="line">  <span class="keyword">subscript</span>(index i: <span class="type">Int</span>) -&gt; <span class="type">Double</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> i == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> i == <span class="number">1</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> y</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> p = <span class="type">Point</span>()</span><br><span class="line">p.y = <span class="number">22.2</span></span><br><span class="line"><span class="built_in">print</span>(p[index: <span class="number">1</span>])<span class="comment">//22.2</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下标可以是类型方法，并且要使用<code>static</code>修饰</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sum</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">subscript</span>(v1: <span class="type">Int</span>, v2: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        v1 + v2</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="type">Sum</span>[<span class="number">20</span>,<span class="number">11</span>])<span class="comment">//31</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="返回值为结构体、类"><a href="#返回值为结构体、类" class="headerlink" title="返回值为结构体、类"></a>返回值为结构体、类</h2><p>当下标的返回值的类型为结构体或者类时，两者有些细微的差别。譬如如下场景中：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PointManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> point = <span class="type">Point</span>()</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Point</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123; point &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>Point</code>是不同的<code>class</code>或者<code>struct</code>类型</p>
+<ul>
+<li><p><code>struct</code>类型</p>
+<p>此时没有<code>subscript</code>没有<code>set</code>方法，如果修改通过下标获取的<code>point</code>，此时会报错：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">0</span> ,y = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PointManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> point = <span class="type">Point</span>()</span><br><span class="line">  <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Point</span> &#123;</span><br><span class="line">      <span class="keyword">get</span> &#123; point &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> pm = <span class="type">PointManager</span>()</span><br><span class="line">pm[<span class="number">0</span>].x = <span class="number">11</span> <span class="comment">//Cannot assign to property: subscript is get-only</span></span><br></pre></td></tr></table></figure>
+
+<p>因为<code>struct</code>是值类型，修改其属性值<code>pm[0].x = 11</code>相当于<code>pm[0] = Point(x: 11, y: pm[0].y)</code>,所以要消除这个报错要添加<code>subscript</code>的<code>set</code>方法。</p>
+</li>
+<li><p><code>class</code>类型</p>
+<p>对于<code>class</code>类型就没有这个问题了，因为保存在<code>PointManager</code>内的是<code>point</code>的引用，修改<code>point</code>的值并不会修改这个引用的值，无需实现<code>set</code>方法。</p>
+</li>
+</ul>
+<h2 id="接受多个参数的下标"><a href="#接受多个参数的下标" class="headerlink" title="接受多个参数的下标"></a>接受多个参数的下标</h2><p>多个参数本身也是一种语法糖</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Gird</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> data = [</span><br><span class="line">        [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],</span><br><span class="line">        [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>],</span><br><span class="line">        [<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>]</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">subscript</span>(row: <span class="type">Int</span>,column: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            <span class="keyword">guard</span> row &gt;= <span class="number">0</span> &amp;&amp; row &lt; <span class="number">3</span> &amp;&amp; column &gt;= <span class="number">0</span> &amp;&amp; column &lt; <span class="number">3</span> <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">            data[row][column] = newValue</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">guard</span> row &gt;= <span class="number">0</span> &amp;&amp; row &lt; <span class="number">3</span> &amp;&amp; column &gt;= <span class="number">0</span> &amp;&amp; column &lt; <span class="number">3</span> <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> data[row][column]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> gird = <span class="type">Gird</span>()</span><br><span class="line">gird[<span class="number">0</span>,<span class="number">1</span>] = <span class="number">77</span></span><br><span class="line">gird[<span class="number">2</span>,<span class="number">1</span>] = <span class="number">99</span></span><br><span class="line"><span class="built_in">print</span>(gird.data)</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/02/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%96%B9%E6%B3%95/" rel="prev" title="Swift5学习笔记之方法">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/04/Swift5-1%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BB%A7%E6%89%BF/" rel="next" title="Swift5学习笔记之继承">
+      Swift5学习笔记之继承 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">定义和使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E6%A0%87%E7%9A%84%E4%BD%BF%E7%94%A8%E7%BB%86%E8%8A%82"><span class="nav-number">2.</span> <span class="nav-text">下标的使用细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%BA%E7%BB%93%E6%9E%84%E4%BD%93%E3%80%81%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">返回值为结构体、类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%97%E5%A4%9A%E4%B8%AA%E5%8F%82%E6%95%B0%E7%9A%84%E4%B8%8B%E6%A0%87"><span class="nav-number">4.</span> <span class="nav-text">接受多个参数的下标</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

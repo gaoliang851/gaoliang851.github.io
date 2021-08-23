@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概述函数式编程(Funtional Programming，简称FP)是一种编程范式，也就是如何编写程序的方法论   主要思想:把计算过程尽量分解成一系列可复用函数的调用    主要特征:函数是“第一等公民”  函数与其他数据类型一样的地位，可以赋值给其他变量，也可以作为函数参数、函数返回值   函数式编程最早出现在LISP语言，绝大部分的现代编程语言也对函数式编程做了不同程度的支持，比如 p H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之从函数式编程初探">
+<meta property="og:url" content="http://yoursite.com/2019/12/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="概述函数式编程(Funtional Programming，简称FP)是一种编程范式，也就是如何编写程序的方法论   主要思想:把计算过程尽量分解成一系列可复用函数的调用    主要特征:函数是“第一等公民”  函数与其他数据类型一样的地位，可以赋值给其他变量，也可以作为函数参数、函数返回值   函数式编程最早出现在LISP语言，绝大部分的现代编程语言也对函数式编程做了不同程度的支持，比如 p H">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-09T02:16:48.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之从函数式编程初探 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/09/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之从函数式编程初探
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-09 10:16:48" itemprop="dateCreated datePublished" datetime="2019-12-09T10:16:48+08:00">2019-12-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>函数式编程(Funtional Programming，简称FP)是一种编程范式，也就是如何编写程序的方法论 </p>
+<ul>
+<li><p>主要思想:把计算过程尽量分解成一系列可复用函数的调用  </p>
+</li>
+<li><p>主要特征:函数是“第一等公民”</p>
+<p> 函数与其他数据类型一样的地位，可以赋值给其他变量，也可以作为函数参数、函数返回值</p>
+</li>
+</ul>
+<p>函数式编程最早出现在LISP语言，绝大部分的现代编程语言也对函数式编程做了不同程度的支持，比如 p Haskell、JavaScript、Python、Swift、Kotlin、Scala等</p>
+<p>这里对Swift的函数编程仅做了解初试。</p>
+<h2 id="预热"><a href="#预热" class="headerlink" title="预热"></a>预热</h2><p>说起函数式编程，不得不先说下Swift中几个设计的”很有意思”的Api</p>
+<h3 id="Array的常见操作"><a href="#Array的常见操作" class="headerlink" title="Array的常见操作"></a>Array的常见操作</h3><h4 id="Map映射操作"><a href="#Map映射操作" class="headerlink" title="Map映射操作"></a>Map映射操作</h4><p>Array中有一个map函数。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">map</span>&lt;T&gt;<span class="params">(<span class="number">_</span> transform: <span class="params">(Element)</span></span></span> -&gt; <span class="type">T</span>) -&gt; [<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这个函数要求传入一个闭包：<code>(Element) -&gt; T</code>。执行的时候，会遍历Array中每个元素，依次传入这个闭包中(Element)</p>
+<p>每次返回的值会组成一个新的数组。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="comment">//[2, 4, 6, 8]</span></span><br><span class="line"><span class="keyword">var</span> arr2 = arr.<span class="built_in">map</span> &#123; (i) -&gt; <span class="type">Int</span> <span class="keyword">in</span></span><br><span class="line">    i * <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>lazy</code>的优化</p>
+<p>Swift对于Map映射操作，都是立刻执行的。如果映射是比较耗时的操作。可以使用lazy延迟操作，在访问的时候在调用转换的闭包函数</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="keyword">var</span> lazyResult = arr.<span class="built_in">lazy</span>.<span class="built_in">map</span> &#123; (element) -&gt; <span class="type">Int</span> <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;maping:\(element)&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> element * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;mapped&quot;</span>,lazyResult[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;mapped&quot;</span>,lazyResult[<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;mapped&quot;</span>,lazyResult[<span class="number">2</span>])</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">maping:1</span></span><br><span class="line"><span class="comment">mapped 2</span></span><br><span class="line"><span class="comment">maping:2</span></span><br><span class="line"><span class="comment">mapped 4</span></span><br><span class="line"><span class="comment">maping:3</span></span><br><span class="line"><span class="comment">mapped 6</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<h4 id="FlatMap映射操作"><a href="#FlatMap映射操作" class="headerlink" title="FlatMap映射操作"></a>FlatMap映射操作</h4><p>这个Api和<code>map</code>操作很像，但有很大的区别。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">flatMap</span>&lt;SegmentOfResult&gt;<span class="params">(<span class="number">_</span> transform: <span class="params">(Element)</span></span></span> -&gt; <span class="type">SegmentOfResult</span>) -&gt; [<span class="type">SegmentOfResult</span>.<span class="type">Element</span>] <span class="keyword">where</span> <span class="type">SegmentOfResult</span> : <span class="type">Sequence</span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数要求传入一个闭包。执行的时候，会遍历Array中每个元素，一次传入这个闭包中，这个闭包会返回一个数组。所有的返回的数组都将展开合并为一个数组并返回。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="comment">//[1, 2, 2, 3, 3, 3, 4, 4, 4, 4]</span></span><br><span class="line"><span class="keyword">var</span> numArray = arr.flatMap &#123; (i) -&gt; <span class="type">Array</span>&lt;<span class="type">Any</span>&gt; <span class="keyword">in</span></span><br><span class="line">    <span class="type">Array</span>.<span class="keyword">init</span>(repeating: i, <span class="built_in">count</span>: i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="compactMap映射"><a href="#compactMap映射" class="headerlink" title="compactMap映射"></a>compactMap映射</h4><p>紧凑映射。相比于<code>map</code>映射，<code>compactMap</code>要求传入的闭包会返回一个可选项，对于返回的可选为不为<code>nil</code>的自动解包，并添加到返回到数组中。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> strings = [<span class="string">&quot;123&quot;</span>,<span class="string">&quot;test&quot;</span>,<span class="string">&quot;jack&quot;</span>,<span class="string">&quot;-30&quot;</span>]</span><br><span class="line"><span class="comment">//[Optional(123), nil, nil, Optional(-30)]</span></span><br><span class="line"><span class="keyword">var</span> numbers = strings.<span class="built_in">map</span> &#123; (str) -&gt; <span class="type">Int?</span> <span class="keyword">in</span></span><br><span class="line">    <span class="type">Int</span>(str)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//[123, -30]</span></span><br><span class="line"><span class="keyword">var</span> numbers2 = strings.<span class="built_in">compactMap</span> &#123; (str) -&gt; <span class="type">Int?</span> <span class="keyword">in</span></span><br><span class="line">    <span class="type">Int</span>(str)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="filter操作"><a href="#filter操作" class="headerlink" title="filter操作"></a>filter操作</h4><p>拦截操作。这个函数要求传入一个闭包：<code>(Element) -&gt; T</code>。执行的时候，会遍历Array中每个元素，依次传入这个闭包中(Element)，返回值为布尔值，返回true，则会被添加到返回的数组中。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="comment">//[2, 4]</span></span><br><span class="line"><span class="keyword">var</span> filterArray = arr.<span class="built_in">filter</span> &#123; (element) -&gt; <span class="type">Bool</span> <span class="keyword">in</span></span><br><span class="line">    element % <span class="number">2</span> == <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="reduce操作"><a href="#reduce操作" class="headerlink" title="reduce操作"></a>reduce操作</h4><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">reduce</span>&lt;Result&gt;<span class="params">(<span class="number">_</span> initialResult: Result, <span class="number">_</span> nextPartialResult: <span class="params">(Result, Element)</span></span></span>  -&gt; <span class="type">Result</span>) -&gt; <span class="type">Result</span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数要求传入一个初始值：<code>initialResult</code>。</p>
+<p><code>nextPartialResult</code>:闭包函数，Element是数组中的每一个元素遍历传入。返回一个结果。Result就是上一次返回的结果。当第一个元素传入时，Result取的是initialResult传入的参数。最后将结果返回</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="comment">//10</span></span><br><span class="line"><span class="keyword">var</span> addResult = arr.<span class="built_in">reduce</span>(<span class="number">0</span>) &#123; (lastResult, element) -&gt; <span class="type">Int</span> <span class="keyword">in</span></span><br><span class="line">       lastResult + element</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//1234</span></span><br><span class="line"><span class="keyword">var</span> stringJoined = arr.<span class="built_in">reduce</span>(<span class="string">&quot;&quot;</span>) &#123; (lastResult, element) -&gt; <span class="type">String</span> <span class="keyword">in</span></span><br><span class="line">    lastResult + <span class="string">&quot;\(element)&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Optional的Map和flatMap"><a href="#Optional的Map和flatMap" class="headerlink" title="Optional的Map和flatMap"></a>Optional的Map和flatMap</h3><h4 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h4><p>在开发的时候,时常会出现判断可选项是否为<code>nil</code>的判断，例如：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num1: <span class="type">Int?</span> = <span class="number">10</span></span><br><span class="line"><span class="comment">//num2:Optional(20)</span></span><br><span class="line"><span class="keyword">var</span> num2 = (num1 != <span class="literal">nil</span>) ? (num1! + <span class="number">10</span>) : <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+
+<p>这样会显得很麻烦，可以使用<code>Optional</code>的<code>map</code>方法。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> num1: <span class="type">Int?</span> = <span class="number">10</span></span><br><span class="line"><span class="comment">//num1不为nil时，会把num1解包传给i</span></span><br><span class="line"><span class="keyword">var</span> num3 = num1.<span class="built_in">map</span> &#123; (i) -&gt; <span class="type">Int</span> <span class="keyword">in</span></span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line">    <span class="keyword">return</span> i * <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(num3) <span class="comment">//Optional(20)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//num1为nil时，不会调用map方法，</span></span><br><span class="line">num1 = <span class="literal">nil</span></span><br><span class="line"><span class="keyword">var</span> num4 = num1.<span class="built_in">map</span> &#123; $<span class="number">0</span> * <span class="number">2</span> &#125; </span><br><span class="line"><span class="built_in">print</span>(num4) <span class="comment">//nil</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h4>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/06/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E4%BB%8EOC%E8%BF%81%E7%A7%BB%E5%88%B0Swift/" rel="prev" title="Swift5学习笔记之从OC迁移到Swift">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之从OC迁移到Swift
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/03/Realm%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Realm学习笔记">
+      Realm学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E7%83%AD"><span class="nav-number">2.</span> <span class="nav-text">预热</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Array%E7%9A%84%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text">Array的常见操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Map%E6%98%A0%E5%B0%84%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.1.</span> <span class="nav-text">Map映射操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlatMap%E6%98%A0%E5%B0%84%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.2.</span> <span class="nav-text">FlatMap映射操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#compactMap%E6%98%A0%E5%B0%84"><span class="nav-number">2.1.3.</span> <span class="nav-text">compactMap映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#filter%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.4.</span> <span class="nav-text">filter操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.5.</span> <span class="nav-text">reduce操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Optional%E7%9A%84Map%E5%92%8CflatMap"><span class="nav-number">2.2.</span> <span class="nav-text">Optional的Map和flatMap</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Map"><span class="nav-number">2.2.1.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flatMap"><span class="nav-number">2.2.2.</span> <span class="nav-text">flatMap</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

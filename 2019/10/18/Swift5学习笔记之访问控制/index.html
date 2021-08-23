@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Swift提供了5个不同的访问级别(以下是从高到低排列，实体指被访问借呗修饰的内容) **open**：允许在定义实体的模块、其他模块中访问，允许其他模块进行继承、重写(open只能用在类、类成员上) **public**：允许在定义实体的模块、其他模块中访问，不允许其他模块进行继承、重写。 **internal**：只允许在定义实体的模块中访问，不允许其他模块中访问。 **fileprivate">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift5学习笔记之访问控制">
+<meta property="og:url" content="http://yoursite.com/2019/10/18/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="Swift提供了5个不同的访问级别(以下是从高到低排列，实体指被访问借呗修饰的内容) **open**：允许在定义实体的模块、其他模块中访问，允许其他模块进行继承、重写(open只能用在类、类成员上) **public**：允许在定义实体的模块、其他模块中访问，不允许其他模块进行继承、重写。 **internal**：只允许在定义实体的模块中访问，不允许其他模块中访问。 **fileprivate">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-18T03:04:06.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/10/18/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift5学习笔记之访问控制 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/18/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift5学习笔记之访问控制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-18 11:04:06" itemprop="dateCreated datePublished" datetime="2019-10-18T11:04:06+08:00">2019-10-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Swift/" itemprop="url" rel="index"><span itemprop="name">Swift</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><code>Swift</code>提供了5个不同的访问级别(以下是从高到低排列，实体指被访问借呗修饰的内容)</p>
+<p>**<code>open</code>**：允许在定义实体的模块、其他模块中访问，允许其他模块进行继承、重写(<code>open</code>只能用在类、类成员上)</p>
+<p>**<code>public</code>**：允许在定义实体的模块、其他模块中访问，不允许其他模块进行继承、重写。</p>
+<p>**<code>internal</code>**：只允许在定义实体的模块中访问，不允许其他模块中访问。</p>
+<p>**<code>fileprivate</code>**：只允许在定义实体的源文件中访问</p>
+<p>**<code>private</code>**：只允许在定义实体的封闭声明中访问</p>
+<ul>
+<li>绝大部分实体默认都是<code>internal</code>级别</li>
+</ul>
+<h2 id="访问级别使用准则"><a href="#访问级别使用准则" class="headerlink" title="访问级别使用准则"></a>访问级别使用准则</h2><p><strong>一个实体不可以被被访问级别的实体定义</strong>，例如</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">internal</span> <span class="keyword">var</span> p = <span class="type">Person</span>() <span class="comment">//报错</span></span><br></pre></td></tr></table></figure>
+
+<p>代码中，<code>Person</code>类的访问权限是 <code>fileprivate</code>的，而使用<code>Person</code>定义的变量<code>p</code>的访问权限却是<code>internal</code>。这就使得在实体模块内可以访问变量<code>P</code>,但是<code>p</code>的类型信息无法访问，所以报错。</p>
+<p>同理的还有：</p>
+<ul>
+<li>变量\常量类型 &gt;= 变量常量</li>
+<li>参数类型、返回值类型 &gt;= 函数</li>
+<li>父类 &gt;= 子类</li>
+<li>父协议 &gt;= 子协议</li>
+<li>原类型 &gt;= <code>typealias</code></li>
+<li>原始值类型、关联性类型 &gt;= 枚举类型</li>
+<li>定义类型A时用到的其他类型 &gt;= 类型A</li>
+</ul>
+<h2 id="元组类型"><a href="#元组类型" class="headerlink" title="元组类型"></a>元组类型</h2><p>元组类型的访问级别是所有成员类型最低的那个。</p>
+<p>例如：<code>Dog</code>的访问级别是<code>internal</code>，<code>Person</code>的访问级别是<code>fileprivate</code>。所以元组类型<code>(Dog,fileprivate)</code>的访问级别是<code>fileprivate</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">struct</span> <span class="title">Dog</span></span>&#123;&#125;</span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//(Dog,Person)的访问级别是fileprivate</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//使用元组类型(Dog,fileprivate)定义的变量data1 ，data1的访问级别是fileprivate,与类型相等，编译通过</span></span><br><span class="line"><span class="keyword">fileprivate</span> <span class="keyword">var</span> data1: (<span class="type">Dog</span>,<span class="type">Person</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用元组类型(Dog,fileprivate)定义的变量data3，data3的访问级别是private,小于元组类型的访问级别，编译通过。</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> data3: (<span class="type">Dog</span>,<span class="type">Person</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用元组类型(Dog,fileprivate)定义的变量data2,data2的访问级别是internal大于元组类型的访问级别，报错</span></span><br><span class="line"><span class="keyword">internal</span> <span class="keyword">var</span> data2: (<span class="type">Dog</span>,<span class="type">Person</span>) <span class="comment">//报错</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="泛型类型"><a href="#泛型类型" class="headerlink" title="泛型类型"></a>泛型类型</h2><p>泛型类型的访问级别是<strong>类型的访问级别</strong>以及<strong>所有泛型类型参数的访问级别</strong>中最低的那个</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;&#125;</span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">class</span> <span class="title">Dog</span> </span>&#123;&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span>&lt;<span class="title">T1</span>,<span class="title">T2</span>&gt; </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Person&lt;Car,Dog&gt; 的访问级别是 Person,Dog,Car中访问级别中最低的：fileprivate</span></span><br><span class="line"><span class="comment">//类型的访问级别 要 &gt;= 变量的 ，所以编译成功</span></span><br><span class="line"><span class="keyword">fileprivate</span> <span class="keyword">var</span> p = <span class="type">Person</span>&lt;<span class="type">Car</span>,<span class="type">Dog</span>&gt;()</span><br></pre></td></tr></table></figure>
+
+<h2 id="成员、嵌套类型"><a href="#成员、嵌套类型" class="headerlink" title="成员、嵌套类型"></a>成员、嵌套类型</h2><p> 类型的访问级别会影响成员(属性、方法、初始化器、下标)、嵌套类型的默认访问级别。</p>
+<blockquote>
+<p>当然成员的访问级别可以比类型的访问级别更高(通过编译)，但是这种做法意义不大。因为类型都访问不到的话，类型的访问级别就没有意义了。</p>
+</blockquote>
+<ul>
+<li>一般情况下，类型为<code>private</code>或<code>fileprivate</code>，那么成员\嵌套类型默认也是<code>private</code>或<code>fileprivate</code></li>
+<li>一般情况下，类型为<code>internal</code>或<code>public</code>，那么成员\嵌套类型默认是<code>internal</code></li>
+<li>直接在全局作用域下定义的<code>private</code>等价于<code>fileprivate</code></li>
+</ul>
+<p><em>全局作用域下的<code>private</code>和<code>fileprivate</code>:</em></p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 全局作用域下 private == fileprivate ,所以编译通过</span></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;&#125;</span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> : <span class="title">Person</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如下代码可以正常编译通过，虽然<code>Dog</code>的访问级别是<code>private</code>,但在全局作用域下，等价于<code>fileprivate</code>。<code>Dog</code>内的<code>age</code>属性和<code>run()</code>方法也可以此源文件中访问，所以<code>Person</code>可以访问,编译通过。</p>
+<p>如果<code>Dog</code>中<code>age</code>和<code>run</code>显式加上<code>private</code>,就只能在<code>Dog</code>结构体内访问，外部就无法访问了。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">struct</span> <span class="title">Dog</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span> <span class="comment">//如果显式加上 private,在 Person.walk() 中是无法调用和访问的</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125; <span class="comment">//如果显式加上 private,在 Person.walk() 中是无法调用和访问的</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> dog: <span class="type">Dog</span> = <span class="type">Dog</span>()</span><br><span class="line">    <span class="keyword">mutating</span> <span class="function"><span class="keyword">func</span> <span class="title">walk</span><span class="params">()</span></span> &#123;</span><br><span class="line">        dog.run() <span class="comment">//</span></span><br><span class="line">        dog.age = <span class="number">1</span> <span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再如下代码：局部作用域下的定义的私有实体，实体内的成员访问级别和实体访问级别相同，也可以在作用域内访问</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Dog</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> age: <span class="type">Int</span> = <span class="number">0</span> <span class="comment">//默认访问级别：private,但这个private和Dog的private相同，访问级别相同</span></span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125; <span class="comment">//默认访问级别：private,但这个private和Dog的private相同，访问级别相同</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> dog: <span class="type">Dog</span> = <span class="type">Dog</span>()</span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">walk</span><span class="params">()</span></span> &#123;</span><br><span class="line">            dog.age = <span class="number">1</span> <span class="comment">//age的访问级别和Dog相同，也可以在Test实体内访问</span></span><br><span class="line">            dog.run() <span class="comment">//run的访问级别和Dog相同，也可以在Test实体内访问</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="成员的重写"><a href="#成员的重写" class="headerlink" title="成员的重写"></a>成员的重写</h2><ul>
+<li><p>子类重写成员的访问级别必须 &gt;= 子类的访问级别，或者 &gt;= 父类被重写成员的访问级别 (子类重写成员的访问级别必须必须比子类的访问级别和父类被重写成员的访问级别中最低的那个高)</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Persons</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Students</span>: <span class="title">Persons</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>父类的成员不能被成员作用域定义外的子类重写</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person2</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Student2</span>: <span class="title">Person2</span> </span>&#123;</span><br><span class="line">        <span class="comment">//Person2内部定义的子类可以重写private方法,</span></span><br><span class="line">        <span class="comment">//因为 Student2类 和 Person.run 在同一作用域</span></span><br><span class="line">        <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">fileprivate</span> <span class="function"><span class="keyword">func</span> <span class="title">walk</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student2</span>: <span class="title">Person2</span> </span>&#123;</span><br><span class="line">    <span class="comment">//因为 Student2类 和 Person.walk 在同一作用域</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">walk</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="getter、setter"><a href="#getter、setter" class="headerlink" title="getter、setter"></a>getter、setter</h2><p><code>getter</code>、<code>setter</code>默认自动接收它们所属环境的访问级别</p>
+<p>可以给<code>setter</code>单独设置一个比<code>getter</code>更低的访问级别，用以限制写的权限。反之不可以。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局变量num get是public级别的，set是fileprivate</span></span><br><span class="line"><span class="keyword">fileprivate</span>(<span class="keyword">set</span>) <span class="keyword">public</span> <span class="keyword">var</span> num = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span>(<span class="keyword">set</span>) <span class="keyword">var</span> age = <span class="number">0</span> <span class="comment">//外部可以访问(internal)，但只能在内部修改</span></span><br><span class="line">    <span class="keyword">fileprivate</span>(<span class="keyword">set</span>) <span class="keyword">public</span> <span class="keyword">var</span> weight: <span class="type">Int</span> &#123; <span class="comment">//外部可以访问(public)，但只能在文件内修改</span></span><br><span class="line">        <span class="keyword">set</span> &#123;&#125;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="number">10</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//下标方法get是public访问级别，set是internal级别的</span></span><br><span class="line">    <span class="keyword">internal</span>(<span class="keyword">set</span>) <span class="keyword">public</span> <span class="keyword">subscript</span>(index: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">set</span> &#123; &#125;</span><br><span class="line">        <span class="keyword">get</span> &#123; index &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="初始化器"><a href="#初始化器" class="headerlink" title="初始化器"></a>初始化器</h2><ul>
+<li><p>如果一个<code>public</code>类想在另外一个模块调用编译生成的默认无参初始化器，必须显示提供<code>public</code>的无参初始化器</p>
+<ul>
+<li>因为<code>public</code>类的默认初始化器是<code>internal</code>级别</li>
+</ul>
+</li>
+<li><p><code>required</code>初始化器 &gt;= 它的默认访问级别</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="keyword">internal</span> <span class="keyword">required</span> <span class="keyword">init</span>() &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// required init 默认访问级别是 internal,如果使用级别低于internal的修饰，编译不通过</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果结构体有<code>private</code>或<code>fileprivate</code>的存储实例属性，那么它的成员初始化器也是<code>private</code>或<code>fileprivate</code>。否则默认就是<code>internal</code></p>
+</li>
+</ul>
+<h2 id="枚举类型的case"><a href="#枚举类型的case" class="headerlink" title="枚举类型的case"></a>枚举类型的case</h2><p>不能给<code>enum</code>的每个<code>case</code>单独设置访问级别，每个<code>case</code>自动接收<code>enum</code>的访问级别。</p>
+<p><code>public enum</code>定义的<code>case</code>也是<code>public</code></p>
+<h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><ul>
+<li><p>协议中要求实现的方法自动接收协议的访问级别，不能单独设置访问级别</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Runnable是fileprivate访问级别的，那么run方法也是fileprivate访问级别的</span></span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Runnalbe</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遵守协议的实体中，实现协议的方法的访问级别 &gt;= 实体的访问级别，或者 &gt;= 协议的访问级别。通俗一点讲：协议中方法的实现的访问级别不能小于实体和协议中最低的访问级别</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">// - Person.run() 方法的访问级别，不能小于Runnable和Person中访问级别最低的</span></span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Runnalbe</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> : <span class="title">Runnalbe</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">  <span class="comment">// private func run() &#123;&#125;  //private小于 fileprivate 和 public ，编译报错</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><ul>
+<li><p>如果有显示设置扩展的访问级别，扩展添加的成员自动接收扩展的访问级别</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123; &#125;</span><br><span class="line"><span class="keyword">fileprivate</span> <span class="class"><span class="keyword">extension</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125; <span class="comment">//run方法也是fileprivate访问级别</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stu = <span class="type">Student</span>()</span><br><span class="line">stu.run()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果没有显示设置扩展的访问级别，扩展添加的成员的默认访问级别，跟直接在类型中定义的成员一样</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123; &#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123;  &#125; <span class="comment">//run方法是internal访问级别的</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stu = <span class="type">Student</span>()</span><br><span class="line">stu.run()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以单独给扩展添加的成员设置访问级别</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123; &#125;</span><br><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">extension</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">run</span><span class="params">()</span></span> &#123; &#125; <span class="comment">// 只能在 Student内访问</span></span><br><span class="line">    <span class="keyword">fileprivate</span> <span class="function"><span class="keyword">func</span> <span class="title">walk</span><span class="params">()</span></span> &#123; <span class="comment">//只能在声明的源文件内访问</span></span><br><span class="line">        run()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> stu = <span class="type">Student</span>()</span><br><span class="line">stu.walk() </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果扩展遵守了协议，那么就不能给扩展<strong>显式</strong>设置扩展的访问级别。这是语法糖，因为协议的访问级别受到了实体和协议本身的访问级别影响。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Student</span> : <span class="title">CustomDebugStringConvertible</span> </span>&#123; <span class="comment">//显示添加访问级别报错</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">var</span> debugDescription: <span class="type">String</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="string">&quot;Student&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在同一文件中的扩展，可以写成类似多个部分的类型声明</p>
+<ul>
+<li>在原本的声明中声明一个私有成员，可以在同一文件的扩展中访问它</li>
+<li>在扩展的声明一个私有成员，可以在同一文件的其他扩展中、原本声明访问它</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//在同一个文件中，原本的声明和扩展可以看成是一个声明拆分，私有变量(private)可以互相访问。</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">learn</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">go</span><span class="params">()</span></span> &#123;</span><br><span class="line">        test2()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">        learn()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">()</span></span> &#123; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">abc</span><span class="params">()</span></span> &#123;</span><br><span class="line">        test2()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Swift/" rel="tag"># Swift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/30/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%89%A9%E5%B1%95/" rel="prev" title="Swift5学习笔记之扩展">
+      <i class="fa fa-chevron-left"></i> Swift5学习笔记之扩展
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/22/Swift5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="next" title="Swift5学习笔记之内存管理">
+      Swift5学习笔记之内存管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E7%BA%A7%E5%88%AB%E4%BD%BF%E7%94%A8%E5%87%86%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">访问级别使用准则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%83%E7%BB%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">元组类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">泛型类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%90%E5%91%98%E3%80%81%E5%B5%8C%E5%A5%97%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">成员、嵌套类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%90%E5%91%98%E7%9A%84%E9%87%8D%E5%86%99"><span class="nav-number">5.</span> <span class="nav-text">成员的重写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getter%E3%80%81setter"><span class="nav-number">6.</span> <span class="nav-text">getter、setter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8"><span class="nav-number">7.</span> <span class="nav-text">初始化器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B%E7%9A%84case"><span class="nav-number">8.</span> <span class="nav-text">枚举类型的case</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-number">9.</span> <span class="nav-text">协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-number">10.</span> <span class="nav-text">扩展</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

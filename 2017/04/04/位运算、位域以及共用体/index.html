@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="OC在底层isa的实现上使用了位运算，位域以及共用体。我们先提前看一下这些技术的用法。 基本数据类型OC中基本数据类型所占的字节数：    C ObjC 32位 64位    bool BOOL(64位) 1 1   char int8_t、BOOL(32位) 1 1   unsigned char Boolean 1 1   short int16_t 2 2   unsigned short">
+<meta property="og:type" content="article">
+<meta property="og:title" content="位运算、位域以及共用体">
+<meta property="og:url" content="http://yoursite.com/2017/04/04/%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E4%BD%8D%E5%9F%9F%E4%BB%A5%E5%8F%8A%E5%85%B1%E7%94%A8%E4%BD%93/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="OC在底层isa的实现上使用了位运算，位域以及共用体。我们先提前看一下这些技术的用法。 基本数据类型OC中基本数据类型所占的字节数：    C ObjC 32位 64位    bool BOOL(64位) 1 1   char int8_t、BOOL(32位) 1 1   unsigned char Boolean 1 1   short int16_t 2 2   unsigned short">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-04-04T08:38:10.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="iOS,Android,Java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/04/04/%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E4%BD%8D%E5%9F%9F%E4%BB%A5%E5%8F%8A%E5%85%B1%E7%94%A8%E4%BD%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>位运算、位域以及共用体 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E4%BD%8D%E5%9F%9F%E4%BB%A5%E5%8F%8A%E5%85%B1%E7%94%A8%E4%BD%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          位运算、位域以及共用体
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-04 16:38:10" itemprop="dateCreated datePublished" datetime="2017-04-04T16:38:10+08:00">2017-04-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>OC在底层<code>isa</code>的实现上使用了位运算，位域以及共用体。我们先提前看一下这些技术的用法。</p>
+<h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><p>OC中基本数据类型所占的字节数：</p>
+<table>
+<thead>
+<tr>
+<th align="center">C</th>
+<th align="center">ObjC</th>
+<th align="center">32位</th>
+<th align="center">64位</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">bool</td>
+<td align="center">BOOL(64位)</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">char</td>
+<td align="center">int8_t、BOOL(32位)</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">unsigned char</td>
+<td align="center">Boolean</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">short</td>
+<td align="center">int16_t</td>
+<td align="center">2</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">unsigned short</td>
+<td align="center">unichar</td>
+<td align="center">2</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">int</td>
+<td align="center">int32_t、NSInteger(32位)、boolean_t(32位)</td>
+<td align="center">4</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">unsigned int</td>
+<td align="center">boolean_t(64位)、NSUInteger(32位)</td>
+<td align="center">4</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">long</td>
+<td align="center">NSInteger(64位)</td>
+<td align="center">4</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">unsigned long</td>
+<td align="center">NSUInteger(64位)</td>
+<td align="center">4</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">long long</td>
+<td align="center">int64_t</td>
+<td align="center">8</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">CGFloat(32位)</td>
+<td align="center">4</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">double</td>
+<td align="center">CGFloat(64位)</td>
+<td align="center">8</td>
+<td align="center">8</td>
+</tr>
+</tbody></table>
+<ul>
+<li>BOOL在32位机器被定义为char、在64位机器被定义为bool</li>
+<li>boolean_t在32位机器被定义为unsigned int、在64位机器被定义为int</li>
+<li>NSInteger在32位机器被定义为int、在64位机器被定义为long</li>
+<li>NSUInteger在32位机器被定义为unsigned int、在64位机器被定义为unsigned long</li>
+<li>CGFloat在32位机器被定义为float、在64位机器被定义为double</li>
+<li>由于C语言只会将bool的非0值置为1，因此，BOOL的使用过程中应注意在32位机器上并非只有1和0两种可能取值，取值范围是-128~127</li>
+</ul>
+<h2 id="需求提出"><a href="#需求提出" class="headerlink" title="需求提出"></a>需求提出</h2><p>假设有如下场景（Model）：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLPerson</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>,<span class="keyword">getter</span>=isTall) <span class="built_in">BOOL</span> tall;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>,<span class="keyword">getter</span>=isRich) <span class="built_in">BOOL</span> rich;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">assign</span>,<span class="keyword">getter</span>=isHandsome) <span class="built_in">BOOL</span> handsome;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLPerson</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>GLPerson中，有三个BOOL类型的成员属性。一个BOOL属性占一个字节。那么是否可以用其他方式来存储这三个值呢。</p>
+<h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>所谓位运算，就是对一个比特（Bit）位进行操作。比特（Bit）是一个电子元器件，8个比特构成一个字节（Byte），它已经是粒度最小的可操作单元了。</p>
+<p>OC中可以使用C语言中的六种位运算：</p>
+<p>| 运算法 |  <code>&amp;</code>   |  <code>|</code>   |   <code>^</code>    | <code>~</code>  | <code>&lt;&lt;</code> | <code>&gt;&gt;</code> |<br>| :—-: | :—-: | :—-: | :——: | :–: | :–: | :–: |<br>|  说明  | 按位与 | 按位或 | 按位异或 | 取反 | 左移 | 右移 |</p>
+<h3 id="按位与运算-amp"><a href="#按位与运算-amp" class="headerlink" title="按位与运算(&amp;)"></a>按位与运算(&amp;)</h3><p>一个比特位只有0和1两个取值，均为1才为1，否则为0</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>&amp;<span class="number">1</span> = <span class="number">1</span>;  <span class="number">1</span>&amp;<span class="number">0</span> = <span class="number">0</span>;  <span class="number">0</span>&amp;<span class="number">0</span> = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="按位或运算"><a href="#按位或运算" class="headerlink" title="按位或运算(|)"></a>按位或运算(|)</h3><p>两个二进制位有1时，就为1。两个都为0时结果才为0;</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>|<span class="number">1</span> = <span class="number">1</span>; <span class="number">1</span>|<span class="number">0</span> = <span class="number">1</span>; <span class="number">0</span>|<span class="number">0</span> = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="按位异或运算"><a href="#按位异或运算" class="headerlink" title="按位异或运算(^)"></a>按位异或运算(^)</h3><p>参与<code>^</code>运算两个二进制位不同时，结果为 1，相同时结果为 0.</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">0</span>^<span class="number">1</span>=<span class="number">1</span>; <span class="number">0</span>^<span class="number">0</span>=<span class="number">0</span>; <span class="number">1</span>^<span class="number">1</span>=<span class="number">0</span>。</span><br></pre></td></tr></table></figure>
+
+<h3 id="取反运算"><a href="#取反运算" class="headerlink" title="取反运算(~)"></a>取反运算(~)</h3><p>取反运算符<code>~</code>为单目运算符，右结合性，作用是对参与运算的二进制位取反。例如<code>~1</code>为0，<code>~0</code>为1。</p>
+<h3 id="左移运算-lt-lt"><a href="#左移运算-lt-lt" class="headerlink" title="左移运算( &lt;&lt; )"></a>左移运算( &lt;&lt; )</h3><p>左移运算符<code>&lt;&lt;</code>用来把操作数的各个二进制位全部左移若干位，高位丢弃，低位补0。</p>
+<p>如果数据较小，被丢弃的高位不包含 1，那么左移 n 位相当于乘以 2 的 n 次方。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">9</span>&lt;&lt;<span class="number">3</span>的结果为 <span class="number">72</span>。</span><br><span class="line"></span><br><span class="line">&lt;&lt; <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">1001</span>  （<span class="number">9</span> 在内存中的存储）</span><br><span class="line">-----------------------------------------------------------------------------------</span><br><span class="line">   <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0100</span> <span class="number">1000</span>  （<span class="number">72</span> 在内存中的存储）</span><br></pre></td></tr></table></figure>
+
+<h3 id="右移运算-gt-gt"><a href="#右移运算-gt-gt" class="headerlink" title="右移运算( &gt;&gt; )"></a>右移运算( &gt;&gt; )</h3><p>右移运算符<code>&gt;&gt;</code>用来把操作数的各个二进制位全部右移若干位，低位丢弃，高位补 0 或 1。如果数据的最高位是 0，那么就补 0；如果最高位是 1，那么就补 1。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">9</span>&gt;&gt;<span class="number">3</span>的结果为 <span class="number">1</span>。</span><br><span class="line">&gt;&gt; <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">1001</span>  （<span class="number">9</span> 在内存中的存储）</span><br><span class="line">-----------------------------------------------------------------------------------</span><br><span class="line">   <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0000</span> -- <span class="number">0000</span> <span class="number">0001</span>  （<span class="number">1</span> 在内存中的存储）</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/03/21/block%E5%BA%95%E5%B1%82%E5%AD%A6%E4%B9%A0/" rel="prev" title="block底层学习">
+      <i class="fa fa-chevron-left"></i> block底层学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/04/08/isa%E8%AF%A6%E8%A7%A3/" rel="next" title="isa详解">
+      isa详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">基本数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E6%8F%90%E5%87%BA"><span class="nav-number">2.</span> <span class="nav-text">需求提出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="nav-number">3.</span> <span class="nav-text">位运算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E4%B8%8E%E8%BF%90%E7%AE%97-amp"><span class="nav-number">3.1.</span> <span class="nav-text">按位与运算(&amp;)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E6%88%96%E8%BF%90%E7%AE%97"><span class="nav-number">3.2.</span> <span class="nav-text">按位或运算(|)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E5%BC%82%E6%88%96%E8%BF%90%E7%AE%97"><span class="nav-number">3.3.</span> <span class="nav-text">按位异或运算(^)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%96%E5%8F%8D%E8%BF%90%E7%AE%97"><span class="nav-number">3.4.</span> <span class="nav-text">取反运算(~)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E7%A7%BB%E8%BF%90%E7%AE%97-lt-lt"><span class="nav-number">3.5.</span> <span class="nav-text">左移运算( &lt;&lt; )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B3%E7%A7%BB%E8%BF%90%E7%AE%97-gt-gt"><span class="nav-number">3.6.</span> <span class="nav-text">右移运算( &gt;&gt; )</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="iOS开发中有三种常见的定时器  NSTimer CADisplayLink GCD  NSTimerNSTimer是iOS中最常用的定时器。其通过Runloop来实现，一般情况下比较准确。但是当前循环耗时操作较多时，会出现延迟问题。同时，也受所加入的RunLoop的RunLoopMode影响。 简单使用&#x2F;&#x2F;&#x2F; 构造并开启(启动NSTimer本质上是将其加入RunLoop中)&#x2F;&#x2F; &quot;sc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理之定时器">
+<meta property="og:url" content="http://yoursite.com/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="iOS开发中有三种常见的定时器  NSTimer CADisplayLink GCD  NSTimerNSTimer是iOS中最常用的定时器。其通过Runloop来实现，一般情况下比较准确。但是当前循环耗时操作较多时，会出现延迟问题。同时，也受所加入的RunLoop的RunLoopMode影响。 简单使用&#x2F;&#x2F;&#x2F; 构造并开启(启动NSTimer本质上是将其加入RunLoop中)&#x2F;&#x2F; &quot;sc">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/proxy%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2021-08-21T03:10:17.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="iOS,Android,Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/proxy%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>内存管理之定时器 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内存管理之定时器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-21 11:10:17" itemprop="dateCreated datePublished" datetime="2021-08-21T11:10:17+08:00">2021-08-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>iOS开发中有三种常见的定时器</p>
+<ul>
+<li>NSTimer</li>
+<li>CADisplayLink</li>
+<li>GCD</li>
+</ul>
+<h2 id="NSTimer"><a href="#NSTimer" class="headerlink" title="NSTimer"></a>NSTimer</h2><p>NSTimer是iOS中最常用的定时器。其通过Runloop来实现，一般情况下比较准确。但是当前循环耗时操作较多时，会出现延迟问题。同时，也受所加入的RunLoop的RunLoopMode影响。</p>
+<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// 构造并开启(启动NSTimer本质上是将其加入RunLoop中)</span></span><br><span class="line"><span class="comment">// &quot;scheduledTimer&quot;前缀的为自动启动NSTimer的，如:</span></span><br><span class="line">+ (<span class="built_in">NSTimer</span> *)scheduledTimerWithTimeInterval:(<span class="built_in">NSTimeInterval</span>)interval repeats:(<span class="built_in">BOOL</span>)repeats block:(<span class="keyword">void</span> (^)(<span class="built_in">NSTimer</span> *timer))block</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 构造但不开启</span></span><br><span class="line"><span class="comment">// &quot;timer&quot;前缀的为只构造不启用的，如:</span></span><br><span class="line">+ (<span class="built_in">NSTimer</span> *)timerWithTimeInterval:(<span class="built_in">NSTimeInterval</span>)interval repeats:(<span class="built_in">BOOL</span>)repeats block:(<span class="keyword">void</span> (^)(<span class="built_in">NSTimer</span> *timer))block</span><br><span class="line"></span><br><span class="line"><span class="comment">//定时器的释放一定要先将其终止，而后才能销毁对象</span></span><br><span class="line">- (<span class="keyword">void</span>)invalidate;</span><br><span class="line"><span class="comment">//立即执行(fire)</span></span><br><span class="line"><span class="comment">//我们对定时器设置了延时之后，有时需要让它立刻执行，可以使用fire方法:</span></span><br><span class="line">- (<span class="keyword">void</span>)fire;</span><br></pre></td></tr></table></figure>
+
+<p>使用：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">//方法1</span></span><br><span class="line"><span class="keyword">self</span>.timer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">1.0</span> target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(doTask) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line"><span class="keyword">self</span>.timer = [<span class="built_in">NSTimer</span> timerWithTimeInterval:<span class="number">1.0</span> target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(doTask) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line">[[<span class="built_in">NSRunLoop</span> currentRunLoop] addTimer:<span class="keyword">self</span>.timer forMode:<span class="built_in">NSRunLoopCommonModes</span>];</span><br></pre></td></tr></table></figure>
+
+<h3 id="内存泄露问题"><a href="#内存泄露问题" class="headerlink" title="内存泄露问题"></a>内存泄露问题</h3><p>由于NSTimer在初始化时，会对<strong>target</strong>有一个强引用。需要添加到RunLoop才能运行，而一旦运行后，RunLoop又会强引用NSTimer。如果<strong>target</strong>再对NSTimer强引用的话就非常容易因为循环应用造成内存泄露。</p>
+<p>而<code>-[NSTimer invalidate]</code>方法中又会解除target的强应用，并且从RunLoop中退出。</p>
+<p>比如：</p>
+<ol>
+<li>NSTimer强引用Target，Target又强引用NSTimer，此时造成循环引用。解决方案是：timer换成weak引用。</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) <span class="built_in">NSTimer</span> *timer;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">@implemention</span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">       [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="keyword">self</span>.timer = [<span class="built_in">NSTimer</span> timerWithTimeInterval:<span class="number">1.</span>f target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(timerTest) userInfo:<span class="literal">nil</span> repeats:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span>  </span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>如果使用<code>scheduled</code>开头的方法创建了timer。此时Target不管使用强引用和弱引用都无法解决ViewController无法释放的问题。原因在于：创建NSTimer的时候，就已经将NSTimer加入了RunLoop。如果不停止NSTimer，RunLoop将一直强引用NSTimer。而NSTimer又强引用着ViewController，造成ViewController无法释放。</p>
+<p>解决方案是：在适当的时机调用<code>-[NSTimer invalidate]</code>方法，是RunLoop解除对NSTimer的强应用，和NSTimer对ViewController的强引用。</p>
+</li>
+</ol>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">weak</span>,<span class="keyword">nonatomic</span>) <span class="built_in">NSTimer</span> *timer;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="keyword">self</span>.timer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">1.</span>f</span><br><span class="line">                                                  target:<span class="keyword">self</span></span><br><span class="line">                                                selector:<span class="keyword">@selector</span>(timerTest)</span><br><span class="line">                                                userInfo:<span class="literal">nil</span></span><br><span class="line">                                                 repeats:<span class="literal">YES</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//解决方案</span></span><br><span class="line">-(<span class="keyword">void</span>)viewDidDisappear:(<span class="built_in">BOOL</span>)animated &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidDisappear:animated];</span><br><span class="line">    [<span class="keyword">self</span>.timer invalidate];</span><br><span class="line">&#125;</span><br><span class="line">@end3</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>当然使用NSTimer的block创建方式，配合__weak 也可解除强应用。</li>
+</ol>
+<h4 id="代理对象"><a href="#代理对象" class="headerlink" title="代理对象"></a>代理对象</h4><p>另外，解决这类问题还可以使用代理对象。将代理对象设置为Target，NSTimer强引用代理对象，代理对象弱引用真正要调用的Target。即可避免循环引用。</p>
+<img src="/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/proxy%E7%A4%BA%E6%84%8F%E5%9B%BE.png" class="">
+
+<h5 id="NSObject构建代理对象"><a href="#NSObject构建代理对象" class="headerlink" title="NSObject构建代理对象"></a>NSObject构建代理对象</h5><p>使用NSObjcet构建代理对象</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLProxy</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">weak</span>) <span class="keyword">id</span> target;</span><br><span class="line">+ (<span class="keyword">instancetype</span>) proxyWithTarget:(<span class="keyword">id</span>)target;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLProxy</span></span></span><br><span class="line">+ (<span class="keyword">instancetype</span>) proxyWithTarget:(<span class="keyword">id</span>)target &#123;</span><br><span class="line">    GLProxy *proxy = [[GLProxy alloc] init];</span><br><span class="line">    proxy.target = target;</span><br><span class="line">    <span class="keyword">return</span> proxy;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> 利用消息转发机制:</span></span><br><span class="line"><span class="comment"> 当定时器调用代理对象的selector方法时，由于代理对象并未实现该方法，</span></span><br><span class="line"><span class="comment"> 回来到消息转发阶段。将该方法转发给target即可。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">- (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>.target;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>在使用的时候：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) <span class="built_in">NSTimer</span> *timer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">self</span>.timer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">1.</span>f</span><br><span class="line">                                                  target:[GLProxy proxyWithTarget:<span class="keyword">self</span>]</span><br><span class="line">                                                selector:<span class="keyword">@selector</span>(timerTest)</span><br><span class="line">                                                userInfo:<span class="literal">nil</span></span><br><span class="line">                                                 repeats:<span class="literal">YES</span>];</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用NSProxy构建代理对象"><a href="#使用NSProxy构建代理对象" class="headerlink" title="使用NSProxy构建代理对象"></a>使用NSProxy构建代理对象</h5><h6 id="NSProxy是什么"><a href="#NSProxy是什么" class="headerlink" title="NSProxy是什么"></a>NSProxy是什么</h6><p><code>NSProxy</code> 是 NSProxy 是一个<strong>抽象类</strong>,跟 <code>NSObject</code> 一样的基类，都遵守<code>&lt;NSObject&gt;</code>协议</p>
+<p><code>NSProxy</code>是一个抽象类，必须继承实例化其子类才能使用。</p>
+<p><code>NSProxy</code>从类名来看是代理类专门负责代理对象转发消息的。相比<code>NSObject</code>类来说<code>NSProxy</code>更轻量级，通过<code>NSProxy</code>可以帮助<code>Objective-C</code>间接的实现多重继承的功能。</p>
+<h6 id="NSProxy-和-NSObject-的比较"><a href="#NSProxy-和-NSObject-的比较" class="headerlink" title="NSProxy 和 NSObject 的比较"></a>NSProxy 和 NSObject 的比较</h6><ul>
+<li><p>相比 NSObject,NSProxy 更轻量级, 做消息转发效率更高.</p>
+<p>NSObject 寻找方法顺序：本类-&gt;(父类-)&gt;(动态方法解析)-&gt; 消息转发；</p>
+<p>NSproxy 顺序：本类-&gt;消息转发</p>
+</li>
+</ul>
+<h6 id="NSProxy-的用途"><a href="#NSProxy-的用途" class="headerlink" title="NSProxy 的用途"></a>NSProxy 的用途</h6><ol>
+<li><p>AOP 面向切片编程</p>
+<p>iOS 中面向切片编程一般有两种方式 ，一个是直接基于 runtime 的 method-Swizzling.还有一种就是基于 NSProxy</p>
+</li>
+<li><p>解决 NSTimer, CADisplayLink 等强引用 target 引起的无法释放问题。如 NSTimer:利用消息转发来断开 NSTimer 对象与视图之间的强引用关系。初始化 NSTimer 时把触发事件的 target 替换成一个单独的对象，然后这个对象中 NSTimer 的 SEL 方法触发时让这个方法在当前的视图 self 中实现。</p>
+</li>
+<li><p>多重继承。实现类似 CAAnimation 类族.</p>
+</li>
+</ol>
+<h6 id="构建代理对象"><a href="#构建代理对象" class="headerlink" title="构建代理对象"></a>构建代理对象</h6><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLProxys</span> : <span class="title">NSProxy</span></span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">weak</span>) <span class="keyword">id</span> target;</span><br><span class="line">+ (<span class="keyword">instancetype</span>) proxyWithTarget:(<span class="keyword">id</span>)target;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLProxys</span></span></span><br><span class="line">+ (<span class="keyword">instancetype</span>) proxyWithTarget:(<span class="keyword">id</span>)target &#123;</span><br><span class="line">    <span class="comment">//NSProxy没有init方法，创建时使用alloc即可</span></span><br><span class="line">    GLProxys *proxy = [GLProxys alloc];</span><br><span class="line">    proxy.target = target;</span><br><span class="line">    <span class="keyword">return</span> proxy;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)sel &#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span>.target methodSignatureForSelector:sel];</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span> *)invocation &#123;</span><br><span class="line">    [invocation invokeWithTarget:<span class="keyword">self</span>.target];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>使用时：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>,<span class="keyword">nonatomic</span>) <span class="built_in">NSTimer</span> *timer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">self</span>.timer = [<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">1.</span>f</span><br><span class="line">                                                  target:[GLProxys proxyWithTarget:<span class="keyword">self</span>]</span><br><span class="line">                                                selector:<span class="keyword">@selector</span>(timerTest)</span><br><span class="line">                                                userInfo:<span class="literal">nil</span></span><br><span class="line">                                                 repeats:<span class="literal">YES</span>];</span><br></pre></td></tr></table></figure>
+
+<h3 id="NSTimer不准时"><a href="#NSTimer不准时" class="headerlink" title="NSTimer不准时"></a>NSTimer不准时</h3><p>NSTimer是不准时的，原因在于它是基于RunLoop实现的。</p>
+<p>NSTimer每过固定的时间执行一次的话，RunLoop在每次循环过程中，会计算Timer的时间。假如时间累计到了一次固定时间，则去执行一次Timer。而每次Runloop所做的任务不同，每次循环的时间也是不固定的。</p>
+<p>假如：NSTimer重复的周期为1s, RunLoop可能第一次循环用了0.2s，不到NSTimer重复周期，开始下一次。</p>
+<p>第二次0.2s，一共累计了0.4s,不到NSTimer重复周期，继续下一次。</p>
+<p>第三次由于任务比较耗时花了0.7s,此时已经累计了1.3s,超过了NSTimer的重复周期，则执行了NSTimer一次。</p>
+<p>所以NSTimer是不准的。想要更准确，可以使用GCD的定时器。GCD定时器不是基于RunLoop实现的，而是使用系统内核来实现的。</p>
+<h2 id="CADisplayLink"><a href="#CADisplayLink" class="headerlink" title="CADisplayLink"></a>CADisplayLink</h2><p>CADisplayLink是基于<code>屏幕刷新的周期</code>，所以其一般很准时，每秒刷新60次。其本质也是通过RunLoop，所以不难看出，当RunLoop选择其他模式或被耗时操作过多时，仍旧会造成延迟。</p>
+<p>其使用步骤为 <code>创建CADisplayLink-&gt;添加至RunLoop中-&gt;终止-&gt;销毁</code>。代码如下</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">self</span>.link = [<span class="built_in">CADisplayLink</span> displayLinkWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(doTask)];</span><br><span class="line">[<span class="keyword">self</span>.link addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop] forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//在dealloc中</span></span><br><span class="line"><span class="comment">// 终止定时器</span></span><br><span class="line">[disLink invalidate];</span><br><span class="line"><span class="comment">// 销毁对象</span></span><br><span class="line">disLink = <span class="literal">nil</span>;</span><br></pre></td></tr></table></figure>
+
+<p>同时，由于其是基于屏幕刷新的，所以也度量单位是每帧，其提供了根据屏幕刷新来设置间隔的frameInterval属性，其决定于屏幕刷新多少帧时调用一次该方法，默认为1，即1/60秒调用一次。</p>
+<p>如果我们想要计算出每次调用的时间间隔，可以通过frameInterval * duration求出，后者为屏幕每帧间隔的只读属性。</p>
+<p>在日常开发中，适当使用CADisplayLink甚至有优化作用。比如对于需要动态计算进度的进度条，由于起进度反馈主要是为了UI更新，那么当计算进度的频率超过帧数时，就造成了很多无谓的计算。如果将计算进度的方法绑定到CADisplayLink上来调用，则只在每次屏幕刷新时计算进度，优化了性能。MBProcessHUB则是利用了这一特性</p>
+<h3 id="内存泄露的问题"><a href="#内存泄露的问题" class="headerlink" title="内存泄露的问题"></a>内存泄露的问题</h3><p>CADisplayLink与NSTimer类似。除了没有使用Block创建的方式外，其内存问题解决方案和NSTimer相同。</p>
+<h2 id="GCD定时器"><a href="#GCD定时器" class="headerlink" title="GCD定时器"></a>GCD定时器</h2><p>NSTimer依赖于RunLoop，如果RunLoop的任务过于繁重，可能会导致NSTimer不准时。而GCD却没有这种缺点，他是基于系统内核实现的。也不会像NSTimer那样受到RunLoop Mode的影响。</p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><h4 id="创建定时器"><a href="#创建定时器" class="headerlink" title="创建定时器"></a>创建定时器</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * type :dispatch源可处理的事件类型</span></span><br><span class="line"><span class="comment"> * handle :可以理解为句柄、索引或id，假如要监听进程，需要传入进程的ID,一般填0</span></span><br><span class="line"><span class="comment"> * mask :可以理解为描述，提供更详细的描述，让它知道具体要监听什么，一般填0</span></span><br><span class="line"><span class="comment"> * queue :自定义源需要的一个队列，用来处理所有的响应句柄（block）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">dispatch_source_t</span> <span class="title">dispatch_source_create</span><span class="params">(<span class="keyword">dispatch_source_type_t</span> type,</span></span></span><br><span class="line"><span class="function"><span class="params">                                         <span class="keyword">uintptr_t</span> handle,</span></span></span><br><span class="line"><span class="function"><span class="params">                                         <span class="keyword">uintptr_t</span> mask, </span></span></span><br><span class="line"><span class="function"><span class="params">                                         <span class="keyword">dispatch_queue_t</span> _Nullable <span class="built_in">queue</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>dispatch Source Timer 是间隔定时器，也就是说每隔一段时间间隔定时器就会触发。在 NSTimer 中要做到同样的效果需要手动把 repeats 设置为 YES。<strong>注意：使用时需要强引用定时器，否则一旦定时器被释放，定时器就会停止。</strong></p>
+<h4 id="设置定时器"><a href="#设置定时器" class="headerlink" title="设置定时器"></a>设置定时器</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * source :要设置的定时器</span></span><br><span class="line"><span class="comment"> * start :是几秒后开始执行</span></span><br><span class="line"><span class="comment"> * interval:是时间间隔</span></span><br><span class="line"><span class="comment"> * leeway :指的是一个期望的容忍时间。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dispatch_source_set_timer</span><span class="params">(<span class="keyword">dispatch_source_t</span> source,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="keyword">dispatch_time_t</span> start,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="keyword">uint64_t</span> interval,</span></span></span><br><span class="line"><span class="function"><span class="params">                               <span class="keyword">uint64_t</span> leeway)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>该API有几个需要注意的点：</p>
+<ul>
+<li>设置<strong>start</strong>参数时，当我们使用dispatch_time 或者 DISPATCH_TIME_NOW 时，系统会使用默认时钟来进行计时。然而当系统休眠的时候，默认时钟是不走的，也就会导致计时器停止。使用dispatch_walltime可以让计时器按照真实时间间隔进行计时。</li>
+<li><strong>leeway</strong>参数指的是一个期望的容忍时间，将它设置为 1 秒，意味着系统有可能在定时器时间到达的前 1 秒或者后 1 秒才真正触发定时器。在调用时推荐设置一个合理的 leeway 值。需要注意，就算指定 leeway 值为 0，系统也无法保证完全精确的触发时间，只是会尽可能满足这个需求。</li>
+</ul>
+<h4 id="设置回调"><a href="#设置回调" class="headerlink" title="设置回调"></a>设置回调</h4><p>设置回调可以有两种方式，一种是设置block回调，一种是设置一个C语言函数回调</p>
+<p>block回调方式：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * source: 要设置的时间源</span></span><br><span class="line"><span class="comment"> * handler: 回调block</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dispatch_source_set_event_handler</span><span class="params">(<span class="keyword">dispatch_source_t</span> source,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       <span class="keyword">dispatch_block_t</span> _Nullable handler)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>C语言回调方式</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * source: 要设置的时间源</span></span><br><span class="line"><span class="comment"> * handler: 回调的C语言函数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dispatch_source_set_event_handler_f</span><span class="params">(<span class="keyword">dispatch_source_t</span> source,</span></span></span><br><span class="line"><span class="function"><span class="params">                                         <span class="keyword">dispatch_function_t</span> _Nullable handler)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动定时器"><a href="#启动定时器" class="headerlink" title="启动定时器"></a>启动定时器</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dispatch_resume</span><span class="params">(<span class="keyword">dispatch_object_t</span> object)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="停止定时器"><a href="#停止定时器" class="headerlink" title="停止定时器"></a>停止定时器</h4><p>停止 Dispatch Timer 有两种方法，一种是使用 dispatch_suspend，另外一种是使用 dispatch_source_cancel。</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">dispatch_suspend(<span class="keyword">self</span>.timer);</span><br><span class="line">dispatch_source_cancel(<span class="keyword">self</span>.timer);</span><br></pre></td></tr></table></figure>
+
+<p>dispatch_suspend 严格上只是把 Timer 暂时挂起，它和 dispatch_resume 是一个平衡调用，两者分别会减少和增加 dispatch 对象的挂起计数。当这个计数大于 0 的时候，Timer 就会执行。在挂起期间，产生的事件会积累起来，等到 resume 的时候会融合为一个事件发送。</p>
+<p><strong>需要注意的是：</strong>dispatch source 并没有提供用于检测 source 本身的挂起计数的 API，也就是说外部不能得知一个 source 当前是不是挂起状态，在设计代码逻辑时需要考虑到这一点。</p>
+<p>dispatch_source_cancel 则是真正意义上的取消 Timer。被取消之后如果想再次执行 Timer，只能重新创建新的 Timer。这个过程类似于对 NSTimer 执行 invalidate。</p>
+<p>关于取消 Timer，<strong>另外一个很重要的注意事项：</strong>dispatch_suspend 之后的 Timer，是不能被释放的！下面的代码会引起崩溃：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">dispatch_suspend(<span class="keyword">self</span>.timer);</span><br><span class="line"><span class="comment">//Thread 1: EXC_BAD_INSTRUCTION (code=EXC_I386_INVOP, subcode=0x0)</span></span><br><span class="line"><span class="keyword">self</span>.timer = <span class="literal">nil</span>; </span><br></pre></td></tr></table></figure>
+
+<p>因此使用 dispatch_suspend 时，Timer 本身的实例需要一直保持。使用 dispatch_source_cancel 则没有这个限制：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">dispatch_source_cancel(<span class="keyword">self</span>.timer);</span><br><span class="line"><span class="keyword">self</span>.timer = <span class="literal">nil</span>;  <span class="comment">//OK</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/20/%E5%8F%8C%E5%90%91%E5%BE%AA%E7%8E%AF%E9%93%BE%E8%A1%A8/" rel="prev" title="双向循环链表">
+      <i class="fa fa-chevron-left"></i> 双向循环链表
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/08/22/Pointer/" rel="next" title="Pointer">
+      Pointer <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSTimer"><span class="nav-number">1.</span> <span class="nav-text">NSTimer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">简单使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">内存泄露问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.2.1.</span> <span class="nav-text">代理对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#NSObject%E6%9E%84%E5%BB%BA%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">NSObject构建代理对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8NSProxy%E6%9E%84%E5%BB%BA%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">使用NSProxy构建代理对象</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#NSProxy%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.1.2.1.</span> <span class="nav-text">NSProxy是什么</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#NSProxy-%E5%92%8C-NSObject-%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.1.2.2.</span> <span class="nav-text">NSProxy 和 NSObject 的比较</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#NSProxy-%E7%9A%84%E7%94%A8%E9%80%94"><span class="nav-number">1.2.1.2.3.</span> <span class="nav-text">NSProxy 的用途</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.2.1.2.4.</span> <span class="nav-text">构建代理对象</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSTimer%E4%B8%8D%E5%87%86%E6%97%B6"><span class="nav-number">1.3.</span> <span class="nav-text">NSTimer不准时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CADisplayLink"><span class="nav-number">2.</span> <span class="nav-text">CADisplayLink</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">内存泄露的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">GCD定时器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.1.1.</span> <span class="nav-text">创建定时器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.1.2.</span> <span class="nav-text">设置定时器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%9B%9E%E8%B0%83"><span class="nav-number">3.1.3.</span> <span class="nav-text">设置回调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.1.4.</span> <span class="nav-text">启动定时器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.1.5.</span> <span class="nav-text">停止定时器</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

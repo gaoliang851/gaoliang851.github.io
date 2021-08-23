@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="OC是一门动态语言，所有的工作会尽可能在运行时才去决定完成，而非编译时。Category作为OC的一种特性，是开发中很常用的一种特性。 Category与Class Extension不同于Class Extension，Category是在运行时，才会将数据合并到类信息中，而Class Extension在编译的时候，它的数据就已经包含在类信息中了。 Category的底层结构根据objc源码可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Category底层原理">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="OC是一门动态语言，所有的工作会尽可能在运行时才去决定完成，而非编译时。Category作为OC的一种特性，是开发中很常用的一种特性。 Category与Class Extension不同于Class Extension，Category是在运行时，才会将数据合并到类信息中，而Class Extension在编译的时候，它的数据就已经包含在类信息中了。 Category的底层结构根据objc源码可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category_load%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B_%E5%B9%95%E5%B8%83.png">
+<meta property="og:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category_load%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81_%E5%B9%95%E5%B8%83.png">
+<meta property="og:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/initialize%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B_%E5%B9%95%E5%B8%83.png">
+<meta property="og:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/+initialize%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90_%E5%B9%95%E5%B8%83.png">
+<meta property="article:published_time" content="2017-02-21T08:38:10.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="Objective-C">
+<meta property="article:tag" content="Category">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E7%BB%93%E6%9E%84.png">
+
+<link rel="canonical" href="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Category底层原理 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Category底层原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-21 16:38:10" itemprop="dateCreated datePublished" datetime="2017-02-21T16:38:10+08:00">2017-02-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>OC是一门动态语言，所有的工作会尽可能在运行时才去决定完成，而非编译时。Category作为OC的一种特性，是开发中很常用的一种特性。</p>
+<h2 id="Category与Class-Extension"><a href="#Category与Class-Extension" class="headerlink" title="Category与Class Extension"></a>Category与Class Extension</h2><p>不同于Class Extension，Category是在运行时，才会将数据合并到类信息中，而Class Extension在编译的时候，它的数据就已经包含在类信息中了。</p>
+<h2 id="Category的底层结构"><a href="#Category的底层结构" class="headerlink" title="Category的底层结构"></a>Category的底层结构</h2><p>根据objc源码可以在<code>objc-runtime-new.h</code>文件中找到<code>Category</code>的底层数据结构：<strong>category_t</strong>。并且我们对一个已有的Category重写为C++, ,发现<code>Category</code>底层被转换为<strong>_category_t</strong>这种类型的结构。</p>
+<img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E7%BB%93%E6%9E%84.png" class="">
+
+<h2 id="Category的加载过程"><a href="#Category的加载过程" class="headerlink" title="Category的加载过程"></a>Category的加载过程</h2><img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B.png" class="">
+
+<ul>
+<li><p>_objc_init ：objc的入口函数，包含了环境变量，线程的处理，C++静态函数，Runtime，缓存条件的初始化和回调机制的启动。</p>
+</li>
+<li><p>map_images : 在dyld已将images加载入内存中时，回调该函数。</p>
+</li>
+<li><p>map_images_nolock ： 会在map_images中调用。</p>
+</li>
+<li><p>_read_images : 是map_images_nolock的核心函数，内部做了如下处理，<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/290568369761">参考</a></p>
+<ul>
+<li><p>加载所有类到类的<code>gdb_objc_realized_classes</code>表中。</p>
+</li>
+<li><p>对所有类做重映射。</p>
+</li>
+<li><p>将所有<code>SEL</code>都注册到<code>namedSelectors</code>表中。</p>
+</li>
+<li><p>修复函数指针遗留。</p>
+</li>
+<li><p>将所有<code>Protocol</code>都添加到<code>protocol_map</code>表中。</p>
+</li>
+<li><p>对所有<code>Protocol</code>做重映射。</p>
+</li>
+<li><p>初始化所有非懒加载的类，进行<code>rw、ro</code>等操作。</p>
+</li>
+<li><p>遍历已标记的懒加载的类，并做初始化操作。</p>
+</li>
+<li><p>处理所有<code>Category</code>，包括<code>Class</code>和<code>Meta Class</code>。</p>
+</li>
+<li><p>初始化所有<code>未初始化</code>的类。</p>
+</li>
+</ul>
+</li>
+<li><p>_load_categories_nolock : 加载分类</p>
+</li>
+<li><p>remapClass : 重映射类。</p>
+</li>
+<li><p>attachCategories : 遍历分类数组，将分类的信息添加到类上</p>
+</li>
+<li><p>attachLists : 方法数组，属性数组，协议数组均会调用该方法，将分类相应的数据进行拼接。内部逻辑为：</p>
+<ul>
+<li>将原有数组扩容到 原有数组长度+分类中数组的长度</li>
+<li>将类中（方法、属性、协议）数组原有数据移动到数组尾端。</li>
+<li>将分类中（方法、属性、协议）数组添加到类中相应数组的首部。</li>
+</ul>
+</li>
+</ul>
+<h3 id="memmove与memcpy"><a href="#memmove与memcpy" class="headerlink" title="memmove与memcpy"></a>memmove与memcpy</h3><p>在attchList函数中，新数组拼接到原有数组上时，用到了<strong>memmove</strong>与<strong>memcpy</strong>函数。<strong>这俩函数作用是一样的，唯一的区别是，当内存发生局部重叠的时候，memmove保证拷贝的结果是正确的，memcpy不保证拷贝的结果的正确。</strong>而源码中：<strong>memmove</strong>操作的是原数组内移动，需要保证结果正确。<strong>memcpy</strong>是新数组拷贝到旧数组，所以不会发生内存重叠的问题。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//将数组中原有的数据放到数组末尾。数组内操作，需保证拷贝结果不会因内存重叠发生错误。</span></span><br><span class="line">memmove(<span class="built_in">array</span>()-&gt;lists + addedCount, <span class="built_in">array</span>()-&gt;lists, </span><br><span class="line">                    oldCount * <span class="keyword">sizeof</span>(<span class="built_in">array</span>()-&gt;lists[<span class="number">0</span>]));</span><br><span class="line"><span class="comment">//将新数组添加到开头；两个数组之间操作，不会发生内存重叠的问题。</span></span><br><span class="line"><span class="built_in">memcpy</span>(<span class="built_in">array</span>()-&gt;lists, addedLists, </span><br><span class="line">                   addedCount * <span class="keyword">sizeof</span>(<span class="built_in">array</span>()-&gt;lists[<span class="number">0</span>]));</span><br></pre></td></tr></table></figure>
+
+<h3 id="调用原有实现"><a href="#调用原有实现" class="headerlink" title="调用原有实现"></a>调用原有实现</h3><p>从Category的加载流程中可以看到，在类或元类的方法数组，属性数组，协议数组中，分类的实现排在了原有的实现，这就意味着：<strong>假如分类中有和类中同名的方法，会优先调用分类的中的方法。</strong>那么如果想调用原有的方法实现，那么就需要倒序遍历方法数组，找到方法后执行。</p>
+<p>示例：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">/// 在 GLObject 中定义一个start方法</span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLObject</span> : <span class="title">NSObject</span></span></span><br><span class="line">- (<span class="keyword">void</span>)start;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLObject</span></span></span><br><span class="line">- (<span class="keyword">void</span>)start &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;GLObject start&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLObject</span> (<span class="title">Test</span>)</span></span><br><span class="line"><span class="comment">/// 覆盖原有类中的start实现</span></span><br><span class="line">- (<span class="keyword">void</span>)start &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;Test start&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 调用原有start实现</span></span><br><span class="line">- (<span class="keyword">void</span>) oldStart &#123;</span><br><span class="line">    Class clazz = [<span class="keyword">self</span> <span class="keyword">class</span>];</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> methodCount;</span><br><span class="line">    <span class="comment">//获取方法类表</span></span><br><span class="line">    Method *methodList = class_copyMethodList(clazz, &amp;methodCount);</span><br><span class="line">    <span class="comment">//倒序遍历方法数组</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = methodCount; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">        Method method = methodList[i];</span><br><span class="line">        <span class="comment">//通过SEL来对比</span></span><br><span class="line">        SEL methodSel = method_getName(method);</span><br><span class="line">        <span class="keyword">if</span> ([<span class="built_in">NSStringFromSelector</span>(methodSel) isEqualToString:<span class="built_in">NSStringFromSelector</span>(<span class="keyword">@selector</span>(start))]) &#123;</span><br><span class="line">            <span class="comment">//获取方法实现</span></span><br><span class="line">            IMP last_start_imp = method_getImplementation(method);</span><br><span class="line">            <span class="keyword">typedef</span> <span class="keyword">void</span> (*fn)(<span class="keyword">id</span>,SEL);</span><br><span class="line">            <span class="comment">//调用</span></span><br><span class="line">            fn f = (fn)last_start_imp;</span><br><span class="line">            f(<span class="keyword">self</span>,methodSel);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        GLObject *obj = [[GLObject alloc] init];</span><br><span class="line">        [obj start]; <span class="comment">//Test start</span></span><br><span class="line">        [obj oldStart]; <span class="comment">//GLObject start</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Category的总结"><a href="#Category的总结" class="headerlink" title="Category的总结"></a>Category的总结</h2><h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>Category编译之后的底层数据结构是<strong>struct category_t</strong>，里面存储着分类的对象方法，类方法、属性、协议信息。在程序运行的时候，Runtime会将Category的数据合并到类信息中（类对象、元类对象中）。</p>
+<h3 id="调用方式"><a href="#调用方式" class="headerlink" title="调用方式"></a>调用方式</h3><ul>
+<li>如果Category中和本类中有重名的方法，在将Category的数据合并到类信息中（类对象、元类对象中）时，Category的方法会排在本类方法前面。调用时，就会调用Category的方法。</li>
+<li>如果多个Category中都含有同名的方法，那么后编译的Category，方法会排在方法数组前面。调用时，也会调用最后编译的Category中的方法。</li>
+</ul>
+<h2 id="load方法"><a href="#load方法" class="headerlink" title="+load方法"></a>+load方法</h2><p>iOS开发中，<strong>load函数</strong>的使用频次不算太高，一般的应用场景包括：</p>
+<p>1、hook方法的时候 </p>
+<p>2、涉及到组件化开发中不同组件间通信，在load中注册相关协议等等；</p>
+<p>load的加载是在pre-main阶段（即main函数之前，<strong>load_images函数中</strong>），关于这点大家是有共识的，所以load方法中的逻辑要尽可能的简单，不要让其影响到APP的启动速度。</p>
+<h3 id="调用流程"><a href="#调用流程" class="headerlink" title="调用流程"></a>调用流程</h3><img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category_load%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B_%E5%B9%95%E5%B8%83.png" class="">
+
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/Category_load%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81_%E5%B9%95%E5%B8%83.png" class="">
+
+<h3 id="load-总结"><a href="#load-总结" class="headerlink" title="+load 总结"></a>+load 总结</h3><ul>
+<li><strong>+load</strong>方法会在Runtime加载类、分类的时候调用</li>
+<li>每个<strong>类</strong>、<strong>分类</strong>的<strong>+load</strong>，在程序运行过程中只调用一次。</li>
+<li>调用顺序<ul>
+<li>1、先调用类的<strong>+load</strong><ul>
+<li>按照编译的先后顺序调用(先编译，先调用)</li>
+<li>调用子类的<strong>+load</strong>之前会先调用父类的<strong>+load</strong></li>
+</ul>
+</li>
+<li>2、再调用分类的<strong>+load</strong><ul>
+<li>按照编译的先后顺序调用(先编译，先调用)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>+load方法</strong>是使用函数地址直接调用的，并非<strong>objc_msgSend</strong>。</li>
+</ul>
+<h2 id="initialize方法"><a href="#initialize方法" class="headerlink" title="+initialize方法"></a>+initialize方法</h2><p><strong>+initialize</strong>方法会在类第一次接收到消息时调用。关于这个方法，Apple的文档中是这样描述的：</p>
+<blockquote>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">Initializes the <span class="keyword">class</span> before it receives its first message.</span><br><span class="line"></span><br><span class="line">在这个类接收第一条消息之前调用。</span><br><span class="line"></span><br><span class="line">Discussion</span><br><span class="line"></span><br><span class="line">The runtime sends initialize to each <span class="keyword">class</span> <span class="keyword">in</span> a program exactly one time just before the <span class="keyword">class</span>, or any <span class="keyword">class</span> that inherits from it, is sent its first message from within the program. (Thus the method may never be invoked <span class="keyword">if</span> the <span class="keyword">class</span> is not used.) The runtime sends the initialize message to classes <span class="keyword">in</span> a thread-safe manner. Superclasses receive <span class="keyword">this</span> message before their subclasses.</span><br><span class="line"></span><br><span class="line">Runtime在一个程序中每一个类的一个程序中发送一个初始化一次，或是从它继承的任何类中，都是在程序中发送第一条消息。（因此，当该类不使用时，该方法可能永远不会被调用。）运行时发送一个线程安全的方式初始化消息。父类的调用一定在子类之前。</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="调用流程-1"><a href="#调用流程-1" class="headerlink" title="调用流程"></a>调用流程</h3><img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/initialize%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B_%E5%B9%95%E5%B8%83.png" class="">
+
+<h3 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h3><img src="/2017/02/21/Category%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/+initialize%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90_%E5%B9%95%E5%B8%83.png" class="">
+
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><ul>
+<li><strong>+initialize</strong>方法会在类第一次接收到消息时调用</li>
+<li>调用顺序：<ul>
+<li>先调用父类的+initialize，再调用子类的+initialize</li>
+<li>(先初始化父类，再初始化子类，每个类只会初始化一次)</li>
+</ul>
+</li>
+<li><code>+initialize</code> 和 <code>+ load</code> 的很大区别 是：<code>+initialize</code>是通过<code>objc_msgSend</code>进行调用的，所以有以下特点：<ul>
+<li>如果子类中没有实现 <code>+ initialize</code>，会调用父类本身的 <code>+initialize</code> (所以父类的 <code>+initialize</code> 方法可能会被调用多次)</li>
+<li>如果分类实现了 <code>+initialize</code>，就覆盖类本身的 <code>+initialize</code>调用</li>
+</ul>
+</li>
+</ul>
+<p>一个比较经典的例子：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">SuperObject</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">SuperObject</span></span></span><br><span class="line">+ (<span class="keyword">void</span>)initialize &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;SuperObject initialize&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">SuperObject</span> (<span class="title">Runnale</span>)</span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">SuperObject</span> (<span class="title">Runnale</span>)</span></span><br><span class="line">+ (<span class="keyword">void</span>) initialize &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;SuperObject (Runnale) initialize&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">SuperObject</span> (<span class="title">Start</span>) //编译顺序在 <span class="title">SuperObject</span> (<span class="title">Runnale</span>)之后</span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">SuperObject</span> (<span class="title">Start</span>)</span></span><br><span class="line">+ (<span class="keyword">void</span>) initialize &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;SuperObject (Start) initialize&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">SubObject1</span> : <span class="title">SuperObject</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">SubObject1</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">SubObject2</span> : <span class="title">SuperObject</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">SubObject2</span></span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="comment">//输出：</span></span><br><span class="line">        <span class="comment">//SuperObject (Start) initialize</span></span><br><span class="line">        <span class="comment">//SuperObject (Start) initialize</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 因为：调用子类的+initialize 方法之前 调用了 父类的+initialize</span></span><br><span class="line">        <span class="comment">// 而SuperObject的分类中实现了+initialize（最后编译的是SuperObject (Start)）</span></span><br><span class="line">        <span class="comment">// 又因为 SubObject1 没有实现,所以调用了父类的+initialize，即[SuperObject(Start) initialize]</span></span><br><span class="line">        <span class="comment">// 所以调用了两次 [SuperObject(Start) initialize]</span></span><br><span class="line">        [SubObject1 alloc];</span><br><span class="line">        <span class="comment">//输出：</span></span><br><span class="line">        <span class="comment">//因为SubObject2没有实现,所以调用了父类的+initialize，即[SuperObject(Start) initialize]</span></span><br><span class="line">        [SubObject2 alloc];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Objective-C/" rel="tag"># Objective-C</a>
+              <a href="/tags/Category/" rel="tag"># Category</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/02/11/KVO-KVC%E6%8E%A2%E7%A9%B6%E6%89%8B%E8%AE%B0/" rel="prev" title="KVO&KVC探究手记">
+      <i class="fa fa-chevron-left"></i> KVO&KVC探究手记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/02/28/%E5%B7%A7%E7%94%A8%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1/" rel="next" title="巧用关联对象">
+      巧用关联对象 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Category%E4%B8%8EClass-Extension"><span class="nav-number">1.</span> <span class="nav-text">Category与Class Extension</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Category%E7%9A%84%E5%BA%95%E5%B1%82%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">Category的底层结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Category%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">Category的加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#memmove%E4%B8%8Ememcpy"><span class="nav-number">3.1.</span> <span class="nav-text">memmove与memcpy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%8E%9F%E6%9C%89%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.2.</span> <span class="nav-text">调用原有实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Category%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">Category的总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">4.1.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">调用方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#load%E6%96%B9%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">+load方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">5.1.</span> <span class="nav-text">调用流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">5.2.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#load-%E6%80%BB%E7%BB%93"><span class="nav-number">5.3.</span> <span class="nav-text">+load 总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initialize%E6%96%B9%E6%B3%95"><span class="nav-number">6.</span> <span class="nav-text">+initialize方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B-1"><span class="nav-number">6.1.</span> <span class="nav-text">调用流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-1"><span class="nav-number">6.2.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">6.3.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

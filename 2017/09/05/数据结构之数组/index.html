@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="数组是一种顺序存储的线性表，所有元素的内存地址是连续的。 接口设计◼ int size(); &#x2F;&#x2F; 元素的数量◼ boolean isEmpty(); &#x2F;&#x2F; 是否为空◼ boolean contains(E element); &#x2F;&#x2F; 是否包含某个元素◼ void add(E element); &#x2F;&#x2F; 添加元素到最后面◼ E get(int index); &#x2F;&#x2F; 返回index位置对应的元素◼ E">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构之动态数组">
+<meta property="og:url" content="http://yoursite.com/2017/09/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="数组是一种顺序存储的线性表，所有元素的内存地址是连续的。 接口设计◼ int size(); &#x2F;&#x2F; 元素的数量◼ boolean isEmpty(); &#x2F;&#x2F; 是否为空◼ boolean contains(E element); &#x2F;&#x2F; 是否包含某个元素◼ void add(E element); &#x2F;&#x2F; 添加元素到最后面◼ E get(int index); &#x2F;&#x2F; 返回index位置对应的元素◼ E">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-05T10:25:56.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="iOS,Android,Java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2017/09/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E6%95%B0%E7%BB%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据结构之动态数组 | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/05/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E6%95%B0%E7%BB%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据结构之动态数组
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-09-05 18:25:56" itemprop="dateCreated datePublished" datetime="2017-09-05T18:25:56+08:00">2017-09-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构和算法</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>数组是一种顺序存储的线性表，所有元素的内存地址是连续的。</p>
+<h2 id="接口设计"><a href="#接口设计" class="headerlink" title="接口设计"></a>接口设计</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">◼ <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>; <span class="comment">// 元素的数量</span></span><br><span class="line">◼ <span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>; <span class="comment">// 是否为空</span></span><br><span class="line">◼ <span class="function"><span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(E element)</span></span>; <span class="comment">// 是否包含某个元素</span></span><br><span class="line">◼ <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(E element)</span></span>; <span class="comment">// 添加元素到最后面</span></span><br><span class="line">◼ <span class="function">E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>; <span class="comment">// 返回index位置对应的元素</span></span><br><span class="line">◼ <span class="function">E <span class="title">set</span><span class="params">(<span class="keyword">int</span> index, E element)</span></span>; <span class="comment">// 设置index位置的元素</span></span><br><span class="line">◼ <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, E element)</span></span>; <span class="comment">// 往index位置添加元素</span></span><br><span class="line">◼ <span class="function">E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span></span>; <span class="comment">// 删除index位置对应的元素</span></span><br><span class="line">◼ <span class="function"><span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(E element)</span></span>; <span class="comment">// 查看元素的位置</span></span><br><span class="line">◼ <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>; <span class="comment">// 清除所有元素</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="java实现"><a href="#java实现" class="headerlink" title="java实现"></a>java实现</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayList</span> &lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//用来记录存入元素的数量</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size;</span><br><span class="line">    <span class="comment">//用来存放元素的数组</span></span><br><span class="line">    <span class="keyword">private</span> E elements[];</span><br><span class="line">    <span class="comment">//默认容量为10</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//没有找到的标识</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ELEMENT_NOT_FOUND = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> capaticy 数组的容量，如果小于默认容量，则使用默认容量</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">(<span class="keyword">int</span> capaticy)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//如果容量小于默认容量，则使用默认容量</span></span><br><span class="line">        capaticy = capaticy &lt; DEFAULT_CAPACITY ? DEFAULT_CAPACITY:capaticy;</span><br><span class="line">        elements = (E[]) <span class="keyword">new</span> Object[capaticy];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 无参构造函数，默认容量为 DEFAULT_CAPACITY</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(DEFAULT_CAPACITY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 向数组最后面添加元素</span></span><br><span class="line"><span class="comment">    * @param element 要添加的元素</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(E element)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//向数组最后添加元素，就是像数组index=size添加</span></span><br><span class="line">        add(size,element);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 向数组index的位置，添加元素element</span></span><br><span class="line"><span class="comment">    * @param index</span></span><br><span class="line"><span class="comment">    * @param element</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index,E element)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//先检查index是否合法</span></span><br><span class="line">        checkRangeForAdd(index);</span><br><span class="line">        <span class="comment">//再要确保elements的容量有size + 1;</span></span><br><span class="line">        ensureCapaticy(size + <span class="number">1</span>);</span><br><span class="line">        <span class="comment">//将elements中 [index,size-1]区间内的元素依次向后移一个位置，从最后开始移</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = size; i &gt; index; i--) &#123;</span><br><span class="line">            elements[i] = elements[i - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//将element插入到index位置</span></span><br><span class="line">        elements[index] = element;</span><br><span class="line">        size++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 移除index处的元素</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//首先检查index是否合法</span></span><br><span class="line">        checkRange(index);</span><br><span class="line">        <span class="comment">//先获取index的元素，以便最后返回</span></span><br><span class="line">        E oldElement = elements[index];</span><br><span class="line">        <span class="comment">//将[index+1,size-1]区间的元素依次向前移动一个。</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = index; i &lt; size - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            elements[index] = elements[index + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//更新size</span></span><br><span class="line">        size--;</span><br><span class="line">        <span class="keyword">return</span> oldElement;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 清空数组中所有元素</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//遍历elements,置为null</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            elements[i] = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        size = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">set</span><span class="params">(<span class="keyword">int</span> index, E element)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//首先检查index是否合法</span></span><br><span class="line">        checkRange(index);</span><br><span class="line">        <span class="comment">//合法的话，先获取index的旧元素以便最后返回</span></span><br><span class="line">        E oldElement = elements[index];</span><br><span class="line">        <span class="comment">//替换新元素</span></span><br><span class="line">        elements[index] = element;</span><br><span class="line">        <span class="keyword">return</span> oldElement;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 获取动态数组中元素的数量</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 判断该数组是不是为空</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> size == <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 判断该数组是否包含元素 element,遍历判断</span></span><br><span class="line"><span class="comment">    * @param element 要比对的元素</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(E element)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> indexOf(element) != ELEMENT_NOT_FOUND;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 根据元素返回该元素的下标</span></span><br><span class="line"><span class="comment">    * @param</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(E element)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//首先判断element是否为null</span></span><br><span class="line">        <span class="keyword">if</span> (element == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//遍历数组，找到就返回下标i</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (elements[i] == <span class="keyword">null</span>) <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//遍历数组，找到就返回下标i</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (element.equals(elements[i])) <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果上面都没找到，返回 ELEMENT_NOT_FOUND</span></span><br><span class="line">        <span class="keyword">return</span> ELEMENT_NOT_FOUND;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@description</span> 根据角标获取元素</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> index 要查询的角标</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//首先检查角标是否越界</span></span><br><span class="line">        checkRange(index);</span><br><span class="line">        <span class="keyword">return</span> elements[index];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * @description 检查index是否合法</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">checkRange</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt; size - <span class="number">1</span> || index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ArrayIndexOutOfBoundsException(<span class="string">&quot;index: &quot;</span>+ index +<span class="string">&quot;越界,Size=&quot;</span> + size);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * @description 对Add操作检查index是否合法，判断的依据为index是否大于0，是否不超过size。</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">checkRangeForAdd</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; size) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ArrayIndexOutOfBoundsException(<span class="string">&quot;index: &quot;</span>+ index +<span class="string">&quot;越界,Size=&quot;</span> + size);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * @description 确保element有capaticy的容量，如果不够，则进行扩容</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapaticy</span><span class="params">(<span class="keyword">int</span> capaticy)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//如果elements长度大于等于capaticy, do nothing</span></span><br><span class="line">        <span class="keyword">if</span> (elements.length &gt;= capaticy) <span class="keyword">return</span>;</span><br><span class="line">        <span class="comment">// 如果不够，先创建一个容量为elements 1.5倍的新数组，使用位运算效率要高。</span></span><br><span class="line">        E[] newElements = (E[]) <span class="keyword">new</span> Object[elements.length + (elements.length &gt;&gt; <span class="number">1</span>)];</span><br><span class="line">        <span class="comment">// 再将旧元素从elements中已入newElements中</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; elements.length; i++) &#123;</span><br><span class="line">            newElements[i] = elements[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 用newElements替代elements</span></span><br><span class="line">        elements = newElements;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        StringBuilder stringBuilder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        stringBuilder.append(<span class="string">&quot;size:&quot;</span> + size).append(<span class="string">&quot;,[&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">            E element = elements[i];</span><br><span class="line">            <span class="keyword">if</span> (i != <span class="number">0</span>) stringBuilder.append(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">            stringBuilder.append(element.toString());</span><br><span class="line">        &#125;</span><br><span class="line">        stringBuilder.append(<span class="string">&quot;]&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> stringBuilder.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="OC实现"><a href="#OC实现" class="headerlink" title="OC实现"></a>OC实现</h2><p><strong>GLArrayList.h</strong></p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLArrayList</span> &lt;<span class="title">ObjectType</span>&gt; : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 初始化</span></span><br><span class="line">- (<span class="keyword">instancetype</span>) init;</span><br><span class="line">- (<span class="keyword">instancetype</span>) initWithCapaticy:(<span class="keyword">int</span>)capaticy;</span><br><span class="line">+ (<span class="keyword">instancetype</span>) new __unavailable;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 增</span></span><br><span class="line">- (<span class="keyword">void</span>) addElement:(ObjectType)element;</span><br><span class="line">- (<span class="keyword">void</span>) addElement:(ObjectType)element atIndex:(<span class="keyword">int</span>)index;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 删</span></span><br><span class="line">- (ObjectType) removeAtIndex:(<span class="keyword">int</span>)index;</span><br><span class="line">- (<span class="keyword">void</span>) clear;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 改</span></span><br><span class="line">- (ObjectType) setElement:(ObjectType)element atIndex:(<span class="keyword">int</span>)index;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 查</span></span><br><span class="line">- (<span class="keyword">int</span>) size;</span><br><span class="line">- (<span class="built_in">BOOL</span>) isEmpty;</span><br><span class="line">- (<span class="built_in">BOOL</span>) containsElement:(ObjectType)element;</span><br><span class="line">- (ObjectType) getElementAtIndex:(<span class="keyword">int</span>)index;</span><br><span class="line">- (<span class="keyword">int</span>) indexOfElement:(ObjectType)element;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p><strong>GLArrayList.m</strong></p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 数组默认容量</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> <span class="keyword">const</span> GL_ARRAY_LIST_DEFAULT_CAPATICY = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> <span class="keyword">const</span> GL_ARRAY_LIST_NOT_FOUND = <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span> * AnyObject;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLArrayList</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//用来存放元素的数组</span></span><br><span class="line">    AnyObject *_array;</span><br><span class="line">    <span class="comment">//用来记录_array中元素的数量</span></span><br><span class="line">    <span class="keyword">int</span> _size;</span><br><span class="line">    <span class="comment">//用来记录_array中的容量</span></span><br><span class="line">    <span class="keyword">int</span> _capacity;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">GLArrayList</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 初始化</span></span><br><span class="line">- (<span class="keyword">instancetype</span>) init &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</span><br><span class="line">        _array = calloc(GL_ARRAY_LIST_DEFAULT_CAPATICY, <span class="keyword">sizeof</span>(AnyObject));</span><br><span class="line">        _size = <span class="number">0</span>;</span><br><span class="line">        _capacity = GL_ARRAY_LIST_DEFAULT_CAPATICY;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">instancetype</span>) initWithCapaticy:(<span class="keyword">int</span>)capaticy &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</span><br><span class="line">        _array = calloc(capaticy, <span class="keyword">sizeof</span>(AnyObject));</span><br><span class="line">        _size = <span class="number">0</span>;</span><br><span class="line">        _capacity = capaticy;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 增</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 将元素添加至数组最后</span></span><br><span class="line"><span class="comment">/// @param element 要添加的元素</span></span><br><span class="line">- (<span class="keyword">void</span>) addElement:(<span class="keyword">id</span>)element &#123;</span><br><span class="line">    [<span class="keyword">self</span> addElement:element atIndex:_size];</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>) addElement:(<span class="keyword">id</span>)element atIndex:(<span class="keyword">int</span>)index &#123;</span><br><span class="line">    <span class="comment">//先确定index是否合法</span></span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; _size) &#123;</span><br><span class="line">        <span class="keyword">@throw</span> [GLArrayIndexOutOfBoundsException exeptionWithIndex:index];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//首先确保有size + 1 的容量，如果没有要扩容</span></span><br><span class="line">    [<span class="keyword">self</span> ensureCapaticy:_size + <span class="number">1</span>];</span><br><span class="line">    <span class="comment">// 把[index,size - 1]区间内从后开始，依次向后挪动一个单位</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = _size; i &gt; index; i--) &#123;</span><br><span class="line">        _array[i] = _array[i - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//将element插入index处</span></span><br><span class="line">    _array[index] = (__bridge_retained AnyObject)element;</span><br><span class="line">    _size++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/// 确保_array有Capaticy的容量</span></span><br><span class="line"><span class="comment">/// @param capaticy 容量</span></span><br><span class="line">- (<span class="keyword">void</span>) ensureCapaticy:(<span class="keyword">int</span>)capaticy &#123;</span><br><span class="line">    <span class="comment">//如果当前容量大于capaticy, do nothing</span></span><br><span class="line">    <span class="keyword">if</span> (_capacity &gt;= capaticy) <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">//否则进行扩容，创建一个新数组，扩容为当前容量的1.5倍</span></span><br><span class="line">    <span class="keyword">int</span> newCapaticy = _capacity + (_capacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">    GLLog(<span class="string">@&quot;capaticy:%d -&gt; %d&quot;</span>,_capacity,newCapaticy);</span><br><span class="line">    AnyObject *newArray = calloc(newCapaticy, <span class="keyword">sizeof</span>(AnyObject));</span><br><span class="line">    <span class="comment">//将所有元素移入新数组中</span></span><br><span class="line">    AnyObject *oldArray = _array;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _size; i++) &#123;</span><br><span class="line">        newArray[i] = oldArray[i];</span><br><span class="line">    &#125;</span><br><span class="line">    _array = newArray;</span><br><span class="line">    _capacity = newCapaticy;</span><br><span class="line">    free(oldArray);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 删</span></span><br><span class="line">- (<span class="keyword">id</span>) removeAtIndex:(<span class="keyword">int</span>)index &#123;</span><br><span class="line">    <span class="comment">//首先检查index是否合法</span></span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; _size - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">@throw</span> [GLArrayIndexOutOfBoundsException exeptionWithIndex:index];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取出要移除的元素</span></span><br><span class="line">    AnyObject elementToRemove = _array[index];</span><br><span class="line">    <span class="comment">//将[index+1,size -1]区间内的元素，从前到后依次向前移动一个单位</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = index; i &lt; _size - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        _array[i] = _array[i + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    _size--;</span><br><span class="line">    GLLog(<span class="string">@&quot;will remove %@&quot;</span>,elementToRemove);</span><br><span class="line">    <span class="keyword">return</span> (__bridge_transfer <span class="keyword">id</span>)elementToRemove;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>) clear &#123;</span><br><span class="line">    <span class="comment">//遍历释放元素</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _size; i++) &#123;</span><br><span class="line">        <span class="built_in">CFRelease</span>(_array[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    _size = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 改</span></span><br><span class="line">- (<span class="keyword">id</span>) setElement:(<span class="keyword">id</span>)element atIndex:(<span class="keyword">int</span>)index &#123;</span><br><span class="line">    <span class="comment">//先检查index是否合法</span></span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; _size - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">@throw</span> [GLArrayIndexOutOfBoundsException exeptionWithIndex:index];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取出最后的元素以便返回</span></span><br><span class="line">    AnyObject oldElement = _array[index];</span><br><span class="line">    <span class="comment">//将element覆盖index的位置</span></span><br><span class="line">    _array[index] = (__bridge_retained AnyObject) element;</span><br><span class="line">    <span class="built_in">CFRelease</span>(oldElement);</span><br><span class="line">    <span class="keyword">return</span> (__bridge <span class="keyword">id</span>)oldElement;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - 查</span></span><br><span class="line"><span class="comment">/// 获取当前数组中元素的数量</span></span><br><span class="line">- (<span class="keyword">int</span>) size &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>-&gt;_size;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 数组是否为空</span></span><br><span class="line">- (<span class="built_in">BOOL</span>) isEmpty &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>-&gt;_size == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 数组中是否包含element元素</span></span><br><span class="line"><span class="comment">/// @param element 要对比的元素</span></span><br><span class="line">- (<span class="built_in">BOOL</span>) containsElement:(<span class="keyword">id</span>)element &#123;</span><br><span class="line">    <span class="comment">//遍历元素</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _size; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([element isEqual:(__bridge <span class="keyword">id</span>)(_array[i])]) <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/// 获取下标为index的元素</span></span><br><span class="line"><span class="comment">/// @param index 下标</span></span><br><span class="line">- (<span class="keyword">id</span>) getElementAtIndex:(<span class="keyword">int</span>)index &#123;</span><br><span class="line">    <span class="comment">//首先检查index是否合法</span></span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; _size - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">@throw</span> [GLArrayIndexOutOfBoundsException exeptionWithIndex:index];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (__bridge <span class="keyword">id</span>)_array[index];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 获取element对应的下标</span></span><br><span class="line"><span class="comment">/// @param element element</span></span><br><span class="line">- (<span class="keyword">int</span>) indexOfElement:(<span class="keyword">id</span>)element &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _size; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> ([element isEqual:(__bridge  <span class="keyword">id</span>)_array[i]]) <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> GL_ARRAY_LIST_NOT_FOUND;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark -</span></span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSString</span> *)description &#123;</span><br><span class="line">    <span class="built_in">NSMutableString</span> *des = [<span class="built_in">NSMutableString</span> string];</span><br><span class="line">    [des appendFormat:<span class="string">@&quot;size=%d,[&quot;</span>,_size];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; _size; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i != <span class="number">0</span>) &#123;</span><br><span class="line">            [des appendString:<span class="string">@&quot;,&quot;</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        [des appendFormat:<span class="string">@&quot;%@&quot;</span>,_array[i]];</span><br><span class="line">    &#125;</span><br><span class="line">    [des appendString:<span class="string">@&quot;]&quot;</span>];</span><br><span class="line">    <span class="keyword">return</span> des;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> clear];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/08/30/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E4%B9%8B%E5%A4%8D%E6%9D%82%E5%BA%A6/" rel="prev" title="数据结构与算法之复杂度">
+      <i class="fa fa-chevron-left"></i> 数据结构与算法之复杂度
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/26/HTML%E6%9C%9D%E8%8A%B1%E5%A4%95%E6%8B%BE/" rel="next" title="HTML朝花夕拾">
+      HTML朝花夕拾 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">接口设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">java实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OC%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">OC实现</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
