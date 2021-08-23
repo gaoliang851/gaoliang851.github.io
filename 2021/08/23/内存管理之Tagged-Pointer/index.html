@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="内存布局在开始介绍Tagged Pointer之前我们先来介绍一下iOS程序的内存布局    代码段：编译之后的代码 数据段 字符串常量：比如NSString *str &#x3D; @”123” 已初始化数据：已初始化的全局变量、静态变量等 未初始化数据：未初始化的全局变量、静态变量等   堆：通过alloc、malloc、calloc等动态分配的空间，分配的内存空间地址越来越大 栈：函数调用开销，比如局">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理之Tagged Pointer">
+<meta property="og:url" content="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/index.html">
+<meta property="og:site_name" content="Dev.Gao的学习笔记">
+<meta property="og:description" content="内存布局在开始介绍Tagged Pointer之前我们先来介绍一下iOS程序的内存布局    代码段：编译之后的代码 数据段 字符串常量：比如NSString *str &#x3D; @”123” 已初始化数据：已初始化的全局变量、静态变量等 未初始化数据：未初始化的全局变量、静态变量等   堆：通过alloc、malloc、calloc等动态分配的空间，分配的内存空间地址越来越大 栈：函数调用开销，比如局">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png">
+<meta property="og:image" content="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/%E4%BD%BF%E7%94%A8TaggedPointer%E5%89%8D%E5%90%8E%E5%AF%B9%E6%AF%94.png">
+<meta property="og:image" content="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/objc_release_crash.png">
+<meta property="article:published_time" content="2021-08-23T06:35:53.000Z">
+<meta property="article:author" content="Dev.Gao">
+<meta property="article:tag" content="iOS,Android,Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>内存管理之Tagged Pointer | Dev.Gao的学习笔记</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dev.Gao的学习笔记</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内存管理之Tagged Pointer
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-23 14:35:53" itemprop="dateCreated datePublished" datetime="2021-08-23T14:35:53+08:00">2021-08-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="内存布局"><a href="#内存布局" class="headerlink" title="内存布局"></a>内存布局</h2><p>在开始介绍<code>Tagged Pointer</code>之前我们先来介绍一下iOS程序的内存布局</p>
+<img src="/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png" class="">
+
+<ul>
+<li>代码段：编译之后的代码</li>
+<li>数据段<ul>
+<li>字符串常量：比如NSString *str = @”123”</li>
+<li>已初始化数据：已初始化的全局变量、静态变量等</li>
+<li>未初始化数据：未初始化的全局变量、静态变量等</li>
+</ul>
+</li>
+<li>堆：通过alloc、malloc、calloc等动态分配的空间，分配的内存空间地址越来越大</li>
+<li>栈：函数调用开销，比如局部变量。分配的内存空间地址越来越小</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line"><span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">int</span> c = <span class="number">20</span>;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">int</span> d;</span><br><span class="line">        <span class="keyword">int</span> e;</span><br><span class="line">        <span class="keyword">int</span> f = <span class="number">20</span>;</span><br><span class="line">        <span class="built_in">NSString</span> *str = <span class="string">@&quot;123&quot;</span>;</span><br><span class="line">        <span class="built_in">NSObject</span> *obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;\n&amp;a=%p\n&amp;b=%p\n&amp;c=%p\n&amp;d=%p\n&amp;e=%p\n&amp;f=%p\nstr=%p\nobj=%p\n&quot;</span>,</span><br><span class="line">        &amp;a, &amp;b, &amp;c, &amp;d, &amp;e, &amp;f, str, obj);</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">UIApplicationMain</span>(argc, argv, <span class="literal">nil</span>, <span class="built_in">NSStringFromClass</span>([AppDelegate <span class="keyword">class</span>]));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">str = 0x105604068    //字符串常量</span></span><br><span class="line"><span class="comment">&amp;a  = 0x105604d98    //已初始化的全局变量、静态变量</span></span><br><span class="line"><span class="comment">&amp;c  = 0x105604d9c    //已初始化的全局变量、静态变量</span></span><br><span class="line"><span class="comment">&amp;b  = 0x105604e64    //未初始化的全局变量、静态变量</span></span><br><span class="line"><span class="comment">&amp;d  = 0x105604e60    //未初始化的全局变量、静态变量</span></span><br><span class="line"><span class="comment">obj = 0x608000012210 // 堆</span></span><br><span class="line"><span class="comment">&amp;e  = 0x7ffeea5fcff4 // 栈</span></span><br><span class="line"><span class="comment">&amp;f  = 0x7ffeea5fcff0 // 栈</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Tagged-Pointer"><a href="#Tagged-Pointer" class="headerlink" title="Tagged Pointer"></a>Tagged Pointer</h2><ul>
+<li><p>从64bit开始，iOS引入了Tagged Pointer技术，用于优化<code>NSNumber</code>、<code>NSDate</code>、<code>NSString</code>等<code>小对象</code>的存储</p>
+</li>
+<li><p>在没有使用Tagged Pointer之前， NSNumber等对象需要动态分配内存、维护引用计数等，NSNumber指针存储的是堆中NSNumber对象的地址值</p>
+</li>
+<li><p>使用Tagged Pointer之后，NSNumber指针里面存储的数据变成了：<code>Tag + Data</code>，也就是将数据直接存储在了指针中。所以Tagged Pointer对象也是没有<code>isa</code>指针的</p>
+</li>
+<li><p><code>objc_msgSend</code>能识别<code>Tagged Pointer</code>，比如NSNumber的intValue方法，直接从指针提取数据，节省了以前的调用开销。</p>
+<img src="/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/%E4%BD%BF%E7%94%A8TaggedPointer%E5%89%8D%E5%90%8E%E5%AF%B9%E6%AF%94.png" class="">
+
+</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        <span class="built_in">NSNumber</span> *number1 = @<span class="number">4</span>;</span><br><span class="line">        <span class="built_in">NSNumber</span> *number2 = @<span class="number">5</span>;</span><br><span class="line">        <span class="built_in">NSNumber</span> *number3 = @(<span class="number">0xFFFFFFFFFFFFFFF</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;\nnumber1=%p\nnumber2=%p\nnumber3=%p&quot;</span>, number1, number2, number3);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//number1=0x427</span></span><br><span class="line"><span class="comment">//number2=0x527</span></span><br><span class="line"><span class="comment">//number3=0x100484900</span></span><br></pre></td></tr></table></figure>
+
+<p>在小对象的时候， 使用<code>Tagged Pointer</code>，NSNumber指针里面存储的数据变成了：<code>Tag + Data</code>，也就是将数据直接存储在了指针中，不在需要存取来获取值了。</p>
+<h3 id="Tagged-Pointer对象的set方法"><a href="#Tagged-Pointer对象的set方法" class="headerlink" title="Tagged Pointer对象的set方法"></a>Tagged Pointer对象的set方法</h3><p>思考：这两段代码打印结果有什么区别？</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        <span class="keyword">self</span>.name = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abcdefghijk&quot;</span>];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        <span class="keyword">self</span>.name = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abc&quot;</span>];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们先运行第一段代码：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        <span class="keyword">self</span>.name = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abcdefghijk&quot;</span>];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果程序在执行<strong>objc_release</strong>时奔溃，即释放对象导致的崩溃。</p>
+<img src="/2021/08/23/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8BTagged-Pointer/objc_release_crash.png" class="">
+
+<p>原因在于：</p>
+<p>ARC环境下，<code>_name</code>的<code>setter</code>方法大概是这样的：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setName:(<span class="built_in">NSString</span> *)name &#123;</span><br><span class="line">    _name = name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实在编译时期，编译器会自动的为对象添加retain,release方法。编译后大概是这样的：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setName:(<span class="built_in">NSString</span> *)name &#123;</span><br><span class="line">    <span class="keyword">if</span> (_name != name) &#123;</span><br><span class="line">        <span class="comment">//旧值先释放</span></span><br><span class="line">        [_name release];</span><br><span class="line">        <span class="comment">//新值赋值。</span></span><br><span class="line">        <span class="comment">//_name用copy修饰</span></span><br><span class="line">        _name = [name <span class="keyword">copy</span>];</span><br><span class="line">        <span class="comment">//_name用strong修饰</span></span><br><span class="line">        <span class="comment">//_name = [name retain];</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多线程赋值情况下：多个线程有可能同时执行<code>[_name release]</code>方法，造成同一个对象多次release导致crash。</p>
+<p>这种情况的解决方案：</p>
+<ul>
+<li><p>可以使用<code>atomic</code>修饰<code>_name</code>，即在<code>setter方法</code>内部加锁，这样就可以保证只准一个线程调用<code>[_name release]</code></p>
+</li>
+<li><p>也在可以在调用setter方法的地方加锁，这样更加灵活，并不会限制setter方法内部</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">  <span class="keyword">self</span>.name = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abcdefghijk&quot;</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>再来看另外一段代码：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        <span class="keyword">self</span>.name = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abc&quot;</span>];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行后并未发现任何问题。分别打印<code>abcdefghijk</code>和<code>abc</code>字符串的类型:</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="built_in">NSString</span> *str1 = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abc&quot;</span>];</span><br><span class="line"><span class="built_in">NSString</span> *str2 = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;abcdefghijk&quot;</span>];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;\n[str1 class]=%@\n[str2 class]=%@&quot;</span>,[str1 <span class="keyword">class</span>],[str2 <span class="keyword">class</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>结果为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[str1 class]&#x3D;NSTaggedPointerString</span><br><span class="line">[str2 class]&#x3D;__NSCFString</span><br></pre></td></tr></table></figure>
+
+<p>根据打印发现<code>str1</code>是<code>NSTaggedPointerString</code>类型，而Tagged Pointer对象是不通过<code>set</code>方法找对象的。</p>
+<p>我们也可以在源码中找到相关实现，</p>
+<p>在<code>NSObject.mm</code>中查找<code>retain</code>方法的实现：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">- (<span class="keyword">id</span>)<span class="keyword">retain</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> ((<span class="keyword">id</span>)<span class="keyword">self</span>)-&gt;rootRetain();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>点击进入<code>rootRetain</code>方法，我们可以在里面找到<code>if (isTaggedPointer()) return (id)this;</code>也就是说如果是<code>TaggedPointer</code>类型，直接返回，不需要根据指针查找。</p>
+<h2 id="判断是否是TaggedPointer"><a href="#判断是否是TaggedPointer" class="headerlink" title="判断是否是TaggedPointer"></a>判断是否是TaggedPointer</h2><p>查看源码中判断Tagged Pointer的方法：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">_objc_isTaggedPointer(<span class="keyword">const</span> <span class="keyword">void</span> * _Nullable ptr) &#123;</span><br><span class="line">    <span class="keyword">return</span> ((uintptr_t)ptr &amp; _OBJC_TAG_MASK) == _OBJC_TAG_MASK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> TARGET_OS_OSX &amp;&amp; __x86_64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> OBJC_MSB_TAGGED_POINTERS 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> OBJC_MSB_TAGGED_POINTERS 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> OBJC_MSB_TAGGED_POINTERS</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> _OBJC_TAG_MASK (1UL&lt;&lt;63)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> _OBJC_TAG_MASK 1UL</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在判断是否是TaggedPointer的时候，在iOS平台和MAC平台还是不太一样的</p>
+<ul>
+<li>1、iOS平台，需要把1向左移动63位，也就是最高有效位是1（第64bit）</li>
+<li>2、在Mac平台，最低有效位是1</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/21/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B9%8B%E5%AE%9A%E6%97%B6%E5%99%A8/" rel="prev" title="内存管理之定时器">
+      <i class="fa fa-chevron-left"></i> 内存管理之定时器
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">1.</span> <span class="nav-text">内存布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tagged-Pointer"><span class="nav-number">2.</span> <span class="nav-text">Tagged Pointer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tagged-Pointer%E5%AF%B9%E8%B1%A1%E7%9A%84set%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Tagged Pointer对象的set方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%98%AFTaggedPointer"><span class="nav-number">3.</span> <span class="nav-text">判断是否是TaggedPointer</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Dev.Gao</p>
+  <div class="site-description" itemprop="description">人类的本能是胆怯，但人类的本质是不甘心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dev.Gao</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
