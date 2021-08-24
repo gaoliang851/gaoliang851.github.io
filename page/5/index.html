@@ -159,6 +159,131 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/isa%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Dev.Gao">
+      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dev.Gao的学习笔记">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/04/08/isa%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">isa详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-08 16:38:10" itemprop="dateCreated datePublished" datetime="2017-04-08T16:38:10+08:00">2017-04-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/Objective-C/" itemprop="url" rel="index"><span itemprop="name">Objective-C</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><code>isa</code>指针是Runtime中非常重要的一个结构体，也是非常常用的一个数据结构。</p>
+<p>在<strong>arm64</strong>架构之前，<code>isa</code>就是一个普通的指针，存储着<code>Class</code>,<code>Meta-Class</code>对象的内存地址。</p>
+<p>从<strong>arm64</strong>架构开始，对<code>isa</code>进行了优化，变成了一个共用体(<code>union</code>)结构，还使用位域来存储更多的信息。</p>
+<h3 id="isa的结构"><a href="#isa的结构" class="headerlink" title="isa的结构"></a>isa的结构</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">isa_t</span> </span><br><span class="line">&#123;</span><br><span class="line">  Class cls;</span><br><span class="line">  <span class="keyword">uintptr_t</span> bits;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            <span class="keyword">uintptr_t</span> nonpointer        : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_assoc         : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_cxx_dtor      : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> shiftcls          : <span class="number">33</span>; <span class="comment">// MACH_VM_MAX_ADDRESS 0x1000000000</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> magic             : <span class="number">6</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> weakly_referenced : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> deallocating      : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> has_sidetable_rc  : <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">uintptr_t</span> extra_rc          : <span class="number">19</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<ul>
+<li><p><strong>nonpointer</strong>：</p>
+<ul>
+<li>0，代表普通指针，存储着Class、Meta-Class对象的内存地址</li>
+<li>1，代表优化过，使用位域存储更多的信息</li>
+</ul>
+</li>
+<li><p><strong>has_assoc</strong>：</p>
+<ul>
+<li>是否<strong>设置过</strong>关联对象，如果没有，释放时会更快</li>
+</ul>
+</li>
+<li><p><strong>has_cxx_dtor</strong>：</p>
+<ul>
+<li>是否有C++的析构函数(.cxx_destruct),如果没有，释放时会更快</li>
+</ul>
+</li>
+<li><p><strong>shiftcls</strong>：</p>
+<ul>
+<li>存储着Class、Meta-Class对象的内存地址信息</li>
+</ul>
+</li>
+<li><p><strong>magic</strong></p>
+<ul>
+<li>用于调试时分辨对象是否未完成初始化</li>
+</ul>
+</li>
+<li><p><strong>weakly_referenced</strong>：</p>
+<ul>
+<li>是否又被弱引用指向过，如果没有，释放时会更快</li>
+</ul>
+</li>
+<li><p><strong>deallocating</strong></p>
+<ul>
+<li>对象是否正在释放</li>
+</ul>
+</li>
+<li><p><strong>extra_rc</strong></p>
+<ul>
+<li>里面存储的值是<strong>引用计数器 - 1</strong></li>
+</ul>
+</li>
+<li><p><strong>has_sidetable_rc</strong></p>
+<ul>
+<li>引用计数是否过大无法存储在isa中</li>
+<li>如果为1，那么引用计数会存储在一个叫SideTable的类的属性中。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/%E4%BD%8D%E8%BF%90%E7%AE%97%E3%80%81%E4%BD%8D%E5%9F%9F%E4%BB%A5%E5%8F%8A%E5%85%B1%E7%94%A8%E4%BD%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1952,265 +2077,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Dev.Gao">
-      <meta itemprop="description" content="人类的本能是胆怯，但人类的本质是不甘心">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dev.Gao的学习笔记">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/" class="post-title-link" itemprop="url">高仿新浪微博①准备工作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-12-13 14:20:25" itemprop="dateCreated datePublished" datetime="2016-12-13T14:20:25+08:00">2016-12-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/iOS/%E9%A1%B9%E7%9B%AE%E6%89%8B%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">项目手记</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="项目设置"><a href="#项目设置" class="headerlink" title="项目设置"></a>项目设置</h3><h4 id="设置图标选项"><a href="#设置图标选项" class="headerlink" title="设置图标选项"></a>设置图标选项</h4><ul>
-<li><p>删除<code>Launch Screen File</code>&amp;<code>Main.storyboard</code>,并且设置<strong>启动图片</strong>和<strong>应用方向</strong></p>
-<blockquote>
-<p>提示：iPhone项目一般不需要支持横屏，游戏除外</p>
-</blockquote>
-
-
-</li>
-</ul>
-<h4 id="添加图标"><a href="#添加图标" class="headerlink" title="添加图标"></a>添加图标</h4><img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/WX20201214-231147@2x.png" class="" title="This is an example image">
-
-<h4 id="App-名称"><a href="#App-名称" class="headerlink" title="App 名称"></a>App 名称</h4><img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/WX20201214-231503@2x.png" class="" title="This is an example image">
-
-<blockquote>
-<p>此处修改的内容是<code>Info.plist</code>中的<code>CFBundleName</code>对应的内容</p>
-<p>注意不要超过6个中文，否则会影响用户体验</p>
-</blockquote>
-<h4 id="添加启动图片"><a href="#添加启动图片" class="headerlink" title="添加启动图片"></a>添加启动图片</h4><img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/WX20201214-231748@2x.png" class="" title="This is an example image">
-
-<h3 id="架构确定"><a href="#架构确定" class="headerlink" title="架构确定"></a>架构确定</h3><p>在开发之前，确定项目的整体架构，明确开发的主体功能非常重要！新浪微博符合经典应用程序架构设计：</p>
-<ul>
-<li>主视图控制器是一个 <code>UITabbarController</code></li>
-<li>包含四个<code>UINavigationController</code>，分别是<ul>
-<li>首页</li>
-<li>消息</li>
-<li>发现</li>
-<li>我</li>
-</ul>
-</li>
-</ul>
-<p>特殊之处：</p>
-<ul>
-<li><code>UITabbarController</code> 中间有一个 “+” 按钮，点击该按钮能够 Modal 显示<code>微博类型选择</code>界面，方便用户选择自己需要的微博类型</li>
-<li>四个 <code>UINavigationController</code> 在用户登录前后显示的界面格式是不一样的</li>
-</ul>
-<h3 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h3><p>MVVM 是 Model-View-ViewModel 的简写，MVVM 模式和 MVC 模式一样，主要目的是分离视图（View）和模型（Model）</p>
-<h4 id="MVC回顾"><a href="#MVC回顾" class="headerlink" title="MVC回顾"></a>MVC回顾</h4><img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/MVC%E7%A4%BA%E6%84%8F%E5%9B%BE.png" class="" title="This is an example image">
-
-<p>MVC存在的问题：</p>
-<ul>
-<li>模型的代码很少</li>
-<li>控制器的代码一不小心就越来越多</li>
-<li>不好测试</li>
-</ul>
-<h4 id="MVVM-1"><a href="#MVVM-1" class="headerlink" title="MVVM"></a>MVVM</h4><img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/MVVM%E7%A4%BA%E6%84%8F%E5%9B%BE.png" class="" title="This is an example image">
-
-<ul>
-<li><p>MVVM 概念</p>
-<ul>
-<li>在MVVM中，<code>view</code>和<code>view controller</code>正式联系在一起，我们把他们视为一个组件</li>
-<li><code>view</code>和<code>view controller</code>都不能直接引用model，而是引用视图模型</li>
-<li><code>view model</code>是一个放置用户验证逻辑，视图显示逻辑，发起网络请求和其他代码</li>
-</ul>
-</li>
-<li><p>MVVM 使用注意事项</p>
-<ul>
-<li><code>view</code>引用<code>view model</code>，但反过来不行</li>
-<li><code>view model</code>引用了<code>model</code>，但反过来不行</li>
-<li>如果破坏了这些规则，便无法正确的使用MVVM</li>
-</ul>
-</li>
-<li><p>MVVM 的优点</p>
-<ul>
-<li>低耦合：<code>View</code>可以独立与<code>Model</code>变化和修改，一个<code>viewModel</code>可以绑定到不同的<code>view</code>上</li>
-<li>可重用性：可以把一些视图逻辑放在<code>viewModel</code>里面，让很多<code>view</code>重用这段视图逻辑</li>
-<li>独立开发：开发人员可以专注于业务逻辑和数据的开发，设计人员可以专注于页面设计</li>
-<li>可测试：通常界面是比较难于测试的，而MVVM模式可以针对<code>viewModel</code>来进行测试</li>
-</ul>
-</li>
-</ul>
-<h2 id="项目搭建"><a href="#项目搭建" class="headerlink" title="项目搭建"></a>项目搭建</h2><h3 id="准备工作-1"><a href="#准备工作-1" class="headerlink" title="准备工作"></a>准备工作</h3><ul>
-<li><p>删除模板文件：</p>
-<ul>
-<li>viewController.swift</li>
-<li>Main.storyboard</li>
-<li>LaunchScreen.storyboard</li>
-</ul>
-</li>
-<li><p>创建目录结构以及项目文件</p>
-<ul>
-<li><p>主目录为<code>Classes</code></p>
-</li>
-<li><p>二级目录为</p>
-<table>
-<thead>
-<tr>
-<th align="center">目录名</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">View</td>
-<td align="center">控制器和视图</td>
-</tr>
-<tr>
-<td align="center">ViewModel</td>
-<td align="center">视图模型</td>
-</tr>
-<tr>
-<td align="center">Model</td>
-<td align="center">模型</td>
-</tr>
-<tr>
-<td align="center">Tools</td>
-<td align="center">工具类</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>View子目录</p>
-<table>
-<thead>
-<tr>
-<th align="center">目录名</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Main</td>
-<td align="center">主要</td>
-</tr>
-<tr>
-<td align="center">Home</td>
-<td align="center">首页</td>
-</tr>
-<tr>
-<td align="center">Message</td>
-<td align="center">消息</td>
-</tr>
-<tr>
-<td align="center">Discover</td>
-<td align="center">发现</td>
-</tr>
-<tr>
-<td align="center">Profile</td>
-<td align="center">我</td>
-</tr>
-</tbody></table>
-</li>
-<li><p><code>Main</code>目录</p>
-<table>
-<thead>
-<tr>
-<th align="center">目录</th>
-<th align="center">controller</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Main</td>
-<td align="center">GLMainViewController.swift(:<code>UITabbarController</code>)</td>
-</tr>
-<tr>
-<td align="center">Main</td>
-<td align="center">GLNavigationViewController.swift(: <code>UINavgationController</code>)</td>
-</tr>
-<tr>
-<td align="center">Main</td>
-<td align="center">GLBaseViewController.swift(: <code>UIViewController</code>)</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>功能模块文件</p>
-<table>
-<thead>
-<tr>
-<th align="center">目录</th>
-<th align="center">controller</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Home</td>
-<td align="center">GLHomeViewController.swift(:<code>GLBaseViewController</code>)</td>
-</tr>
-<tr>
-<td align="center">Message</td>
-<td align="center">GLMessageViewController.swift(: <code>GLBaseViewController</code>)</td>
-</tr>
-<tr>
-<td align="center">Discover</td>
-<td align="center">GLDiscoverViewController.swift(: <code>GLBaseViewController</code>)</td>
-</tr>
-<tr>
-<td align="center">Profile</td>
-<td align="center">GLProfileViewController.swift(: <code>GLBaseViewController</code>)</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<img src="/2016/12/13/%E9%AB%98%E4%BB%BF%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A%E2%91%A0%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/WX20201213-151529@2x.png" class="" title="This is an example image"></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2280,7 +2146,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">53</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
